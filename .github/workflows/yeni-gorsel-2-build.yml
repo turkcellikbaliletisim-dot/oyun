@@ -20,8 +20,8 @@ jobs:
       - name: Download verified packaging sources
         run: |
           set -euo pipefail
-          curl --fail --location --retry 1 --connect-timeout 15 --max-time 90 'https://at.adobe.com/OWN9cYyLX9f67Lzw' -o "$RUNNER_TEMP/art-tools.zip"
-          echo "0e05b0aab6a87b7f62d719815f79dda4df9f68ea545a0eb4534a8086d0088b2d  $RUNNER_TEMP/art-tools.zip" | sha256sum --check -
+          curl --fail --location --retry 1 --connect-timeout 15 --max-time 90 'https://at.adobe.com/66z2Jd9weV8tORhV' -o "$RUNNER_TEMP/art-tools.zip"
+          echo "1455e9624a9716f26d306aa9aea79c48c7dc7aa526b46918672e74f61a7335ff  $RUNNER_TEMP/art-tools.zip" | sha256sum --check -
           python3 - <<'PY'
           import os, zipfile
           from pathlib import Path
@@ -33,13 +33,14 @@ jobs:
                   p=Path(name);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(name))
           PY
       - name: Install isolated packaging dependencies
-        run: python -m pip install 'Pillow>=11,<13' 'numpy>=2,<3' 'fonttools>=4.60,<5'
+        run: python -m pip install 'Pillow>=11,<13' 'numpy>=2,<3' 'scipy>=1.15,<2' 'fonttools>=4.60,<5'
       - name: Package separate images and test fonts without distributing font binaries
         run: python scripts/skin_v2_build.py --partial
       - name: Commit art and QA only on the isolated branch
         run: |
           set -euo pipefail
           test "$GITHUB_REF_NAME" = 'yeni-gorsel-2-20261012'
+          chmod +x scripts/skin_v2_fonts.command
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add native/skin dokumanlar/skin_v2_sources.json dokumanlar/skin_v2_expected.json dokumanlar/yeni-gorsel-2 scripts/skin_v2_build.py scripts/skin_v2_fonts.py scripts/skin_v2_fonts.command
@@ -48,11 +49,19 @@ jobs:
             exit 1
           fi
           if ! git diff --cached --quiet; then
-            git commit -m 'Yeni gorsel 2: stage individual PNG assets and objective QA'
+            git commit -m 'Yeni gorsel 2: review individual PNG assets and objective QA'
             git push origin HEAD:yeni-gorsel-2-20261012
           fi
       - uses: actions/upload-artifact@v4
         with:
           name: yeni-gorsel-2-qa
-          path: dokumanlar/yeni-gorsel-2/
+          path: |
+            dokumanlar/yeni-gorsel-2/
+            native/skin/manifest_v2.json
+            native/skin/fx_glow_ready.png
+            native/skin/fx_glow_legend.png
+            native/skin/header_bar.png
+            native/skin/nav_bar.png
+            native/skin/result_defeat.png
+            native/skin/icon_net_ok.png
           retention-days: 7
