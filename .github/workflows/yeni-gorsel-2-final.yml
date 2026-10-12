@@ -1,0 +1,79 @@
+name: Yeni gorsel 2 final
+on:
+  push:
+    branches: [yeni-gorsel-2-20261012]
+    paths: [.github/workflows/yeni-gorsel-2-final.yml]
+permissions:
+  contents: write
+concurrency:
+  group: yeni-gorsel-2-build
+  cancel-in-progress: false
+jobs:
+  build-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download verified packaging sources
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 1 --connect-timeout 15 --max-time 90 'https://at.adobe.com/ewDgWSNXWuIeKRDO' -o "$RUNNER_TEMP/art-tools.zip"
+          echo "f5d8e6e6c8d85d04e8565ea0c8f6596bba31d0d8e9728c5e0c51f42c5b07cde7  $RUNNER_TEMP/art-tools.zip" | sha256sum --check -
+          python3 - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          allowed = {'scripts/skin_v2_build.py','scripts/skin_v2_composites.py','scripts/skin_v2_fonts.py','scripts/skin_v2_fonts.command','dokumanlar/skin_v2_sources.json','dokumanlar/skin_v2_expected.json','dokumanlar/YENI-GORSEL-2.md','native/skin/font_roles.json','native/skin/audio/README.md','native/skin/audio/prompts.json'}
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'art-tools.zip') as z:
+              assert len(z.namelist()) == len(allowed) and set(z.namelist()) == allowed
+              assert z.testzip() is None
+              for name in sorted(allowed):
+                  p=Path(name);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(name))
+          PY
+      - name: Install packaging dependencies
+        run: python -m pip install 'Pillow>=11,<13' 'numpy>=2,<3' 'scipy>=1.15,<2' 'fonttools>=4.60,<5' 'cairosvg>=2.7,<3'
+      - name: Build all 114 assets and validate fonts without distributing font binaries
+        run: python scripts/skin_v2_build.py
+      - name: Commit art, specifications and QA on the isolated branch
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'yeni-gorsel-2-20261012'
+          chmod +x scripts/skin_v2_fonts.command
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add native/skin dokumanlar/skin_v2_sources.json dokumanlar/skin_v2_expected.json dokumanlar/YENI-GORSEL-2.md dokumanlar/yeni-gorsel-2 scripts/skin_v2_build.py scripts/skin_v2_composites.py scripts/skin_v2_fonts.py scripts/skin_v2_fonts.command
+          if git diff --cached --name-only | grep -Ei '\.(ttf|otf|woff2?|ttc)$'; then
+            echo 'Font binary staging is forbidden.' >&2
+            exit 1
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Yeni gorsel 2: 104 new PNGs, 10 renewed assets, font installer and QA'
+            git push origin HEAD:yeni-gorsel-2-20261012
+          fi
+      - name: Create verified delivery archive without font binaries
+        run: |
+          python3 - <<'PY'
+          import json,os,zipfile,hashlib
+          from pathlib import Path
+          required=json.loads(Path('dokumanlar/skin_v2_expected.json').read_text())
+          report=json.loads(Path('native/skin/manifest_v2.json').read_text())
+          assert report['png_count']==114 and not report['missing_png'] and not report['errors']
+          assert report['fonts_validated'] and not report['font_binaries_in_package']
+          files=[Path('native/skin')/name for name in required]
+          files += [Path(p) for p in ['native/skin/manifest_v2.json','native/skin/font_roles.json','native/skin/audio/README.md','native/skin/audio/prompts.json','dokumanlar/YENI-GORSEL-2.md','dokumanlar/skin_v2_sources.json','dokumanlar/skin_v2_expected.json','scripts/skin_v2_build.py','scripts/skin_v2_composites.py','scripts/skin_v2_fonts.py','scripts/skin_v2_fonts.command']]
+          files += sorted(Path('dokumanlar/yeni-gorsel-2').glob('*'))
+          target=Path(os.environ['RUNNER_TEMP'])/'destan-diyarlari-paket2.zip'
+          with zipfile.ZipFile(target,'w',zipfile.ZIP_DEFLATED) as z:
+              for f in files:
+                  assert f.is_file() and f.suffix.lower() not in {'.ttf','.otf','.woff','.woff2','.ttc'}
+                  z.write(f,f.as_posix())
+          with zipfile.ZipFile(target) as z: assert z.testzip() is None
+          print('Delivery archive SHA256:',hashlib.sha256(target.read_bytes()).hexdigest())
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: destan-diyarlari-paket2
+          path: ${{ runner.temp }}/destan-diyarlari-paket2.zip
+          retention-days: 7
