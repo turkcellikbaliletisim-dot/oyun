@@ -58,7 +58,7 @@ Python Playwright ve Chromium bulunan ortamda, sunucu açıkken `python3 tests/b
 
 ## Kapsam
 
-Şu anda hesap, online lig, sunucu tarafından korunan koleksiyon, gerçek ödeme, takas, mobil mağaza paketi yok. 40 kartın ayrı illüstrasyonu oluşturuldu; görseller proje için yapay zekâ yardımıyla üretildi. Oyun harici analitik/font/CDN isteği yapmaz. Yerel istemci ve kayıtlar güvenilir sunucu otoritesinin yerine geçmez. Hukuk/mağaza uygunluğu ve gerçek oyuncu dengesi doğrulanmış değildir.
+Hesap, arkadaş odası, lig eşleştirme ve sunucu tarafından korunan koleksiyon geliştirme ortamında hazır. Genel erişime açık barındırma, gerçek ödeme, takas ve imzalı mağaza paketi henüz yok. 40 kartın ayrı illüstrasyonu oluşturuldu; görseller proje için yapay zekâ yardımıyla üretildi. Oyun harici analitik/font/CDN isteği yapmaz. Yerel istemci ve kayıtlar güvenilir sunucu otoritesinin yerine geçmez. Hukuk/mağaza uygunluğu ve gerçek oyuncu dengesi doğrulanmış değildir.
 
 ## Telefona ekleme ve çevrimdışı kullanım
 
@@ -67,3 +67,15 @@ Kurulabilir web uygulaması (PWA) manifesti ve service worker eklendi. Ana menü
 Uygulama kabuğu küçük bir önbellekle hazırlanır; 40 kart resmini çevrimdışı kullanmak için yaklaşık 37 MB’lık indirmeyi oyuncu ayrıca başlatır. İndirme tamamlandıktan sonra bot/hikâye, galeri ve baskı ekranı internet olmadan çalışır. Hazır PDF dosyası ayrı indirilir; tüm büyük PDF otomatik önbelleğe alınmaz. Hesap/ödül/API yanıtları önbelleğe alınmaz. Yeni sürüm kullanıcı geçiş yapınca etkinleşir; maç kaydı korunur.
 
 Kurulum/çevrimdışı destek için gerçek yayında HTTPS, geliştirmede localhost gerekir. Bu görevde site yayını yapılmadı. Kontrol: `python3 tests/pwa-browser.py`. İnternet erişimi kapatılarak yeni hikâye maçı, 40 görsel, galeri, baskı ve ses/müzik akışı doğrulandı.
+
+
+## Hesaplı oyun ve sunucu
+
+Node.js 22+ ile `npm run online`, ardından `http://127.0.0.1:8080/online.html`.
+Arkadaş odası kodunu ikinci tarayıcıyla paylaş; sunucu botu veya 10 hikâye bölümüyle tek başına oyna. Lig finalden sonra açılır. Yerel prototip koleksiyonu sunucu hesabına aktarılmaz.
+
+Hesap ilk bağlantıda oluşur. Kurtarma anahtarını arayüzden güvenli bir dosyaya indir; anahtar hesaba erişim verir. Sunucu `.data/state.json` dosyasına yazar; bu dizin Git'e gönderilmez. Aynı kayıt dizininde yalnız bir sunucu çalışabilir. Yedeklemek için sunucuyu normal biçimde kapat, `.data` dizinini erişimi sınırlı ayrı bir yere kopyala; geri yüklerken durdurulmuş sunucunun veri dizinini yedekten geri koy. Gerçek kullanıcı verilerini depoya veya herkese açık konuma yükleme.
+
+Geliştirmede `HOST`, `PORT`, `DESTAN_DATA_DIR` ayarlanabilir. Yayında HTTPS ters proxy, `NODE_ENV=production`, tam HTTPS `APP_ORIGIN` ve kalıcı özel veri dizini gerekir. Bu görevde dış hosting kurulmadı. Dosya deposu tek süreçli prototiptir; yüksek trafik için veritabanı ve operasyon çalışması gerekir.
+
+`npm test` sunucu yetki, gizli bilgi, saat, tekrar işlem, ödül, yeniden başlatma, kurtarma ve silme kontrollerini içerir. `node tests/run-online-browser.js` iki tarayıcıyla gerçek arayüzü test eder.

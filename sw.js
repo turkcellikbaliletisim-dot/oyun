@@ -1,7 +1,7 @@
 const ROOT=new URL('./',self.location.href);
 const PREFIX='destan-static:'+ROOT.pathname+':';
-const CACHE=PREFIX+'v02-1';
-const CORE=['index.html','manifest.webmanifest','oyun/icon.svg','oyun/style.css','oyun/app.js','oyun/engine.js','oyun/cards.js','oyun/decks.js','oyun/bot.js','oyun/chapters.js','oyun/economy.js','oyun/playtest.js','oyun/pwa.js','oyun/sound.js','oyun/baski.html','oyun/print.js','kart-prototipi/art.js','kart-prototipi/index.html','kart-prototipi/gallery.js','kart-prototipi/style.css','kart-prototipi/Main.html',...Array.from({length:5},(_,i)=>`kart-prototipi/Sayfa${i+1}.html`)];
+const CACHE=PREFIX+'v02-2';
+const CORE=['online.html','oyun/online.js','index.html','manifest.webmanifest','oyun/icon.svg','oyun/style.css','oyun/app.js','oyun/engine.js','oyun/cards.js','oyun/decks.js','oyun/bot.js','oyun/chapters.js','oyun/economy.js','oyun/playtest.js','oyun/pwa.js','oyun/sound.js','oyun/baski.html','oyun/print.js','kart-prototipi/art.js','kart-prototipi/index.html','kart-prototipi/gallery.js','kart-prototipi/style.css','kart-prototipi/Main.html',...Array.from({length:5},(_,i)=>`kart-prototipi/Sayfa${i+1}.html`)];
 const ATLAS=Array.from({length:10},(_,i)=>`kart-prototipi/gorseller/${String(i*4+1).padStart(2,'0')}-${String(i*4+4).padStart(2,'0')}.png`);
 const url=path=>new URL(path,ROOT).href;
 const core=new Set(CORE.map(url)),art=new Set(ATLAS.map(url));

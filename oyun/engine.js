@@ -22,6 +22,7 @@ export function validateDeck(deck) {
 
 // Tekrarlanabilir karıştırma; güvenli/çevrimiçi rastgelelik yerine geçmez.
 function random(s) {
+  if(s.entropy){requireRule(s.entropyIndex<s.entropy.length,'Maç rastgelelik kaydı tükendi.');return s.entropy[s.entropyIndex++]/4294967296;}
   s.rng = (s.rng + 0x6D2B79F5) >>> 0;
   let t = Math.imul(s.rng ^ (s.rng >>> 15), 1 | s.rng);
   t ^= t + Math.imul(t ^ (t >>> 7), 61 | t);
@@ -34,11 +35,12 @@ function shuffle(s, list) {
   }
 }
 
-export function createGame({ decks = [DECKS.starter.cards, DECKS.starter.cards], seed = 1, first, opening, pinned } = {}) {
+export function createGame({ decks = [DECKS.starter.cards, DECKS.starter.cards], seed = 1, first, opening, pinned,entropy } = {}) {
   requireRule(Array.isArray(decks) && decks.length === 2, 'İki deste gerekir.');
   decks.forEach(validateDeck);
   requireRule(Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff, 'Tohum 0–4294967295 arası tam sayı olmalı.');
   requireRule(first === undefined || first === 0 || first === 1, 'Başlangıç oyuncusu geçersiz.');
+  if(entropy!==undefined)requireRule(Array.isArray(entropy)&&entropy.length>=80&&entropy.length<=256&&entropy.every(n=>Number.isInteger(n)&&n>=0&&n<=0xffffffff),'Rastgelelik kaydı geçersiz.');
   if(opening!==undefined){
     requireRule(Array.isArray(opening)&&opening.length===2,'İki başlangıç eli gerekir.');
     for(let p=0;p<2;p++){
@@ -49,13 +51,13 @@ export function createGame({ decks = [DECKS.starter.cards, DECKS.starter.cards],
   }
   if(pinned!==undefined)requireRule(opening&&Array.isArray(pinned)&&pinned.length===2&&pinned.every((ids,p)=>Array.isArray(ids)&&new Set(ids).size===ids.length&&ids.every(id=>opening[p].includes(id))),'Korunan kart başlangıç elinde bulunmalı.');
   const s = {
-    version: RULE_VERSION, seed, rng: seed >>> 0, nextUid: 1,
+    version: RULE_VERSION, seed, rng: seed >>> 0, nextUid: 1,...(entropy===undefined?{}:{entropy:[...entropy],entropyIndex:0}),
     status: 'mulligan', active: 0, first: 0, turn: 0, phase: 'main',
     winner: null, reason: null, pending: null, log: [], history: [],
     players: decks.map(deck => ({ hp: 20, energy: 0, maxEnergy: 0, turns: 0,
       deck: [...deck], hand: [], board: [], traps: [], grave: [], half: false,
       stats: { cardPlays: {}, attacks: 0, energySpent: 0 },mulliganPinned:[] })),
-    initial: { decks: decks.map(d => [...d]), seed, ...(first === undefined ? {} : { first }),...(opening===undefined?{}:{opening:opening.map(ids=>[...ids])}),...(pinned===undefined?{}:{pinned:pinned.map(ids=>[...ids])}) },
+    initial: { decks: decks.map(d => [...d]), seed, ...(first === undefined ? {} : { first }),...(opening===undefined?{}:{opening:opening.map(ids=>[...ids])}),...(pinned===undefined?{}:{pinned:pinned.map(ids=>[...ids])}),...(entropy===undefined?{}:{entropy:[...entropy]}) },
   };
   s.first = first ?? Math.floor(random(s) * 2);
   for (let p = 0; p < 2; p++) {

@@ -59,3 +59,8 @@ Sağlayıcı seçimi hesap/eşleştirme kadar gerçek zamanlı maç otoritesi, T
 Gerekli tablolar: users, card_inventory, deck_versions, matches, match_events, reward_transactions, purchases (ödeme varsa), support_cases. Envanter/ödül işlemlerinde benzersiz işlem kimliği ve atomiklik şarttır.
 
 Önce ölçülecek hedefler: maç servis gecikmesi, kopma/geri dönüş, hatalı hamle, sonuç tutarsızlığı, çökme ve maliyet/maç. Yedekleme sıklığı ve saklama süreleri veri hacmi/ülke gereksinimine göre seçilir. Yayın öncesi yedekten geri dönüş tatbikatı, servis alarmı, yetki kontrolü, gizli bilgi sızıntısı testi ve hata telafisi planı gereklidir.
+
+
+## Uygulanan hesaplı prototip
+
+`server/http.js`, `service.js`, `store.js` Node.js yetkili sunucusudur; `online.html` istemcidir. Cookie/CSRF/Origin kontrolü, sahiplik ve üyelik doğrulaması, kriptografik maç rastgeleliği, idempotent hamle/cüzdan işlemleri, hesap kurtarma/silme ve atomik özel dosya kaydı uygulanmıştır. Yerel oyun ayrı, çevrimdışı bir moddur. Sunucu depo dizininde tek yazıcı kilidi kullanır; birden fazla süreç için paylaşımlı veritabanı gerekir. Sunucunun verdiği `actions` listesi yalnız oyuncunun görünür normalize durumundan hesaplanır.

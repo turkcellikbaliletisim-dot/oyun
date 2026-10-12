@@ -6,9 +6,10 @@ import { legalActions, attackValue, resolveTarget, applyAction, attackTargets } 
 function visibleState(state,p) {
   const s=structuredClone(state);
   s.rng=1;s.seed=0;s.history=[];s.log=[];s.initial={};
+  delete s.entropy;delete s.entropyIndex;
   for(let i=0;i<2;i++){
     s.players[i].deck=Array(s.players[i].deck.length).fill(1);
-    if(i!==p){s.players[i].hand=Array(s.players[i].hand.length).fill(1);s.players[i].unknownTraps=s.players[i].traps.length;s.players[i].traps=[];}
+    if(i!==p){s.players[i].hand=Array(s.players[i].hand.length).fill(1);s.players[i].unknownTraps=s.players[i].traps.length;s.players[i].traps=[];s.players[i].mulliganPinned=[];}
   }
   return s;
 }

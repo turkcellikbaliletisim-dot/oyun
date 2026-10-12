@@ -5,6 +5,7 @@ const type = {warrior:'SAVAŞÇI',spell:'BÜYÜ',trap:'TUZAK'};
 const rarity = {common:'YAYGIN',rare:'NADİR',legendary:'EFSANEVİ'};
 const node = (tag,text,cls) => { const el=document.createElement(tag); if(text!==undefined)el.textContent=text; if(cls)el.className=cls; return el; };
 const root=document.getElementById('sheets');
+document.getElementById('print-cards').addEventListener('click',()=>window.print());
 for(let i=0;i<5;i++){
   const page=node('section'); page.append(node('div',`Türkiye Serisi · v0.2 · Sayfa ${i+1}/5 · 63×88 mm`,'sheet-title'));
   const grid=node('div',undefined,'grid');
