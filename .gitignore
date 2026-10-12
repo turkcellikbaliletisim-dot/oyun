@@ -5,3 +5,4 @@ test-results/
 .data/
 .godot/
 native-builds/
+*.import
