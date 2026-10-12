@@ -1,21 +1,22 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-12 20:40 UTC (saatlik otomatik çalışma, dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
+Son güncelleme: 2026-10-12 21:45 UTC (2. saatlik çalışma; 1. çalışma 20:40 UTC) (saatlik otomatik çalışma, dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
 
 ## Yapılanlar
+- 2026-10-12 21:45 UTC: main'de yeni commit yok (e336526); `otomatik/saatlik` zaten güncel. İlk görsel bağlama yapıldı (`native/main.gd`): `skin()`/`skin_box()` yardımcıları, tüm butonlarda `button_dark/gold.png` 9-slice (100,32,100,32), `background.png` tam ekran arka plan, `audio/click.ogg` tıklama sesi. Dosya yoksa eski düz stile geri düşer. **Godot ile test edilemedi** (bu ortamda Godot yok); Mac'te `npm run test:native` çalıştırılmalı. `npm test`: 74/74.
 - 2026-10-12 20:40 UTC: `main` incelendi. "Yeni görsel" ve "Yeni görsel 2" paketleri main'de; `yeni-gorsel-2-20261012` dalı main'den yalnızca 4 CI workflow dosyası kadar fazla, `yeni-gorsel-import-20261012` eski bir alt kümedir (yeni içerik yok).
 - `dokumanlar/skin_v2_expected.json` içindeki 114 PNG'nin hepsi `native/skin/` içinde var, boyutları birebir doğru (Pillow ile doğrulandı). Eksik dosya yok.
 - 14 geçici OGG `native/skin/audio/` içinde.
 - `npm test`: 74/74 geçti.
 
 ## Bu çalışmada bulunan sorunlar
-1. **Görsellerin hiçbiri oyun koduna bağlı değil.** `native/main.gd` içinde yalnızca kart atlasları (`kart-prototipi/gorseller/*.png`) yükleniyor; `native/skin/` hiçbir yerde referans edilmiyor (YENI-GORSEL-2.md de "kod tarafına bağlanmadı" diyor). Görev metnindeki `native/mobile.gd` ve `native/art_slice.gd` depoda yok; tüm arayüz `native/main.gd` (662 satır) ve `native/integration.gd` içinde.
+1. **Görsellerin çoğu hâlâ koda bağlı değil (yalnız button_dark/gold, background, click.ogg bağlandı).** `native/main.gd` içinde yalnızca kart atlasları (`kart-prototipi/gorseller/*.png`) yükleniyor; `native/skin/` hiçbir yerde referans edilmiyor (YENI-GORSEL-2.md de "kod tarafına bağlanmadı" diyor). Görev metnindeki `native/mobile.gd` ve `native/art_slice.gd` depoda yok; tüm arayüz `native/main.gd` (662 satır) ve `native/integration.gd` içinde.
 2. **Native test bu ortamda tamamlanamadı.** Godot 4.4 ile `--editor --import` adım editör ilerleme penceresi hatası verdi (proje 4.7.2 hedefli, sürüm uyumsuzluğu olası); sonraki çalıştırmalar güvenlik denetimi tarafından engellendi. `npm run test:native` Mac'te (Godot 4.7.2) çalıştırılmalı.
 3. Fontlar depoda yok; `bash scripts/skin_v2_fonts.command` çalıştırılmadan font rolleri bağlanamaz.
 4. Sesler geçici prosedürel; kulakla/oyun içi miks onayı yok.
 
 ## Yapılması gereken kod işleri (öncelik sırasıyla)
-- [ ] `main.gd`: `Theme`/`StyleBoxTexture` ile `button_gold/dark/red.png`, `panel.png`, `input_field.png`, `chip_*`, `scrollbar.png`, `divider.png` bağla (9-slice kenar değerleri `manifest_v2.json` içinde).
+- [ ] `main.gd`: (button_gold/dark bağlandı) kalan: `button_red.png`, `panel.png`, `input_field.png`, `chip_*`, `scrollbar.png`, `divider.png` bağla (9-slice kenar değerleri `manifest_v2.json` içinde).
 - [ ] Arka plan/sahne: `background.png`/`background_land.png`, `table_center.png`, `lane.png`/`lane_enemy.png`, `scene_play/story/friends/chest.png`.
 - [ ] Giriş ekranı: `splash.png`, `logo.png`, `logo_wordmark.png`, `loading_bar_frame/fill.png`, `progress_frame/fill.png`.
 - [ ] Yatay maç ekranı düzeni (landscape): `background_land.png` + hat düzeni; şu an dikey akış.

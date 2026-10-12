@@ -75,6 +75,26 @@ func button(text: String, parent: Node, callback: Callable, disabled: bool = fal
 	parent.add_child(node)
 	return node
 
+func skin(file: String) -> Resource:
+	var path = "res://native/skin/" + file
+	return load(path) if ResourceLoader.exists(path) else null
+
+func skin_box(file: String) -> StyleBox:
+	var tex = skin(file)
+	if tex == null:
+		return null
+	var box = StyleBoxTexture.new()
+	box.texture = tex
+	for side in [SIDE_LEFT, SIDE_RIGHT]:
+		box.set_texture_margin(side, 100)
+	for side in [SIDE_TOP, SIDE_BOTTOM]:
+		box.set_texture_margin(side, 32)
+	box.content_margin_left = 24
+	box.content_margin_right = 24
+	box.content_margin_top = 10
+	box.content_margin_bottom = 10
+	return box
+
 func build_shell() -> void:
 	var palette = Theme.new()
 	palette.default_font_size = 18
@@ -89,10 +109,20 @@ func build_shell() -> void:
 		style.content_margin_right = 12
 		style.content_margin_top = 8
 		style.content_margin_bottom = 8
-		palette.set_stylebox(state, "Button", style)
+		var textured = skin_box("button_gold.png" if state in ["hover", "pressed"] else "button_dark.png")
+		palette.set_stylebox(state, "Button", textured if textured != null else style)
 	palette.set_color("font_color", "Button", Color("f1dfb2"))
 	palette.set_color("font_disabled_color", "Button", Color("829093"))
 	theme = palette
+	var backdrop = skin("background.png")
+	if backdrop != null:
+		var bg = TextureRect.new()
+		bg.texture = backdrop
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		add_child(bg)
 	var margin = MarginContainer.new()
 	margin.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	for side in ["left", "right", "top", "bottom"]:
@@ -640,6 +670,11 @@ func _unhandled_key_input(event: InputEvent) -> void:
 
 func play_sound() -> void:
 	if muted:
+		return
+	var clip = skin("audio/click.ogg")
+	if clip != null:
+		audio.stream = clip
+		audio.play()
 		return
 	var sound = AudioStreamWAV.new()
 	sound.format = AudioStreamWAV.FORMAT_16_BITS
