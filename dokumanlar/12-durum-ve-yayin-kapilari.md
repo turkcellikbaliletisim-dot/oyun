@@ -12,9 +12,9 @@ Ekonomi/online/hukuk belgelerinde “taslak/uygulanmadı” belirtilen işleri y
 |---|---|---|---|
 | P0 | İnsanlarla kural ve denge testi | 30+ gerçek maç kaydı; kritik kural sorunları çözülmüş | Tasarım |
 | P0 | İlk üç bölüm kullanıcı testi | 5+ yeni oyuncu; enerji/faz/hedefleme sorunları kaydedilmiş ve giderilmiş | Ürün + UI |
-| P1 | Görev kartı çekiş/zorluk ayarı | Görev çekilemediği için terk oranı ve bölüm başına deneme ölçülmüş | Tasarım |
-| P1 | Daha güçlü bot | Gizli bilgi kullanmadan kontrol destesi kararları, regresyon senaryoları | Geliştirme |
-| P1 | Kart ayrıntı/erişilebilirlik | Küçük ekran, 200% zoom, klavye ve ekran okuyucu testi | UI |
+| P1 | Hikâye zorluk insan testi | Görev kartı başlangıç garantisi uygulandı; deneme/terk oranı gerçek oyuncularla ölçülecek | Tasarım |
+| P1 | Botun ileri strateji değerlendirmesi | Görünür bilgiyle planlama, ölümcül hamle ve takas/kalkan regresyonları tamam; gerçek oyuncu zorluk testi kaldı | Tasarım |
+| P1 | Gerçek ekran okuyucu ve cihaz testi | Kart inceleme, klavye odakları, duyurular ve dar görünüm kontrolleri tamamlandı | UI |
 | P1 | Görsel inceleme ve ses/müzik | 40 görsel hazır; kültürel doğruluk/hak incelemesi, küçük ekran kullanıcı testi ve ses/müzik teslimi | Sanat/ses |
 | P1 | Mobil üretim motoru ve cihaz testi | Gerçek Android/iOS sürümü; hedef performans ve kayıt testi | Geliştirme |
 | P1 | Ekonomiyi sunucuya taşıma | Yerel sahiplik/garanti/ödülleri güvenilir işlemlere taşıma; ücretsiz ilerleme insan testi | Geliştirme + tasarım |

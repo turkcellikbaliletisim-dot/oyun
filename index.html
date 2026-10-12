@@ -8,11 +8,12 @@
   <link rel="stylesheet" href="oyun/style.css">
 </head>
 <body>
+  <a class="skip-link" href="#main">İçeriğe geç</a>
   <header class="masthead">
     <a class="wordmark" href="./">✧ DESTAN DİYARLARI <small>ANADOLU · PROTOTİP v0.2</small></a>
     <nav aria-label="Gezinme"><button id="collection-open">Koleksiyon</button><button id="help-open">Nasıl oynanır?</button><a href="oyun/baski.html">Kartları bas</a><a href="dokumanlar/02-oyun-kurallari.md">Kurallar</a></nav>
   </header>
-  <main>
+  <main id="main" tabindex="-1">
     <section id="setup" class="setup">
       <div class="intro"><span class="eyebrow">BİR DESTAN ANLAT. BİR DİYARI KORU.</span><h1>Efsaneler<br>senin elinde.</h1><p>Anadolu’nun 40 kartıyla desteni kur. Gölge’ye karşı savaş, tuzakları açığa çıkar ve kendi destanını yaz.</p><div class="pills"><span>20 kartlık deste</span><span>20 can</span><span>Tek oyunculu</span></div></div>
       <form id="new-game" class="panel">
@@ -29,6 +30,7 @@
         <button class="primary" type="submit">Maça başla <span aria-hidden="true">→</span></button>
         <button id="resume" type="button" hidden>Kayıtlı maça devam et</button>
         <label class="import">Maç kaydını yükle<input id="import-replay" type="file" accept="application/json,.json"></label>
+        <button id="feedback-export" type="button">Maç değerlendirmelerini CSV indir</button>
         <p class="muted">Ücretsiz yerel prototip. Kart ve altın kazanımı bu tarayıcıda tutulur. Hesap, satın alma ve çevrimiçi lig yok.</p>
       </form>
     </section>
@@ -50,11 +52,13 @@
       <details class="match-log"><summary>Destan kaydı · son hamleler</summary><ol id="log"></ol></details>
     </section>
     <p id="notice" role="status" aria-live="polite"></p>
+    <p id="announcements" class="sr-only" role="status" aria-live="polite"></p>
   </main>
   <footer>Bir kağıt prototipinden doğan ilk oynanabilir sürüm. Denge çalışması sürüyor.</footer>
   <dialog id="help"><h2>İlk maçın</h2><ol><li>Başlangıçta değiştirmek istediğin kartlara dokun, ardından elini onayla.</li><li>Mavi enerji sayısı kadar kart oynayabilirsin. Hedef isteyen kartı seçtikten sonra parlayan hedefe dokun.</li><li>Sahadaki hazır savaşçını seç, ardından rakibi veya bir rakip savaşçıyı seç. Her savaşçı turda bir kez saldırır.</li><li>İlk saldırıdan sonra kart oynayamazsın. Kartlarını önce oyna!</li><li>Koruyucu varsa önce onu geçmelisin. Hasar turlar arasında kalır. Rakibin canını sıfıra indirerek kazan.</li></ol><p>Hızlı hemen saldırır. Zehirli, hasar verdiği savaşçıyı yok eder. Uçan’a yerdeki savaşçı saldırmaz; büyü, tuzak ve yetenekler onu etkileyebilir.</p><p>Maç 20 tam turda biter; canı fazla olan kazanır, eşitlik beraberliktir. Bot bir eğitim rakibidir.</p><button id="help-close" class="primary">Anladım</button></dialog>
   <dialog id="collection"><div class="collection-heading"><h2>Kart koleksiyonun</h2><button id="collection-close">Kapat</button></div><p id="wallet"></p><p id="quests" class="muted"></p><button id="open-pack" class="primary">Paket aç</button><p id="pack-result" role="status"></p><p id="archive-info"></p><p class="muted">Yerel ve ücretsiz ekonomi denemesi. Gerçek para yok. Üretim ve parçalama tek kopya işler; parçalama geri alınmaz. Maç kayıtları ekonomik ödül olarak içeri alınmaz.</p><div id="collection-cards"></div></dialog>
-  <dialog id="card-detail"><h2 id="detail-name"></h2><p id="detail-stats"></p><p id="detail-text"></p><button id="detail-close" class="primary">Kapat</button></dialog>
+  <dialog id="card-detail" aria-labelledby="detail-name"><h2 id="detail-name"></h2><div id="detail-art" class="sigil"></div><p id="detail-stats"></p><p id="detail-text"></p><button id="detail-close" class="primary">Kapat</button></dialog>
+  <dialog id="feedback" aria-labelledby="feedback-title"><h2 id="feedback-title">Maç değerlendirmesi</h2><form id="feedback-form"><label>Kart oyunları deneyimin<select id="feedback-experience"><option value="new">Yeni başlıyorum</option><option value="familiar">Biraz deneyimim var</option><option value="experienced">Sık oynarım</option></select></label><label>Bu maç ne kadar eğlenceliydi?<select id="feedback-fun"><option value="1">1 · Hiç eğlenceli değildi</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 · Çok eğlenceliydi</option></select></label><label>Bir maç daha oynamak ister misin?<select id="feedback-again"><option value="yes">Evet</option><option value="no">Hayır</option></select></label><label>Anlaşılmayan kural veya zorlandığın an<textarea id="feedback-confusion" maxlength="500" rows="4" placeholder="İsteğe bağlı. İsim veya iletişim bilgisi yazma."></textarea></label><p class="muted">Değerlendirme yalnız bu tarayıcıya kaydedilir. CSV dosyasını istediğinde indirip paylaşabilirsin; otomatik gönderim yok.</p><button class="primary" type="submit">Değerlendirmeyi kaydet</button><button id="feedback-close" type="button">Vazgeç</button></form></dialog>
   <script type="module" src="oyun/app.js"></script>
 </body>
 </html>

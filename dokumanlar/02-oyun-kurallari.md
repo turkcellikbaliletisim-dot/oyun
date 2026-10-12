@@ -7,6 +7,7 @@ Bu belge `oyun/engine.js` ile uygulanan yerel prototipin kurallarıdır. v0.1'e 
 - İki oyuncu, her biri tam 20 kartlık bir deste. Bir karttan en çok 2; her farklı Efsanevi karttan en çok 1. Destede birden fazla farklı Efsanevi bulunabilir.
 - Başlangıç canı ve azami oyuncu canı 20. Saha 5 savaşçı, el 7 kart, tuzak alanı 2 kart.
 - Başlayan oyuncu, deste karıştırma ve başlangıç eli maç tohumu üzerinden belirlenir. Tekrarlanabilir rastgelelik yalnız yerel prototip içindir; güvenli çevrimiçi kullanım değildir.
+- Hikâye modunda bölümün görev kartları mevcut desteden seçilerek başlangıç eline alınır ve el değiştirmede korunur. Bu öğretim istisnası serbest maçta uygulanmaz.
 - Her oyuncu 4 kart alır. Bir kez istediği kartları değiştirir. İade edilen kartlar yeniler çekilirken dışarıda tutulur, sonra desteye karıştırılır. Aynı kartın başka kopyası çekilebilir.
 - İlk oyuncu ilk kendi turunda çekmez. İkinci oyuncu ilk kendi turunda normal çekişe ek 1 kart, yani toplam 2 çeker. Sonraki turlarda herkes 1 çeker.
 - Saha, can, enerji, el/deste kart sayısı ve savaşçı mezarlığı açıktır. El kimlikleri, deste sırası ve açılmamış tuzak kimlikleri gizlidir. Tuzak sayısı her zaman görünür.

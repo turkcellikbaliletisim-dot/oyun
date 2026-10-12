@@ -73,11 +73,13 @@ with sync_playwright() as pw:
         if a['type'] == 'mulligan':
             for i in a['indices']:
                 page.locator(f'#hand [data-index="{i}"]').click()
-            page.locator('#confirm-mulligan').click()
+            page.locator('#confirm-mulligan').focus()
+            page.keyboard.press('Enter')
         elif a['type'] == 'play':
             page.locator(f'#hand [data-index="{a["index"]}"]').click()
             if 'target' in a:
                 targeted = True
+                assert page.evaluate('document.activeElement.classList.contains("targetable")')
                 page.locator(f'.targetable[data-target="{a["target"]}"]').click()
         elif a['type'] == 'attack':
             page.locator(f'#my-board [data-uid="{a["uid"]}"]').click()
@@ -95,6 +97,17 @@ with sync_playwright() as pw:
     assert json.loads(page.evaluate("localStorage.getItem('destan-v02-story')")) == [1]
     assert not page.locator('#chapter option[value="2"]').evaluate('(option) => option.disabled')
     assert page.locator('#chapter option[value="3"]').evaluate('(option) => option.disabled')
+    page.locator('#my-board .unit-info').first.click()
+    assert page.locator('#detail-art').get_attribute('style')
+    assert 'SAL' in page.locator('#detail-stats').inner_text()
+    page.locator('#detail-close').click()
+    page.locator('#feedback-open').click()
+    page.locator('#feedback-fun').select_option('4')
+    page.locator('#feedback-confusion').fill('Tuzakların sırasını öğrenmek istiyorum.')
+    page.locator('#feedback-form button[type="submit"]').click()
+    feedback = json.loads(page.evaluate("localStorage.getItem('destan-v02-feedback')"))
+    assert len(feedback) == 1 and feedback[0]['fun'] == 4
+    assert feedback[0]['seconds'] > 0
     page.locator('#collection-open').click()
     assert '130 altın' in page.locator('#wallet').inner_text()
     assert '1 ücretsiz paket' in page.locator('#wallet').inner_text()
@@ -121,6 +134,12 @@ with sync_playwright() as pw:
         assert page.locator('#result').is_visible()
 
     page.locator('#back').click()
+    with page.expect_download() as feedback_download:
+        page.locator('#feedback-export').click()
+    with tempfile.TemporaryDirectory() as temp:
+        csv_path=Path(temp)/'feedback.csv'
+        feedback_download.value.save_as(csv_path)
+        assert 'Tuzakların sırasını' in csv_path.read_text(encoding='utf-8-sig')
     page.reload()
     page.locator('#resume').click()
     assert page.locator('#result').is_visible()
@@ -132,6 +151,9 @@ with sync_playwright() as pw:
     page.set_viewport_size({'width': 390, 'height': 844})
     assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth')
     page.screenshot(path='/tmp/destan-mobile.png', full_page=True)
+    page.set_viewport_size({'width':195,'height':844})
+    assert page.evaluate('document.documentElement.scrollWidth <= window.innerWidth'), 'Dar/zoomlu görünüm taşıyor'
+    page.set_viewport_size({'width':390,'height':844})
     page.locator('#confirm-mulligan').click()
     page.wait_for_function("JSON.parse(localStorage.getItem('destan-v02-match')).replay.history.length>=2")
     assert 'sn' in page.locator('#timer').inner_text()

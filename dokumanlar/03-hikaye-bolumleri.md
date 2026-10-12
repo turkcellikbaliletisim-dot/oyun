@@ -18,6 +18,7 @@ Bölümlerin diyalogları, hazır desteleri, rakipleri ve görev doğrulamaları
 ## Öğretim ve tekrar oynama
 
 - Bölüm 1'de bot saldırmaz ve kart oynamaz: oyuncu enerji, saha, saldırı ve tur bitirmeyi baskısız öğrenir. Bu senaryolu eğitimdir; gerçek rakibin gücünü temsil etmez. Kazanmayı garanti etmek yerine hata düzeltme ve yeniden deneme sunulur.
+- Görev kartları her bölümün başlangıç eline yerleştirilir ve mulligan sırasında korunur. Bunlar desteden çıkarılarak verilir; ek kopya yaratılmaz. Serbest maçlar normal rastgele başlangıç elini kullanır.
 - Sonraki bölümlerde açık saha ve kendi elinden karar veren bot aktiftir. Bot rakibin gizli eline bakmaz.
 - Diyalog, görev ve sonucun nedeni maç ekranında görünür. Ana menüde nasıl oynanır penceresi vardır.
 - Eğitim yardımcı ekranı hikâye içeriğinden bağımsızdır. Şimdiki görevler mekanik kullanmayı ölçer; doğru strateji veya tam ustalık ölçmez.
@@ -46,4 +47,4 @@ Online lig için tek açılış koşulu **bölüm 10 + çevrimiçi yayın sürü
 
 ## İnsan testi kabul ölçütleri
 
-Bölüm 1–3'ün ilk oturumda tamamlanması, oyuncunun Koruyucu ve saldırı fazını açıklayabilmesi ve hedef seçimini dış yardım almadan yapması izlenir. 3–6 dakikalık bölüm hedefi henüz doğrulanmamıştır. Görev kartının çekilmemesi yüzünden tekrar denemeye zorlanma oranı ölçülmelidir; gerekirse gelecekte senaryolu başlangıç eli veya eğitici kart üretimi kullanılabilir.
+Bölüm 1–3'ün ilk oturumda tamamlanması, oyuncunun Koruyucu ve saldırı fazını açıklayabilmesi ve hedef seçimini dış yardım almadan yapması izlenir. 3–6 dakikalık bölüm hedefi henüz doğrulanmamıştır. Görev kartının başlangıç eli garantisi uygulandı. Bu kartın maliyeti, öğretim açıklamaları ve rakip zorluğu nedeniyle tekrar deneme/terk oranı insan testinde ölçülmelidir.

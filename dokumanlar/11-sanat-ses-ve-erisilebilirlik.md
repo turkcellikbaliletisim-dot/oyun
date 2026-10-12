@@ -35,3 +35,7 @@ Kart oynama; saldırı; hasar; ölüm; tuzak açılması; çekiş; tur geçişi;
 ## Font ve dil
 
 Uygulama sistem fontu ve Georgia kullanır; dış font indirme zorunluluğu yok. Özel font eklenecekse lisans ve dağıtım hakları doğrulanıp yerel paketlenir. İlk dil Türkçe. Yeni dillerde UI metinleri anahtar dosyasına çıkarılır; değişken uzunluk, çoğul, kart metni ve Türkçe karakterler test edilir.
+
+## Kart inceleme ve klavye iyileştirmeleri
+
+Sahadaki ve eldeki her kartın ayrı **İncele** düğmesi var; kart oynanamaz durumda olsa da ayrıntıları açılır. Açılan pencerede illüstrasyon, tam kural ve sahadaki güncel SAL/CAN görülür. Hedef seçimi klavyeyle hedefe odaklanır; seçili başlangıç kartları aria-pressed ile belirtilir. İçeriğe geç bağlantısı ve sıra/sonuç duyuruları eklendi. 195 CSS px dar görünümde bütün sayfa yatay taşmaz; beşli saha kendi içinde kayabilir. Gerçek ekran okuyucu ve fiziksel cihaz kullanıcı testi ayrı kapıdır.

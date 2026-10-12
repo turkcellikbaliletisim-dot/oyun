@@ -22,7 +22,9 @@ Alternatif: `python3 -m http.server 8000 --bind 127.0.0.1` (depo kökünde). Sun
 5. Önce kartlarını oyna, sonra hazır savaşçıyla hedef seçip saldır. Bir savaşçı turda bir kez saldırır; ilk saldırıdan sonra kart oynanmaz.
 6. Ana menüden kayıtlı maça devam edebilirsin. JSON indir/yükle aynı kurallarla maçı yeniden oluşturur. Tarayıcı verileri silinirse yerel ilerleme kaybolur; kayıt bulut hesabı değildir.
 
-45 saniyelik tur isteğe bağlı; varsayılan çalışma süresiz. Aynı deste ve tohum aynı başlangıcı verir. Bot eğitim rakibidir, ileri rekabetçi yapay zekâ değildir. Ses isteğe bağlıdır.
+45 saniyelik tur isteğe bağlı; varsayılan çalışma süresiz. Aynı deste ve tohum aynı başlangıcı verir. Bot açık bilgiyle tek hamle ve seçili kalkan/güçlendirme birleşimlerini değerlendirir; rakibin gizli eline, tuzak kimliğine veya bilinmeyen deste sırasına bakmaz. Eğitim rakibidir. Ses isteğe bağlıdır.
+
+Maç sonunda **Bu maçı değerlendir** ile yerel oyuncu testi kaydı oluşturabilirsin. Ana menüden CSV indir; özet için `python3 scripts/analyze-playtests.py dosya.csv`. Kartları oynamadan okumak için elde/sahada **İncele** düğmesini kullan.
 
 ## Kontroller
 

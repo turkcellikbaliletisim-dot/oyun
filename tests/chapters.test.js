@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { CHAPTERS, chapterCompleted } from '../oyun/chapters.js';
+import { CHAPTERS, chapterCompleted,chapterOptions } from '../oyun/chapters.js';
 import { validateDeck, createGame, applyAction } from '../oyun/engine.js';
 import { chooseBotAction } from '../oyun/bot.js';
 test('all ten chapters have legal decks and distinct ordered identities',()=>{
@@ -18,7 +18,7 @@ test('every chapter goal is reachable in a complete game with legal actions',()=
   for(const chapter of CHAPTERS){
     let completed=false;
     for(let seed=1;seed<=100&&!completed;seed++){
-      let s=createGame({decks:[chapter.deck,chapter.foe],seed,...(chapter.passive?{first:0}:{})});
+      let s=createGame(chapterOptions(chapter,seed));
       for(let step=0;step<1500&&s.status!=='finished';step++){
         const action=chapter.passive&&s.active===1&&s.status==='playing'&&!s.pending?{type:'end'}:chooseBotAction(s);
         s=applyAction(s,s.active,action);
@@ -27,5 +27,13 @@ test('every chapter goal is reachable in a complete game with legal actions',()=
       completed=chapterCompleted(chapter,s);
     }
     assert.ok(completed,`${chapter.title}: görevli galibiyet bulunamadı`);
+  }
+});
+test('story mission cards are present without duplication and cannot be mulliganed away',()=>{
+  for(const chapter of CHAPTERS){
+    const s=createGame(chapterOptions(chapter,23));
+    const player=s.players[0];assert.equal(player.hand.length,4);assert.equal(player.deck.length,16);
+    for(const id of player.mulliganPinned){const index=player.hand.indexOf(id);assert.ok(index>=0);assert.throws(()=>applyAction(s,0,{type:'mulligan',indices:[index]}));}
+    const total=[...player.deck,...player.hand].sort((a,b)=>a-b);assert.deepEqual(total,[...chapter.deck].sort((a,b)=>a-b));
   }
 });

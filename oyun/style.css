@@ -10,3 +10,10 @@
 /* Karta özgü illüstrasyonlar: dört sahnelik atlasların bir hücresi. */
 .sigil,.unit .sigil{height:auto;aspect-ratio:3/2;font-size:0;border-color:#b9a679;background-color:#d7c8a1}
 @media(max-width:480px){.unit .sigil{display:block;height:auto;aspect-ratio:3/2}}
+/* Klavye, kart inceleme ve dar/zoomlu ekranlar. */
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+.skip-link{position:absolute;left:12px;top:-80px;z-index:20;padding:12px;background:#f6ecd4;color:#172b28}.skip-link:focus{top:12px}
+button{min-height:44px}.panel{min-width:0}.board-slot,.hand-slot{display:flex;flex-direction:column;gap:4px;min-width:0}.board-slot>.card,.hand-slot>.card{width:100%;flex:1}.unit-info{font-size:11px;padding:5px;min-height:44px;background:#183229}.hand .hand-slot>.card{flex:1}.board{grid-template-columns:repeat(5,minmax(56px,1fr));overflow-x:auto}#detail-art{width:100%;aspect-ratio:3/2;max-height:none;margin:16px 0}#feedback-form label{display:flex;flex-direction:column;gap:8px;margin:16px 0}textarea{font:inherit;width:100%;padding:12px;border:1px solid #7c9a84;border-radius:8px;background:#142723;color:var(--ink)}input[type=file]{max-width:100%}.card-name{overflow-wrap:anywhere}#feedback-form button{margin:5px}
+@media(max-width:800px){.hand .hand-slot{flex:0 0 145px;scroll-snap-align:start}.hand .hand-slot>.card{flex:1}}
+@media(max-width:360px){header{display:block}nav{justify-content:flex-start;margin-top:14px}.hero-zone{flex-wrap:wrap}.hero{width:100%}.hero-details{text-align:left}.traps{justify-content:flex-start}.intro h1{font-size:clamp(32px,13vw,46px)}.arena{padding:8px}.battle-line{flex-wrap:wrap}.panel{padding:14px}main{padding:12px}.selection{flex-wrap:wrap}}
+.quest-card-note{color:#76522b;font-weight:750}

@@ -48,3 +48,8 @@ export const CHAPTERS = [
 export function chapterCompleted(chapter,state) {
   return state.status === 'finished' && state.winner === 0 && chapter.complete(state.players[0].stats);
 }
+const OPENINGS=[[1,2,3,30],[3,1,2,30],[30,1,2,3],[32,1,2,3],[2,5,7,30],[36,1,2,3],[16,1,2,3],[33,1,2,3],[18,2,5,7],[3,33,37,4]];
+export function chapterOptions(chapter,seed){
+  const opening=OPENINGS[chapter.id-1];
+  return {decks:[chapter.deck,chapter.foe],seed,opening:[opening,[]],pinned:[chapter.id===10?opening.slice(0,3):[opening[0]],[]],...(chapter.passive?{first:0}:{})};
+}

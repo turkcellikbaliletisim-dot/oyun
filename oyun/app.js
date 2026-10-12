@@ -2,9 +2,10 @@ import { CARDS, CARD_BY_ID } from './cards.js';
 import { DECKS } from './decks.js';
 import { createGame, applyAction, legalActions, attackValue, canAttack, exportReplay, restoreReplay, validateDeck } from './engine.js';
 import { chooseBotAction } from './bot.js';
-import { CHAPTERS, chapterCompleted } from './chapters.js';
+import { CHAPTERS, chapterCompleted,chapterOptions } from './chapters.js';
 import { newProfile,validateProfile,loginReward,chapterReward,matchReward,openPack,craftCard,dismantleCard,archiveCard,capacity,CRAFT,DUST,deckOwned,missingDust } from './economy.js';
 import { applyCardArt } from '../kart-prototipi/art.js';
+import { feedbackRecord,saveFeedback,feedbackCSV } from './playtest.js';
 
 const $ = id => document.getElementById(id);
 const STORE = 'destan-v02-match';
@@ -15,6 +16,8 @@ let visible = false, timed = false, sound = false, audio, saved = null, storageF
 let custom = [...DECKS.starter.cards];
 let chapter = null, completed = [];
 let profile=newProfile(),matchId=null,rewardEligible=false;
+let elapsedMs=0,resumeAt=0,feedback=[],feedbackEligible=true;
+try{const records=JSON.parse(localStorage.getItem('destan-v02-feedback'));if(Array.isArray(records))feedback=records;}catch{}
 const localDay=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Istanbul',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
 try { const data=JSON.parse(localStorage.getItem('destan-v02-story')); if(Array.isArray(data))completed=[...new Set(data.filter(id=>Number.isInteger(id)&&id>=1&&id<=10))]; } catch {}
 const elem = (tag, text, className) => {
@@ -24,13 +27,19 @@ const elem = (tag, text, className) => {
   return node;
 };
 function notice(text) { $('notice').textContent = text; }
+function activeElapsed(){return elapsedMs+(visible&&state?.status!=='finished'?Math.max(0,Date.now()-resumeAt):0);}
+function showCardDetail(id,unit=null,p=0){
+  const c=CARD_BY_ID[id];$('detail-name').textContent=c.name;
+  $('detail-stats').textContent=`${c.cost} enerji · ${TYPE[c.type]} · ${RARITY[c.rarity]}${c.type==='warrior'?` · SAL ${unit?attackValue(state,p,unit):c.attack} / CAN ${unit?unit.hp+'/'+unit.maxHp:c.hp}`:''}`;
+  $('detail-text').textContent=c.text;applyCardArt($('detail-art'),id);$('card-detail').showModal();
+}
 function remaining() {
   if (!visible && saved?.matchId === matchId) return saved.remaining ?? 45000;
   return deadline == null ? 45000 : Math.max(0, deadline - Date.now());
 }
 function persist() {
   if (!state) return;
-  saved = { replay: exportReplay(state), timed, remaining: remaining(), chapterId: chapter?.id ?? null,matchId,rewardEligible };
+  saved = { replay: exportReplay(state), timed, remaining: remaining(), chapterId: chapter?.id ?? null,matchId,rewardEligible,elapsedMs:activeElapsed(),feedbackEligible };
   try { localStorage.setItem(STORE, JSON.stringify(saved)); }
   catch { storageFailed = true; notice('Tarayıcı kaydı kullanılamıyor. Maçı indirerek kaydını koruyabilirsin.'); }
   $('resume').hidden = false;
@@ -62,7 +71,7 @@ function renderCollection(){
   for(const c of CARDS){
     const row=elem('div',undefined,'collection-row'),name=elem('span');
     const inspect=elem('button',`${c.name} · ${profile.inventory[c.id]??0}/${capacity(c.id)}`);inspect.dataset.inspectId=c.id;
-    inspect.addEventListener('click',()=>{$('detail-name').textContent=c.name;$('detail-stats').textContent=`${c.cost} enerji · ${TYPE[c.type]} · ${RARITY[c.rarity]}${c.type==='warrior'?` · SAL ${c.attack} / CAN ${c.hp}`:''}`;$('detail-text').textContent=c.text;$('card-detail').showModal();});name.append(inspect);
+    inspect.addEventListener('click',()=>showCardDetail(c.id));name.append(inspect);
     name.append(elem('small',`${TYPE[c.type]} · ${RARITY[c.rarity]} · ${c.cost} enerji`));row.append(name);
     const craft=elem('button',`Üret · ${CRAFT[c.rarity]} toz`);craft.dataset.craftId=c.id;craft.disabled=profile.dust<CRAFT[c.rarity]||(profile.inventory[c.id]??0)>=capacity(c.id);
     craft.addEventListener('click',()=>{try{profile=craftCard(profile,c.id);saveProfile();renderCollection();}catch(e){notice(e.message);}});
@@ -127,6 +136,8 @@ function openMatch(s, options = {}) {
   timed = options.timed ?? $('timed').checked;
   chapter = CHAPTERS.find(c=>c.id===options.chapterId) ?? null;
   matchId=options.matchId??crypto.randomUUID();rewardEligible=options.rewardEligible??true;
+  elapsedMs=options.elapsedMs??0;resumeAt=Date.now();
+  feedbackEligible=options.feedbackEligible??(options.replay===undefined||Number.isFinite(options.elapsedMs));
   deadline = timed && state.status === 'playing' ? Date.now() + Math.min(45000, Math.max(0, options.remaining ?? 45000)) : null;
   $('setup').hidden = true; $('match').hidden = false; notice(''); render(); persist(); scheduleBot();
 }
@@ -137,12 +148,13 @@ $('new-game').addEventListener('submit', event => {
     const stage=$('mode').value==='story'?CHAPTERS.find(c=>c.id===Number($('chapter').value)):null;
     if(stage && stage.id>1 && !completed.includes(stage.id-1))throw new Error('Önce önceki bölümü tamamla.');
     if(!stage && $('owned-only').checked && !deckOwned(profile,decks[0]))throw new Error(`Bu destede eksik kartların var. Üretim için ${missingDust(profile,decks[0])} toz gerekir; koleksiyonunu aç veya serbest denemeyi seç.`);
-    openMatch(createGame({ decks:stage?[stage.deck,stage.foe]:decks, seed: Number($('seed').value),...(stage?.passive?{first:0}:{}) }),{chapterId:stage?.id});
+    const seed=Number($('seed').value);
+    openMatch(createGame(stage?chapterOptions(stage,seed):{decks,seed}),{chapterId:stage?.id});
   } catch (e) { notice(e.message); }
 });
 $('resume').addEventListener('click', () => { try { openMatch(restoreReplay(saved.replay), saved); } catch (e) { notice(e.message); } });
 $('back').addEventListener('click', () => {
-  persist(); visible = false; clearTimeout(botTimer); $('match').hidden = true; $('setup').hidden = false; notice('Maçın kaydedildi. Devam etmek için kayıtlı maçı aç.');
+  persist(); elapsedMs=activeElapsed();visible = false; clearTimeout(botTimer); $('match').hidden = true; $('setup').hidden = false; notice('Maçın kaydedildi. Devam etmek için kayıtlı maçı aç.');
   if (storageFailed) notice('Bu tarayıcıda kalıcı kayıt yok. Sayfayı kapatmadan maçı indir.');
 });
 window.addEventListener('beforeunload', persist);
@@ -161,6 +173,7 @@ $('sound-toggle').addEventListener('click', () => { sound = !sound; $('sound-tog
 function commit(action, p = 0) {
   try {
     const previousTurn = state.turn;
+    const spent=activeElapsed();
     state = applyAction(state, p, action); selected = null; mulligan.clear();
     if(chapter && chapterCompleted(chapter,state) && !completed.includes(chapter.id)){
       completed.push(chapter.id);
@@ -168,7 +181,8 @@ function commit(action, p = 0) {
       refreshChapters();
     }
     if (timed && state.status === 'playing' && previousTurn !== state.turn) deadline = Date.now() + 45000;
-    if (state.status === 'finished') deadline = null;
+    if (state.status === 'finished') {deadline = null;elapsedMs=spent;}
+    $('announcements').textContent=state.status==='finished'?'Maç tamamlandı. Sonuç ve değerlendirme hazır.':`${state.log.at(-1)} ${state.active===0?'Sıra sende.':'Gölge oynuyor.'}`;
     notice(''); render(); persist(); beep(); scheduleBot();
   } catch (e) { notice(e.message); }
 }
@@ -237,7 +251,8 @@ function board(id,p) {
         render();
       }
     });
-    root.append(node);
+    const slot=elem('div',undefined,'board-slot'),inspect=elem('button','İncele','unit-info');inspect.type='button';inspect.dataset.infoUid=unit.uid;
+    inspect.setAttribute('aria-label',`${CARD_BY_ID[unit.id].name} kartını incele`);inspect.addEventListener('click',()=>showCardDetail(unit.id,unit,p));slot.append(node,inspect);root.append(slot);
   }
   for (let i = state.players[p].board.length; i < 5; i++) root.append(elem('div', '·', 'empty-slot'));
 }
@@ -248,23 +263,26 @@ function hand() {
     const node = cardNode(CARD_BY_ID[id]); node.dataset.index = index;
     const options = actions.filter(a => a.type === 'play' && a.index === index);
     const isMulligan = state.status === 'mulligan' && state.active === 0;
+    const isPinned=isMulligan&&state.players[0].mulliganPinned.includes(id);
     const isDiscard = state.pending?.kind === 'discard' && state.active === 0;
-    node.disabled = !(isMulligan || isDiscard || options.length);
+    node.disabled = !(isMulligan&&!isPinned || isDiscard || options.length);
+    if(isPinned){node.append(elem('small','Görev kartı · korunur','quest-card-note'));node.setAttribute('aria-label',node.getAttribute('aria-label')+' Görev kartı; başlangıçta korunur.');}
     node.classList.toggle('selected', mulligan.has(index) || selected?.type === 'play' && selected.index === index);
+    node.setAttribute('aria-pressed',String(mulligan.has(index)||selected?.type==='play'&&selected.index===index));
     node.addEventListener('click', () => {
       if (isMulligan) { mulligan.has(index) ? mulligan.delete(index) : mulligan.add(index); render(); }
       else if (isDiscard) commit({ type: 'discard', index });
       else if (options.length === 1 && options[0].target == null) commit(options[0]);
       else { selected = { type: 'play', index, options }; render(); }
     });
-    root.append(node);
+    const slot=elem('div',undefined,'hand-slot'),inspect=elem('button','İncele','unit-info');inspect.type='button';inspect.dataset.infoIndex=index;inspect.setAttribute('aria-label',`${CARD_BY_ID[id].name} kartını incele`);inspect.addEventListener('click',()=>showCardDetail(id));slot.append(node,inspect);root.append(slot);
   });
 }
 function decisions() {
   const root = $('decision'); root.replaceChildren(); root.hidden = true;
   if (state.active !== 0 || state.status === 'finished') return;
   if (state.status === 'mulligan') {
-    root.hidden = false; root.append(elem('strong', 'Başlangıç elini seç'), elem('p', 'Değiştirmek istediğin kartlara dokun. Seçtiğin kartlar yenileri çekildikten sonra desteye döner.'));
+    root.hidden = false; root.append(elem('strong', 'Başlangıç elini seç'), elem('p', 'Değiştirmek istediğin kartlara dokun. Seçtiğin kartlar yenileri çekildikten sonra desteye döner.'+(chapter?' Bu bölümün görev kartı başlangıç elinde korunur.':'')));
     const accept = elem('button', mulligan.size ? `${mulligan.size} kartı değiştir` : 'Bu elle başla', 'primary'); accept.id = 'confirm-mulligan';
     accept.addEventListener('click', () => commit({ type: 'mulligan', indices: [...mulligan] })); root.append(accept);
   } else if (state.pending?.kind === 'discard') {
@@ -284,6 +302,7 @@ function decisions() {
   }
 }
 function render() {
+  const focus=document.activeElement,dataset={...focus?.dataset};
   settleRewards();
   heroZone('foe-hero',1); heroZone('my-hero',0); board('foe-board',1); board('my-board',0); hand(); decisions();
   $('turn-label').textContent = state.status === 'mulligan' ? 'Başlangıç eli' : `${state.active === 0 ? 'Senin turun' : 'Gölge’nin turu'} · ${Math.ceil(state.turn/2)}/20`;
@@ -299,21 +318,36 @@ function render() {
   if (state.status === 'finished') {
     $('result').replaceChildren(elem('h2', state.winner == null ? 'Destan berabere bitti.' : state.winner === 0 ? 'Diyar seninle yeniden hatırladı. Kazandın!' : 'Gölge bu kez galip geldi.'), elem('p', `Sonuç: ${state.reason}. Sen ${state.players[0].hp} can · Gölge ${state.players[1].hp} can.`));
     $('turn-label').textContent = 'Maç tamamlandı';
+    if(rewardEligible&&feedbackEligible){const response=elem('button','Bu maçı değerlendir');response.id='feedback-open';response.addEventListener('click',()=>$('feedback').showModal());$('result').append(response);}
     if(chapter){
       const success=chapterCompleted(chapter,state);
       $('result').append(elem('p',success?(chapter.id===10?'Anadolu’nun Mühür Parçası hatırlandı. 10 bölümü tamamladın!':'Görev tamamlandı. Sonraki bölüm açıldı.'):'Bölüm görevi tamamlanmadı. Görevi de yerine getirerek yeniden dene.'));
       const again=elem('button',success&&chapter.id<10?'Sonraki bölüm':'Bölümü yeniden oyna','primary');
-      again.addEventListener('click',()=>{const next=success&&chapter.id<10?CHAPTERS[chapter.id]:chapter;openMatch(createGame({decks:[next.deck,next.foe],seed:Number($('seed').value),...(next.passive?{first:0}:{})}),{chapterId:next.id,timed});});
+      again.addEventListener('click',()=>{const next=success&&chapter.id<10?CHAPTERS[chapter.id]:chapter;openMatch(createGame(chapterOptions(next,Number($('seed').value))),{chapterId:next.id,timed});});
       $('result').append(again);
     }
   }
   $('log').replaceChildren(...state.log.slice().reverse().map(message => elem('li',message)));
   updateTimer();
+  if(selected){document.querySelector('.targetable')?.focus({preventScroll:true});}
+  else {
+    const selectors=[dataset.uid?`[data-uid="${dataset.uid}"]`:null,dataset.index!==undefined?`#hand [data-index="${dataset.index}"]`:null,dataset.infoUid?`[data-info-uid="${dataset.infoUid}"]`:null,dataset.infoIndex!==undefined?`[data-info-index="${dataset.infoIndex}"]`:null];
+    for(const selector of selectors.filter(Boolean)){const target=document.querySelector(selector);if(target&&!target.disabled){target.focus({preventScroll:true});break;}}
+  }
 }
 $('cancel-selection').addEventListener('click', () => { selected = null; render(); });
 $('end-turn').addEventListener('click', () => commit({ type: 'end' }));
 $('surrender').addEventListener('click', () => { if (confirm('Bu maçı bitirip teslim olmak istiyor musun?')) commit({ type: 'surrender' }); });
 $('help-open').addEventListener('click', () => $('help').showModal()); $('help-close').addEventListener('click', () => $('help').close());
+$('feedback-close').addEventListener('click',()=>$('feedback').close());
+$('feedback-form').addEventListener('submit',event=>{
+  event.preventDefault();
+  try{
+    const record=feedbackRecord(state,{matchId,mode:chapter?'story':'practice',chapter:chapter?.id??0,elapsedMs:activeElapsed(),experience:$('feedback-experience').value,fun:Number($('feedback-fun').value),again:$('feedback-again').value==='yes',confusion:$('feedback-confusion').value});
+    const records=saveFeedback(feedback,record);localStorage.setItem('destan-v02-feedback',JSON.stringify(records));feedback=records;$('feedback').close();notice('Maç değerlendirmen bu tarayıcıya kaydedildi.');
+  }catch(e){notice(e.message);}
+});
+$('feedback-export').addEventListener('click',()=>{const blob=new Blob(['\uFEFF'+feedbackCSV(feedback)],{type:'text/csv;charset=utf-8'});const url=URL.createObjectURL(blob),a=elem('a');a.href=url;a.download='destan-mac-degerlendirmeleri.csv';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);});
 $('export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(exportReplay(state),null,2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob), a = elem('a'); a.href = url; a.download = `destan-${state.seed}.json`; a.click(); setTimeout(() => URL.revokeObjectURL(url),1000);
@@ -333,10 +367,11 @@ setInterval(() => {
   if (remaining() > 0) return;
   // Bekleyen zorunlu seçimleri çöz, sonra süre dolan turu bitir.
   const p = state.active;
+  const spent=activeElapsed();
   while (state.pending && state.status === 'playing') {
     const action = state.pending.kind === 'scry' ? { type:'scry', bottom:false } : { type:'discard', index:0 };
     state = applyAction(state,p,action);
   }
   if (state.status === 'playing') commit({type:'end'},p);
-  else { render(); persist(); }
+  else { elapsedMs=spent;render(); persist(); }
 },250);

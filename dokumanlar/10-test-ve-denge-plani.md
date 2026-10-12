@@ -53,3 +53,11 @@ Gerçek Android/iOS cihazlarında Safari/Chrome, düşük bellek, arka plana ge�
 Bağlantı kesilmesi ve tekrar bağlanma; aynı hamlenin iki kez gönderilmesi; sahte sonuç; rakibin gizli eline erişim denemesi; eski sıra numarası; saat manipülasyonu; eşzamanlı ödül talepleri; satın alma doğrulama/iade; hesabı bağlama/silme; envanter kopya sınırı; servis kesintisi ve geri yükleme.
 
 Ödeme ve sunucu henüz yok; bu kontroller bugün çalıştırılmış değildir. Açık kritik hatayla online yayın yapılmaz.
+
+## Oyun içi gerçek oyuncu değerlendirmesi
+
+Yeni maçın sonunda **Bu maçı değerlendir**: deneyim düzeyi, 1–5 eğlence, tekrar oynama isteği ve isteğe bağlı kural notu. Maçın sonucu, tur sayısı, kullanılan kartlar ve ana menüde duraklamayı dışlayan izlenen aktif süre otomatik eklenir. Eski süre kaydı olmayan veya içeri aktarılan maçlar çalışma verisine eklenmez. Kimlik/iletişim istenmez; yorumda kişisel bilgi yazılmaması belirtilir.
+
+Kayıt yalnız tarayıcıda kalır; otomatik dış gönderim yok. Ana menüde CSV indir. Aynı maça verilen yeni cevap önceki cevabı günceller. CSV, kullanıcı yorumunun elektronik tabloda formül olarak çalışmasını engeller.
+
+Özet: `python3 scripts/analyze-playtests.py destan-mac-degerlendirmeleri.csv`. Araç kayıt sayısı, ortalama eğlence, ortanca süre ve tekrar oynama isteğini hesaplar; maç sayısını oyuncu sayısı diye sunmaz. Henüz gerçek oyuncu verisi toplanmadı.

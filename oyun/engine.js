@@ -34,22 +34,36 @@ function shuffle(s, list) {
   }
 }
 
-export function createGame({ decks = [DECKS.starter.cards, DECKS.starter.cards], seed = 1, first } = {}) {
+export function createGame({ decks = [DECKS.starter.cards, DECKS.starter.cards], seed = 1, first, opening, pinned } = {}) {
   requireRule(Array.isArray(decks) && decks.length === 2, 'İki deste gerekir.');
   decks.forEach(validateDeck);
   requireRule(Number.isInteger(seed) && seed >= 0 && seed <= 0xffffffff, 'Tohum 0–4294967295 arası tam sayı olmalı.');
   requireRule(first === undefined || first === 0 || first === 1, 'Başlangıç oyuncusu geçersiz.');
+  if(opening!==undefined){
+    requireRule(Array.isArray(opening)&&opening.length===2,'İki başlangıç eli gerekir.');
+    for(let p=0;p<2;p++){
+      requireRule(Array.isArray(opening[p])&&opening[p].length<=4,'Başlangıç seçimi en çok dört karttır.');
+      const available=[...decks[p]];
+      for(const id of opening[p]){const index=available.indexOf(id);requireRule(index>=0,'Başlangıç kartı destede bulunmalı.');available.splice(index,1);}
+    }
+  }
+  if(pinned!==undefined)requireRule(opening&&Array.isArray(pinned)&&pinned.length===2&&pinned.every((ids,p)=>Array.isArray(ids)&&new Set(ids).size===ids.length&&ids.every(id=>opening[p].includes(id))),'Korunan kart başlangıç elinde bulunmalı.');
   const s = {
     version: RULE_VERSION, seed, rng: seed >>> 0, nextUid: 1,
     status: 'mulligan', active: 0, first: 0, turn: 0, phase: 'main',
     winner: null, reason: null, pending: null, log: [], history: [],
     players: decks.map(deck => ({ hp: 20, energy: 0, maxEnergy: 0, turns: 0,
       deck: [...deck], hand: [], board: [], traps: [], grave: [], half: false,
-      stats: { cardPlays: {}, attacks: 0, energySpent: 0 } })),
-    initial: { decks: decks.map(d => [...d]), seed, ...(first === undefined ? {} : { first }) },
+      stats: { cardPlays: {}, attacks: 0, energySpent: 0 },mulliganPinned:[] })),
+    initial: { decks: decks.map(d => [...d]), seed, ...(first === undefined ? {} : { first }),...(opening===undefined?{}:{opening:opening.map(ids=>[...ids])}),...(pinned===undefined?{}:{pinned:pinned.map(ids=>[...ids])}) },
   };
   s.first = first ?? Math.floor(random(s) * 2);
-  for (let p = 0; p < 2; p++) { shuffle(s, s.players[p].deck); for (let i = 0; i < 4; i++) draw(s, p); }
+  for (let p = 0; p < 2; p++) {
+    shuffle(s,s.players[p].deck);
+    for(const id of opening?.[p]??[]){const index=s.players[p].deck.indexOf(id);s.players[p].hand.push(s.players[p].deck.splice(index,1)[0]);}
+    s.players[p].mulliganPinned=[...(pinned?.[p]??[])];
+    while(s.players[p].hand.length<4)draw(s,p);
+  }
   note(s, `İlk oyuncu: ${s.first === 0 ? 'Destancı' : 'Gölge'}. Başlangıç ellerini seçin.`);
   return s;
 }
@@ -301,6 +315,7 @@ export function applyAction(state, p, action) {
       requireRule(action.type === 'mulligan' && Array.isArray(action.indices), 'Başlangıç elini seç.');
       const indices = [...new Set(action.indices)];
       requireRule(indices.length === action.indices.length && indices.every(i => Number.isInteger(i) && i >= 0 && i < 4), 'Geçersiz mulligan seçimi.');
+      requireRule(indices.every(i=>!s.players[p].mulliganPinned.includes(s.players[p].hand[i])),'Hikâye görev kartı başlangıç elinde korunur.');
       const player = s.players[p], held = indices.map(i => player.hand[i]);
       player.hand = player.hand.filter((_,i) => !indices.includes(i));
       for (const _ of held) draw(s, p);
