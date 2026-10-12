@@ -1,7 +1,3 @@
-# Destan Diyarları: yeni görsel paketi
+# Destan Diyarları - skin
 
-17 arayüz görseli + 2 kahraman portresi. İlk prototip paketidir; atlas kırpımları istenen tuval boyutlarına orantılı uyarlanmıştır.
-
-[Üretim ve entegrasyon notları](../../dokumanlar/YENI-GORSEL.md)
-
-Boyutlar, şeffaf pencereler, kenar boşlukları ve SHA-256 değerleri: `manifest.json`.
+İkinci paket: `manifest_v2.json` ve `../../dokumanlar/YENI-GORSEL-2.md`. İlk paketin `manifest.json` dosyası tarihsel kayıttır; yenilenen frame/button/gem dosyaları için v2 manifest kullanın. Fontlar için proje kökünde `bash scripts/skin_v2_fonts.command`.
