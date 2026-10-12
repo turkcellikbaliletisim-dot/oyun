@@ -1,0 +1,106 @@
+name: Yeni gorsel import
+
+on:
+  push:
+    branches: [yeni-gorsel-import-20261012]
+    paths: [.github/workflows/yeni-gorsel-import.yml]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: yeni-gorsel-import-20261012
+  cancel-in-progress: false
+
+jobs:
+  import-assets:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download and verify the generated asset package
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 2 --connect-timeout 15 --max-time 120 \
+            'https://at.adobe.com/eU3HXYTS5zL4qrYr' \
+            --output "$RUNNER_TEMP/yeni-gorsel.zip"
+          echo "6a2083b0b4ffd616a9196857046823c0c861e8da7b40dc986e81d38f68bdcb4b  $RUNNER_TEMP/yeni-gorsel.zip" | sha256sum --check -
+      - name: Import only the requested assets and their documentation
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import hashlib
+          import json
+          import os
+          import struct
+          import zipfile
+          from pathlib import Path
+
+          expected = {
+              'background.png': (1170, 2532),
+              'background_land.png': (2532, 1170),
+              'frame_unit.png': (512, 680),
+              'frame_spell.png': (512, 680),
+              'frame_trap.png': (512, 680),
+              'frame_legend.png': (512, 680),
+              'card_back.png': (512, 680),
+              'button_gold.png': (600, 180),
+              'button_dark.png': (600, 180),
+              'button_red.png': (600, 180),
+              'panel.png': (800, 800),
+              'gem_mana.png': (256, 256),
+              'gem_attack.png': (256, 256),
+              'gem_health.png': (256, 256),
+              'hero_ring.png': (512, 512),
+              'lane.png': (1024, 400),
+              'logo.png': (1024, 512),
+              'hero_player.png': (512, 512),
+              'hero_foe.png': (512, 512),
+          }
+          allowed = {'native/skin/' + name for name in expected}
+          allowed.update({
+              'native/skin/manifest.json',
+              'native/skin/README.md',
+              'dokumanlar/YENI-GORSEL.md',
+              'dokumanlar/yeni-gorsel-kaynak.png',
+          })
+          archive = Path(os.environ['RUNNER_TEMP']) / 'yeni-gorsel.zip'
+          with zipfile.ZipFile(archive) as z:
+              if set(z.namelist()) != allowed or len(z.namelist()) != len(allowed):
+                  raise SystemExit('Unexpected or duplicate archive entries')
+              if z.testzip() is not None:
+                  raise SystemExit('Archive integrity check failed')
+              manifest = json.loads(z.read('native/skin/manifest.json'))
+              if set(manifest['assets']) != set(expected):
+                  raise SystemExit('Asset manifest mismatch')
+              for name, size in expected.items():
+                  data = z.read('native/skin/' + name)
+                  if data[:8] != b'\x89PNG\r\n\x1a\n':
+                      raise SystemExit('Not a PNG: ' + name)
+                  if struct.unpack('>II', data[16:24]) != size:
+                      raise SystemExit('Wrong dimensions: ' + name)
+                  if hashlib.sha256(data).hexdigest() != manifest['assets'][name]['sha256']:
+                      raise SystemExit('Checksum mismatch: ' + name)
+                  if name not in {'background.png', 'background_land.png', 'lane.png'} and data[25] != 6:
+                      raise SystemExit('Missing RGBA channel: ' + name)
+              for name in sorted(allowed):
+                  target = Path(name)
+                  target.parent.mkdir(parents=True, exist_ok=True)
+                  target.write_bytes(z.read(name))
+              print('Validated and imported 19 PNG assets and 4 supporting files.')
+          PY
+      - name: Commit assets to the isolated import branch
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'yeni-gorsel-import-20261012'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add native/skin dokumanlar/YENI-GORSEL.md dokumanlar/yeni-gorsel-kaynak.png
+          if git diff --cached --quiet; then
+            echo 'Asset files already match.'
+          else
+            git commit -m 'Yeni gorsel: import 19 prototype assets'
+            git push origin HEAD:yeni-gorsel-import-20261012
+          fi
