@@ -3188,9 +3188,9 @@
       "resample_scale": 0.458984375,
       "padding_fraction": 0.04,
       "content_bounds_px": [
-        21,
-        35,
-        491,
+        44,
+        52,
+        470,
         476
       ],
       "matte_method": "green",
@@ -3202,12 +3202,14 @@
         512
       ],
       "mode": "RGBA",
-      "bytes": 325826,
-      "sha256": "35ffb83456ce545773bd719eb99695fd29a9242f21c3f2787ddca313c61c303e",
+      "bytes": 283908,
+      "sha256": "049dfee027928e589eb302b0b96295854d8840a7b697f6ad1c833eaab175e13a",
       "alpha_min": 0,
       "alpha_max": 255,
-      "transparent_fraction": 0.31226348876953125,
-      "edge_alpha_max": 0
+      "transparent_fraction": 0.45941162109375,
+      "edge_alpha_max": 0,
+      "exterior_portrait_matte_corrected": true,
+      "postprocessing": "Verified round-ring silhouette mask; exterior rectangular background removed without repainting portrait"
     },
     "enemy_07.png": {
       "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ea96f797-155f-4b6a-8f7b-9f76ca23782c",
@@ -3336,9 +3338,9 @@
       "resample_scale": 0.458984375,
       "padding_fraction": 0.04,
       "content_bounds_px": [
-        21,
-        33,
-        491,
+        74,
+        50,
+        441,
         478
       ],
       "matte_method": "green",
@@ -3350,12 +3352,14 @@
         512
       ],
       "mode": "RGBA",
-      "bytes": 308833,
-      "sha256": "7498ae29e66a4318bb5219b7e717de2ee4c78ff8a5e0b1e166612da4ee422bef",
+      "bytes": 254804,
+      "sha256": "af703cb14b85653e29d8a20696da315a3a2f796f211fcc68aee8e14fe9cb0322",
       "alpha_min": 0,
       "alpha_max": 255,
-      "transparent_fraction": 0.3954963684082031,
-      "edge_alpha_max": 0
+      "transparent_fraction": 0.5721244812011719,
+      "edge_alpha_max": 0,
+      "exterior_portrait_matte_corrected": true,
+      "postprocessing": "Verified round-ring silhouette mask; exterior rectangular background removed without repainting portrait"
     },
     "hero_player_alt1.png": {
       "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:cb16f79c-9180-43a0-9639-619d81678c52",
@@ -3373,10 +3377,10 @@
       "resample_scale": 0.458984375,
       "padding_fraction": 0.04,
       "content_bounds_px": [
-        21,
-        21,
-        491,
-        491
+        59,
+        43,
+        453,
+        457
       ],
       "matte_method": "green",
       "generated_independently": true,
@@ -3387,12 +3391,14 @@
         512
       ],
       "mode": "RGBA",
-      "bytes": 297494,
-      "sha256": "7447cf44378ee4189ecd9d4a76bde503f693ba26ebf18ee0f59c35c746a806c8",
+      "bytes": 264443,
+      "sha256": "ee236e9526c58c3c0fe4b843b9382417b17558d1227145a227feac651cb45f84",
       "alpha_min": 0,
       "alpha_max": 255,
-      "transparent_fraction": 0.46871185302734375,
-      "edge_alpha_max": 0
+      "transparent_fraction": 0.5894050598144531,
+      "edge_alpha_max": 0,
+      "exterior_portrait_matte_corrected": true,
+      "postprocessing": "Verified round-ring silhouette mask; exterior rectangular background removed without repainting portrait"
     },
     "hero_player_alt2.png": {
       "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:99221d1d-ded4-4fe7-a4ae-e0d56427a2e9",
@@ -4023,5 +4029,6 @@
       ],
       "edge_alpha_max": 0
     }
-  }
+  },
+  "portrait_exterior_matte_verified": true
 }
