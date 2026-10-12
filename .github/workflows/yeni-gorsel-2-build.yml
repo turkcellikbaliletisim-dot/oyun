@@ -1,0 +1,58 @@
+name: Yeni gorsel 2 build
+on:
+  push:
+    branches: [yeni-gorsel-2-20261012]
+    paths: [.github/workflows/yeni-gorsel-2-build.yml]
+permissions:
+  contents: write
+concurrency:
+  group: yeni-gorsel-2-build
+  cancel-in-progress: false
+jobs:
+  build-art:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Download verified packaging sources
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 1 --connect-timeout 15 --max-time 90 'https://at.adobe.com/OWN9cYyLX9f67Lzw' -o "$RUNNER_TEMP/art-tools.zip"
+          echo "0e05b0aab6a87b7f62d719815f79dda4df9f68ea545a0eb4534a8086d0088b2d  $RUNNER_TEMP/art-tools.zip" | sha256sum --check -
+          python3 - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          allowed = {'scripts/skin_v2_build.py','scripts/skin_v2_fonts.py','scripts/skin_v2_fonts.command','dokumanlar/skin_v2_sources.json','dokumanlar/skin_v2_expected.json'}
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'art-tools.zip') as z:
+              assert len(z.namelist()) == len(allowed) and set(z.namelist()) == allowed
+              assert z.testzip() is None
+              for name in sorted(allowed):
+                  p=Path(name);p.parent.mkdir(parents=True,exist_ok=True);p.write_bytes(z.read(name))
+          PY
+      - name: Install isolated packaging dependencies
+        run: python -m pip install 'Pillow>=11,<13' 'numpy>=2,<3' 'fonttools>=4.60,<5'
+      - name: Package separate images and test fonts without distributing font binaries
+        run: python scripts/skin_v2_build.py --partial
+      - name: Commit art and QA only on the isolated branch
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'yeni-gorsel-2-20261012'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add native/skin dokumanlar/skin_v2_sources.json dokumanlar/skin_v2_expected.json dokumanlar/yeni-gorsel-2 scripts/skin_v2_build.py scripts/skin_v2_fonts.py scripts/skin_v2_fonts.command
+          if git diff --cached --name-only | grep -Ei '\.(ttf|otf|woff2?|ttc)$'; then
+            echo 'Font binary staging is forbidden.' >&2
+            exit 1
+          fi
+          if ! git diff --cached --quiet; then
+            git commit -m 'Yeni gorsel 2: stage individual PNG assets and objective QA'
+            git push origin HEAD:yeni-gorsel-2-20261012
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: yeni-gorsel-2-qa
+          path: dokumanlar/yeni-gorsel-2/
+          retention-days: 7
