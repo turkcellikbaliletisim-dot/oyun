@@ -79,20 +79,20 @@ func skin(file: String) -> Resource:
 	var path = "res://native/skin/" + file
 	return load(path) if ResourceLoader.exists(path) else null
 
-func skin_box(file: String) -> StyleBox:
+func skin_box(file: String, edge_x: int = 100, edge_y: int = 32, pad_x: int = 24, pad_y: int = 10) -> StyleBox:
 	var tex = skin(file)
 	if tex == null:
 		return null
 	var box = StyleBoxTexture.new()
 	box.texture = tex
 	for side in [SIDE_LEFT, SIDE_RIGHT]:
-		box.set_texture_margin(side, 100)
+		box.set_texture_margin(side, edge_x)
 	for side in [SIDE_TOP, SIDE_BOTTOM]:
-		box.set_texture_margin(side, 32)
-	box.content_margin_left = 24
-	box.content_margin_right = 24
-	box.content_margin_top = 10
-	box.content_margin_bottom = 10
+		box.set_texture_margin(side, edge_y)
+	box.content_margin_left = pad_x
+	box.content_margin_right = pad_x
+	box.content_margin_top = pad_y
+	box.content_margin_bottom = pad_y
 	return box
 
 func build_shell() -> void:
@@ -109,8 +109,14 @@ func build_shell() -> void:
 		style.content_margin_right = 12
 		style.content_margin_top = 8
 		style.content_margin_bottom = 8
-		var textured = skin_box("button_gold.png" if state in ["hover", "pressed"] else "button_dark.png")
+		var textured = skin_box("button_gold.png" if state in ["hover", "pressed", "focus"] else "button_dark.png")
 		palette.set_stylebox(state, "Button", textured if textured != null else style)
+	# input_field.png: 9-slice [33, 22, 33, 22] (manifest_v2.json)
+	for state in ["normal", "focus", "read_only"]:
+		var field = skin_box("input_field.png", 33, 22, 18, 8)
+		if field != null:
+			palette.set_stylebox(state, "LineEdit", field)
+	palette.set_color("font_color", "LineEdit", Color("f1dfb2"))
 	palette.set_color("font_color", "Button", Color("f1dfb2"))
 	palette.set_color("font_disabled_color", "Button", Color("829093"))
 	theme = palette
@@ -320,7 +326,12 @@ func mutate(path: String, body: Dictionary, retryable: bool = false) -> void:
 		accept_account(result)
 	selected = []
 	mulligan_indices = []
-	play_sound()
+	var cue = "click"
+	if result.has("rewards"):
+		cue = "pack_open"
+	elif result.has("state") and result.get("status") == "finished":
+		cue = "victory" if result.state.get("winner") == 0 else "defeat"
+	play_sound(cue)
 	render()
 	updated.emit()
 
@@ -668,10 +679,10 @@ func _unhandled_key_input(event: InputEvent) -> void:
 		export_replay()
 		get_viewport().set_input_as_handled()
 
-func play_sound() -> void:
+func play_sound(sound_name: String = "click") -> void:
 	if muted:
 		return
-	var clip = skin("audio/click.ogg")
+	var clip = skin("audio/%s.ogg" % sound_name)
 	if clip != null:
 		audio.stream = clip
 		audio.play()
