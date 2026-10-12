@@ -15,6 +15,10 @@ jobs:
       - run: npm test
       - run: npm run simulate
       - run: npm run economy
+      - name: Godot verisi kaynakla eşleşiyor
+        run: |
+          npm run native:data
+          git diff --exit-code -- native/data.json
       - name: Kart belgesi kaynakla eşleşiyor
         run: |
           npm run docs:cards
@@ -23,3 +27,15 @@ jobs:
         run: |
           npm run prototype
           git diff --exit-code -- kart-prototipi
+  godot:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Godot 4.6.3 kur ve resmi SHA512 değerini doğrula
+        run: |
+          bash scripts/install-godot.sh "$RUNNER_TEMP/destan-godot"
+          echo "$RUNNER_TEMP/destan-godot" >> "$GITHUB_PATH"
+      - run: npm run test:native

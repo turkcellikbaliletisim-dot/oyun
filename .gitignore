@@ -3,3 +3,5 @@ node_modules/
 test-results/
 *.log
 .data/
+.godot/
+native-builds/

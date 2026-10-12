@@ -1,44 +1,22 @@
-# 12 — Tamamlanan işler ve kalan yayın kapıları
+# 13 — Doğrulama sonuçları
 
-## Tamamlandı
+Bu kayıt otomatik kontrolleri gerçek oyuncu ve gerçek cihaz testlerinden ayırır. Kontroller buluttaki Linux ortamında yapıldı; tarihler: 12 Ekim 2026.
 
-Kural v0.2, belirsiz kart etkileşimleri, tutarlı bölüm/lig/takas kapsamı, kesin başlangıç ve test desteleri; 40 kartlı yerel oynanabilir motor; bot; deste oluşturma; 10 bölüm ve görev koşulları; yerel kayıt ve JSON tekrar; yerel koleksiyon, paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri; isteğe bağlı saat, prosedürel ses/müzik ve ses düzeyi; PWA kurulum ve isteğe bağlı 40 resimli çevrimdışı kullanım; 40 ayrı illüstrasyon, güncel kart tuvali/galerisi ve A4 baskı; otomatik motor/tarayıcı testleri. Ekonomi, mimari, sanat, kullanıcı testi ve yayın planları somutlaştırıldı.
+| Kontrol | Sonuç |
+|---|---|
+| `npm test` | 74/74 geçti: kart etkileri, kurallar, hikâye, ekonomi, bot, geri bildirim, 15 sunucu regresyonu ve Godot veri eşitliği |
+| `node tests/run-online-browser.js` | İki ayrı tarayıcı hesabı: oda/katılma, gerçek hamleler, mobil görünüm, yeniden bağlantı, hikâye ödülü, paket, tekrar indirme, üçüncü tarayıcıda hesap kurtarma geçti |
+| `python3 tests/pwa-browser.py` | İnternet kapalıyken yeni hikâye maçı, 40 görsel, galeri, baskı, ses/müzik geçti; API yanıtları önbelleğe alınmaz |
+| `npm run test:native` | Godot 4.6.3 import; 40 atlas, native koleksiyon, bütün eğitim maçı, legal hamleler, ödül/paket, biten maç tekrarı, cookie yeniden bağlantısı ve kurtarma geçti |
+| Godot gerçek pencere | Linux X11 + Mesa llvmpipe OpenGL ile aynı entegrasyon geçti; koleksiyon ve maç ekranları görüntülendi |
+| Godot kurucu | Resmi 4.6.3 Linux arşivi indirildi, sabit resmi SHA512 doğrulandı; kurulan binary ile native test geçti |
+| Kart/prototip üreticileri | Önceki aşamada 40 ayrı atlas hücresi, galeri, A4 sayfaları ve PDF kontrol edildi; Godot aynı atlasları kullanır |
+| Bot simülasyonu | Önceki aşamada 60 maç ve deterministik tekrar geçti; starter–tempo 13/20, tempo–control 17/20, control–starter 8/20 |
 
-Ekonomi/online/hukuk belgelerinde “taslak/uygulanmadı” belirtilen işleri yazılı plana dönüştürmek, o sistemleri kurmak veya sonuçlarını doğrulamak değildir.
+Godot arayüzünde Mac için HiDPI, Command kısayolları ve native dosya penceresi ayarlandı. Fiziksel Mac'te bu özellikler **henüz doğrulanmadı**. Mac export şablonları bulunmadığından imzalı veya imzasız Mac ZIP üretilmedi. Godot motoru Linux'ta 4.6.3 Standard ile çalıştırıldı.
 
-## Açık iş listesi
+Godot istemcisi Node sunucusuna bağlıdır. Mevcut web prototipi çevrimdışı oynanır; Godot'a sunucusuz offline motor portu tamamlandı denmez. Hesaplı oyun tek yazıcılı dosya deposu kullanır; çok süreç/veritabanı ve üretim operasyonu ayrı çalışmadır.
 
-| Öncelik | İş | Kabul ölçütü | Sorumlu rol |
-|---|---|---|---|
-| P0 | İnsanlarla kural ve denge testi | 30+ gerçek maç kaydı; kritik kural sorunları çözülmüş | Tasarım |
-| P0 | İlk üç bölüm kullanıcı testi | 5+ yeni oyuncu; enerji/faz/hedefleme sorunları kaydedilmiş ve giderilmiş | Ürün + UI |
-| P1 | Hikâye zorluk insan testi | Görev kartı başlangıç garantisi uygulandı; deneme/terk oranı gerçek oyuncularla ölçülecek | Tasarım |
-| P1 | Botun ileri strateji değerlendirmesi | Görünür bilgiyle planlama, ölümcül hamle ve takas/kalkan regresyonları tamam; gerçek oyuncu zorluk testi kaldı | Tasarım |
-| P1 | Gerçek ekran okuyucu ve cihaz testi | Kart inceleme, klavye odakları, duyurular ve dar görünüm kontrolleri tamamlandı | UI |
-| P1 | Görsel inceleme ve ses/müzik | 40 görsel hazır; kültürel doğruluk/hak incelemesi, küçük ekran kullanıcı testi ve ses miksajı/gerçek cihaz dinleme kontrolü | Sanat/ses |
-| P1 | Mobil üretim motoru ve cihaz testi | Kurulabilir web uygulaması hazır; gerçek Android/iOS cihaz ve gerekirse native mağaza paketi testi | Geliştirme |
-| P1 | Üretim ekonomisi doğrulama | Sahiplik/garanti/ödüller sunucuya taşındı; ücretsiz ilerleme insan testi kaldı | Geliştirme + tasarım |
-| P1 | Sunucu üretim hazırlığı | Gizli bilgi/saat/hamle testleri tamam; gerçek hosting, yük, alarm ve yedek dönüş tatbikatı kaldı | Backend |
-| P1 | Hesaplı beta | Hesap/eşleştirme/yeniden bağlantı otomatik doğrulandı; beta gerçek oyuncularla | Backend |
-| P1 | Şirket/ülke/yaş/hukuk | Gerçek bilgilere göre uzman incelemesi ve nihai metinler | Ürün + hukuk |
-| P2 | Kozmetik ödeme | Ürün tanımı, mağaza doğrulama ve iade senaryoları | Geliştirme + muhasebe |
-| P2 | Analitik ve destek | Veri dayanağı, olay sözlüğü, hata alarmı ve destek akışı | Operasyon |
-| P2 | Bütçe ve oyuncu edinme | Gerçek teklifler, net gelir/gider ve test bütçesi | Ürün |
-| P3 | Yeni diyar/takas/turnuva | Ayrı ürün, denge ve hukuki inceleme | Ürün |
+GitHub Actions'a Node kontrolleri ve doğrulanmış Godot kurulumuyla native test eklendi. Buradaki yerel test sonuçları uzak CI çalışmasının sonucu değildir.
 
-## Yayın için karar
-
-Mevcut çıktı **yerel ve hesaplı oynanabilir prototiptir**. İnsan dengesi, üretim barındırma, yük/yedekleme, ödeme ve hukuki kapılar tamamlanmadan ticari mobil oyun olarak hazır denmez. İlk sonraki çalışma, çalışan prototiple gerçek oyuncu testidir; daha fazla kart eklemek değildir.
-
-## Değişiklik sınırı
-
-HTML/Claude tuvali v0.2 verileri ve 40 illüstrasyonla güncellendi; önceki tasarım Git geçmişinde korunur. Kart ve kural değişimi v0.2 canonical kaynakta, otomatik test ve üretilmiş belgeyle birlikte yapılır. Eski maç kaydının aynı sonuç vermesi yalnız aynı kural sürümü için garanti edilir. Üretim sürümüne geçerken kayıt migrasyonu veya açık uyumsuzluk bildirimi gerekir.
-
-## Mobil web ve çevrimdışı kontrol
-
-PWA manifesti, statik önbellek ve isteğe bağlı atlas indirme eklendi. `tests/pwa-browser.py` önce 40 resmi indirdi, ardından tarayıcının internetini kapattı: sayfa yenileme, yeni hikâye maçı, 40 resmin decode edilmesi, galeri ve baskı açılması geçti. Ses/müzik düğmeleri ve WebAudio çalışması tarayıcıda kontrol edildi; gerçek cihazda dinleme/ana ekrana kurulum henüz yapılmadı. PDF otomatik çevrimdışı indirilmez.
-
-
-## Yetkili sunucu aşaması
-
-Misafir hesap/kurtarma/silme, arkadaş odası, sunucu botu/hikâyesi, lig kuyruğu/MMR, gizli bilgi görünümü, 45 saniyelik saat ve iki kaçırılan turda teslim eklendi. Koleksiyon, üretim, paket garantisi ve bölüm ödülleri sunucunun saatinde doğrulanır. Aynı işlem kimliği tekrar ödül vermez. Canlı istemciye rastgelelik veya rakip kart kimlikleri verilmez; biten maçta tekrar dosyası açılır. 15 sunucu regresyon testi geçti. Harici yayın ve gerçek kullanıcı testi yapılmadı.
+Gerçek insan denge/yeni oyuncu testi, fiziksel iOS/Android/Mac, üretim hosting/yük/yedekten dönüş tatbikatı, Apple imza/notarizasyon, mağaza/ödeme ve uzman hukuk incelemesi yapılmadı. Güncel açık işler [12 durum belgesinde](12-durum-ve-yayin-kapilari.md), Mac başlangıcı [native README'de](../native/README.md).

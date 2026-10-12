@@ -38,3 +38,7 @@ HTML/Claude tuvali v0.2 verileri ve 40 illüstrasyonla güncellendi; önceki tas
 ## Yetkili sunucu aşaması
 
 Misafir hesap/kurtarma/silme, arkadaş odası, sunucu botu/hikâyesi, lig kuyruğu/MMR, gizli bilgi görünümü, 45 saniyelik saat ve iki kaçırılan turda teslim eklendi. Koleksiyon, üretim, paket garantisi ve bölüm ödülleri sunucunun saatinde doğrulanır. Aynı işlem kimliği tekrar ödül vermez. Canlı istemciye rastgelelik veya rakip kart kimlikleri verilmez; biten maçta tekrar dosyası açılır. 15 sunucu regresyon testi geçti. Harici yayın ve gerçek kullanıcı testi yapılmadı.
+
+## Godot/Mac aşaması
+
+Godot 4.6.3 projesi, 40 atlas, kart masası/hedefler, hikâye/bot, arkadaş odası/lig, koleksiyon ve deste oluşturma eklendi. Native istemci mevcut yetkili Node sunucusunu kullanır. Retina ayarı, Command kısayolları, native dosya kaydetme ve Universal macOS geliştirme export preset'i hazır. Linux'ta bütün eğitim maçı ve hesap/ekonomi entegrasyonu geçti. Fiziksel Mac ve Mac paketi doğrulanmadı; export şablonları/imza/notarizasyon ve üretim sunucusu kaldı. [Mac geliştirme talimatı](../native/README.md).

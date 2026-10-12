@@ -1,5 +1,7 @@
 # Destan Diyarları
 
+**Godot/Mac geliştirmesi:** depo kökündeki `project.godot` dosyasını Godot 4.6.3 ile aç. Mac başlatıcı ve kullanım: [native/README.md](native/README.md).
+
 Türkiye temalı kart savaş oyununun **oynanabilir v0.2 prototipi**. 40 kart, bot rakip, üç hazır deste, deste oluşturma, 10 hikâye bölümü, yerel koleksiyon ekonomisi, kayıt ve basılabilir kartlar içerir. Ticari mobil yayın değil; insan denge testleri ve üretim gereksinimleri sürüyor.
 
 ## Çalıştırma
