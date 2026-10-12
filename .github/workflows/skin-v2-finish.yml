@@ -48,7 +48,10 @@ jobs:
           PY
       - name: Install packaging dependencies
         run: |
-          command -v ffmpeg
+          if ! command -v ffmpeg >/dev/null 2>&1; then
+            sudo apt-get update -qq
+            sudo apt-get install -y -qq --no-install-recommends ffmpeg
+          fi
           python -m pip install --disable-pip-version-check pillow numpy scipy fonttools cairosvg soundfile
       - name: Complete assets and run technical validation
         run: python -X faulthandler scripts/skin_v2_finish.py
