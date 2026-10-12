@@ -1,0 +1,47 @@
+{
+  "revision": "bd8f81ddb5c74d5c8897b36ad88b440266245103",
+  "required_characters": "ıİşŞğĞçÇöÖüÜ0123456789",
+  "font_binaries_distributed_in_art_package": false,
+  "fonts": {
+    "font_title.ttf": {
+      "family_and_weight": "Cinzel Bold",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/cinzel/Cinzel%5Bwght%5D.ttf",
+      "source_sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34",
+      "installed_sha256": "79491c38654ad6659da1611a9d4eb7a49708c450ccf84940e1956b3a6f9625fc",
+      "glyph_count": 367,
+      "turkish_and_digits_covered": true,
+      "digit_one_distinct_from_latin_I": true,
+      "static_font": true
+    },
+    "font.ttf": {
+      "family_and_weight": "Nunito Sans SemiBold",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/nunitosans/NunitoSans%5BYTLC%2Copsz%2Cwdth%2Cwght%5D.ttf",
+      "source_sha256": "f934d7142fb4784bf828da485b7dcbd90c0c80d514e9d49a5da0ed3a1ae2491d",
+      "installed_sha256": "d74f6526b3135b1fe391da80fe76ee7e571a35bb7570aada7cc34c9bbd50e7ed",
+      "glyph_count": 939,
+      "turkish_and_digits_covered": true,
+      "digit_one_distinct_from_latin_I": true,
+      "static_font": true
+    },
+    "font_numbers.ttf": {
+      "family_and_weight": "Alfa Slab One",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/alfaslabone/AlfaSlabOne-Regular.ttf",
+      "source_sha256": "28664afa698a3393bd5a29eec750230a0645c5301d62200e5f2d3a027fb2299d",
+      "installed_sha256": "a54b88546d3577e6cd0513db5d09dbd496735ef09615f2299cad59c5225e2c41",
+      "glyph_count": 671,
+      "turkish_and_digits_covered": true,
+      "digit_one_distinct_from_latin_I": true,
+      "static_font": true
+    },
+    "font_card.ttf": {
+      "family_and_weight": "Cinzel SemiBold",
+      "source_url": "https://raw.githubusercontent.com/google/fonts/bd8f81ddb5c74d5c8897b36ad88b440266245103/ofl/cinzel/Cinzel%5Bwght%5D.ttf",
+      "source_sha256": "f4d83d34d1f6c741193e4acf4b3dff9531e5a67b6aa65228d00a7db72a4e0f34",
+      "installed_sha256": "d0dc049953acdfbc2d45638496235e15c6e816e3c581e68279be4d3808de93bc",
+      "glyph_count": 367,
+      "turkish_and_digits_covered": true,
+      "digit_one_distinct_from_latin_I": true,
+      "static_font": true
+    }
+  }
+}

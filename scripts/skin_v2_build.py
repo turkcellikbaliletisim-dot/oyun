@@ -17,6 +17,7 @@ import tempfile
 import time
 import urllib.request
 import numpy as np
+from scipy import ndimage
 from PIL import Image, ImageChops, ImageDraw, ImageFilter, ImageFont, ImageOps
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -104,6 +105,24 @@ def matte(im: Image.Image, kind: str) -> Image.Image:
     return Image.fromarray(np.uint8(np.round(np.clip(out,0,1)*255)), 'RGBA')
 
 
+
+def clean_matte_debris(im: Image.Image) -> Image.Image:
+    """Discard tiny disconnected chroma-key debris, retain real object groups."""
+    a = np.array(im.getchannel('A'))
+    labels, count = ndimage.label(a > 120)
+    if count == 0:
+        return im
+    sizes = np.bincount(labels.ravel()); sizes[0] = 0
+    largest = int(sizes.max())
+    keep = np.flatnonzero(sizes >= max(40, largest * 0.012))
+    core = np.isin(labels, keep)
+    # A small halo preserves antialiasing but excludes distant lines and specks.
+    allowed = ndimage.binary_dilation(core, iterations=max(2, round(max(im.size)*0.004)))
+    a[~allowed] = 0
+    result = im.copy(); result.putalpha(Image.fromarray(a, 'L'))
+    return result
+
+
 def bounds(im: Image.Image, threshold: int = 8):
     return im.getchannel('A').point(lambda x: 255 if x > threshold else 0).getbbox()
 
@@ -118,6 +137,8 @@ def fit_asset(im: Image.Image, size: tuple[int,int], kind: str, name: str) -> tu
     metadata = {}
     if kind in TRANSPARENT_KINDS:
         im = matte(im, kind)
+        if kind != 'black':
+            im = clean_matte_debris(im)
         box = bounds(im)
         if box is None:
             raise ValueError('Empty cutout: ' + name)
@@ -133,16 +154,6 @@ def fit_asset(im: Image.Image, size: tuple[int,int], kind: str, name: str) -> tu
         out.alpha_composite(resized, ((w-new[0])//2, (h-new[1])//2))
         metadata.update(source_visible_bounds=list(box), resample_scale=scale,
                         padding_fraction=padding, content_bounds_px=list(bounds(out)))
-        if name in {'nav_active','target_ring'}:
-            a = out.getchannel('A')
-            draw = ImageDraw.Draw(a)
-            radius = min(w,h)*0.24
-            draw.ellipse((w/2-radius,h/2-radius,w/2+radius,h/2+radius),fill=0)
-            out.putalpha(a)
-        if name in {'fx_glow_ready','fx_glow_legend'}:
-            a = out.getchannel('A')
-            ImageDraw.Draw(a).rounded_rectangle((w*.32,h*.28,w*.68,h*.72), radius=w*.05, fill=0)
-            out.putalpha(a)
     else:
         if im.width < w or im.height < h:
             raise ValueError('Would upscale opaque artwork: ' + name)

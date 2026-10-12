@@ -1,6 +1,6 @@
 {
   "scene_play": {
-    "url": "32960499-80ab-4c47-8bc5-62139cd093c1",
+    "url": "39855259-764a-4d91-aa63-01c73be46d6a",
     "size": [
       1200,
       800
@@ -81,12 +81,12 @@
     "kind": "green"
   },
   "icon_check": {
-    "url": "c7c7d6a8-1ddf-40cc-9f9a-7c2feb17ab7d",
+    "url": "98cb0bfc-efe7-4dab-a859-6b72b5cf23f3",
     "size": [
       256,
       256
     ],
-    "kind": "magenta"
+    "kind": "alpha"
   },
   "icon_story": {
     "url": "8fc930b6-c4f1-4b74-8d05-cdaf31fe2c45",
@@ -209,28 +209,28 @@
     "kind": "green"
   },
   "icon_net_ok": {
-    "url": "df51ce36-2c5b-4f35-9ec4-b6fb56ea9e37",
+    "url": "cd8393d4-8b34-4924-832e-49da5250b984",
     "size": [
       256,
       256
     ],
-    "kind": "magenta"
+    "kind": "alpha"
   },
   "icon_net_bad": {
-    "url": "08ce95e6-469f-40e9-aa03-63fa28ebcc7c",
+    "url": "73f3ef55-5779-4f55-bf89-7e6ae60a51a0",
     "size": [
       256,
       256
     ],
-    "kind": "magenta"
+    "kind": "alpha"
   },
   "icon_surrender": {
-    "url": "b60f8fdc-2a76-41ca-a998-38bf33800538",
+    "url": "4bbddf6e-c6e0-4b37-9049-0e9204234125",
     "size": [
       256,
       256
     ],
-    "kind": "green"
+    "kind": "alpha"
   },
   "icon_replay": {
     "url": "2d87ead3-390c-4a28-a92d-6f9ec2272df3",
@@ -329,12 +329,12 @@
     "kind": "green"
   },
   "result_defeat": {
-    "url": "a3022aec-884d-4051-b4e5-7ce3740443f0",
+    "url": "4c8d5066-20ae-45b9-8d5e-ae518559fe92",
     "size": [
       1200,
       700
     ],
-    "kind": "green"
+    "kind": "alpha"
   },
   "input_field": {
     "url": "dbf91ed8-23c6-4f5a-a9a8-4c2ce3db2407",
@@ -549,6 +549,238 @@
     "size": [
       256,
       256
+    ],
+    "kind": "green"
+  },
+  "scene_story": {
+    "url": "0b2ccec3-3e07-4d73-9fce-2039d02f01da",
+    "size": [
+      1200,
+      800
+    ],
+    "kind": "scene"
+  },
+  "scene_chest": {
+    "url": "98b417b6-d014-4432-8045-894ef2c5bfae",
+    "size": [
+      1200,
+      800
+    ],
+    "kind": "scene"
+  },
+  "scene_friends": {
+    "url": "4c840ade-cae4-4094-8379-bf8cce4d960b",
+    "size": [
+      1200,
+      800
+    ],
+    "kind": "scene"
+  },
+  "backdrop": {
+    "url": "0877c0b5-724f-492a-bf0c-8589b4f366d3",
+    "size": [
+      1170,
+      2532
+    ],
+    "kind": "scene"
+  },
+  "splash": {
+    "url": "a50a4146-13df-425b-b141-f999ce4c0ae8",
+    "size": [
+      1242,
+      2688
+    ],
+    "kind": "scene"
+  },
+  "chest_closed": {
+    "url": "1b27612b-6282-4e27-ae41-5b3ad209c3cc",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "chest_open": {
+    "url": "8ae960ec-491a-4e6d-94a1-0a1293155c49",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "chapter_01": {
+    "url": "9d2ba61a-90dd-4af1-98ab-52ad9af945cc",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_02": {
+    "url": "b0c7b77f-7677-43be-abe0-2eedc05ebdc3",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_03": {
+    "url": "5979ccde-3464-4d58-a532-b4b791232dd8",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_04": {
+    "url": "aebbae54-7e8b-4845-af57-853b3a6e32c0",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_05": {
+    "url": "20a9b000-fbca-4484-9909-8d11d5648677",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_06": {
+    "url": "1b220653-7f54-43f2-81e3-8cdf616b1eb9",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_07": {
+    "url": "13b309fa-95c5-486e-91c5-329111784554",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_08": {
+    "url": "ddc73859-1a96-4527-82b2-1ce9a15f835d",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_09": {
+    "url": "e93ef2d3-d307-4a7f-98ef-c31a73626bdf",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "chapter_10": {
+    "url": "69d1d4e6-e477-45c9-be28-4e771a3b3bbd",
+    "size": [
+      1200,
+      600
+    ],
+    "kind": "scene"
+  },
+  "enemy_01": {
+    "url": "7c662e4e-ce6f-4a3e-b933-94da9a3ca4f6",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_02": {
+    "url": "64e639df-a2e4-4d1d-8f96-2d839d792a9c",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_03": {
+    "url": "c336d28b-db52-4740-9fc9-cdb0d6401c7b",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_04": {
+    "url": "0dc62338-4453-4a0a-91cc-2f28f26aacff",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_05": {
+    "url": "c581d14f-58c7-4bb4-bb86-8c594c03abb6",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_06": {
+    "url": "9cc7887d-a33b-486e-81ff-dab768d135a8",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_07": {
+    "url": "ea96f797-155f-4b6a-8f7b-9f76ca23782c",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_08": {
+    "url": "54a56cdf-f8e9-45d1-a990-b18e9668f190",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_09": {
+    "url": "d96d335b-85fb-4f21-8e4f-dc98edbf7511",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "enemy_10": {
+    "url": "b5b25c0d-0115-4179-97e5-bffa429ea9fb",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "hero_player_alt1": {
+    "url": "cb16f79c-9180-43a0-9639-619d81678c52",
+    "size": [
+      512,
+      512
+    ],
+    "kind": "green"
+  },
+  "hero_player_alt2": {
+    "url": "99221d1d-ded4-4fe7-a4ae-e0d56427a2e9",
+    "size": [
+      512,
+      512
     ],
     "kind": "green"
   }

@@ -24,7 +24,7 @@ SPECS = {
     'font_title.ttf': ('cinzel', 'Cinzel[wght].ttf', {'wght': 700}, 'Cinzel Bold'),
     'font.ttf': ('nunitosans', 'NunitoSans[YTLC,opsz,wdth,wght].ttf',
                  {'wght': 600, 'wdth': 100, 'opsz': 12}, 'Nunito Sans SemiBold'),
-    'font_numbers.ttf': ('lilitaone', 'LilitaOne-Regular.ttf', {}, 'Lilita One'),
+    'font_numbers.ttf': ('alfaslabone', 'AlfaSlabOne-Regular.ttf', {}, 'Alfa Slab One'),
     'font_card.ttf': ('cinzel', 'Cinzel[wght].ttf', {'wght': 600}, 'Cinzel SemiBold'),
 }
 
