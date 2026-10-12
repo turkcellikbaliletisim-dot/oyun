@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<title>Kart Sayfası 4</title>
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0}
+</style>
+</helmet>
+<div style="width:794px;height:1123px;box-sizing:border-box;padding:0 40px;background:#ffffff;display:flex;flex-direction:column;font-family:'Source Sans 3',sans-serif">
+<div style="height:62px;flex:none;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#6b6478"><span>Türkiye Serisi · Sayfa 4/5</span><span>Kartları kenarlarından kes (63×88 mm)</span></div>
+<div style="display:grid;grid-template-columns:repeat(3,238px);grid-auto-rows:333px;gap:0">
+<sc-for list="{{cards}}" as="c" hint-placeholder-count="9">
+<div style="width:238px;height:333px;box-sizing:border-box;padding:6px;background:{{c.rim}};border-radius:12px">
+<div style="width:100%;height:100%;box-sizing:border-box;padding:7px;background:#f7f0e1;border:2px solid {{c.accent}};border-radius:8px;display:flex;flex-direction:column;gap:6px">
+<div style="height:34px;display:flex;align-items:center;justify-content:space-between;gap:6px">
+<div style="flex:1;font-family:'Alegreya',serif;font-weight:800;font-size:16px;line-height:1.05;color:#1d1a2f">{{c.name}}</div>
+<div style="width:30px;height:30px;flex:none;box-sizing:border-box;border-radius:50%;border:2px solid {{c.rim}};background:{{c.accent}};color:#ffffff;font-family:'Alegreya',serif;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center">{{c.cost}}</div>
+</div>
+<div style="height:104px;flex:none;box-sizing:border-box;border-radius:6px;border:1px solid {{c.accent}};background:{{c.art}};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:9px;letter-spacing:0.12em;font-weight:700;color:{{c.dark}}">ÇİZİM ALANI</div>
+<div style="height:14px;flex:none;display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:0.08em;font-weight:700"><span style="color:{{c.dark}}">{{c.typeName}}</span><span style="color:{{c.ink}}">{{c.rarityLabel}}</span></div>
+<div style="flex:1;min-height:0;box-sizing:border-box;padding:6px 8px;background:#fffaf0;border:1px solid #d9ccb0;border-radius:6px;display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:12px;line-height:1.3;color:#2a2638">
+<sc-if value="{{c.hasKw}}" hint-placeholder-val="{{ true }}"><div style="font-weight:700;color:{{c.dark}}">{{c.kw}}</div></sc-if>
+<sc-if value="{{c.hasText}}" hint-placeholder-val="{{ true }}"><div>{{c.text}}</div></sc-if>
+</div>
+<div style="height:32px;flex:none;display:flex;align-items:center;justify-content:space-between">
+<div style="font-size:10px;color:#6b6478">Anadolu Diyarı · {{c.n}}/40</div>
+<sc-if value="{{c.isWarrior}}" hint-placeholder-val="{{ true }}">
+<div style="display:flex;gap:5px">
+<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#b5452f;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">SAL</span>{{c.atk}}</div>
+<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#2f7d5b;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">CAN</span>{{c.hp}}</div>
+</div>
+</sc-if>
+<sc-if value="{{c.isOther}}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;font-weight:700;color:{{c.dark}}">{{c.foot}}</div></sc-if>
+</div>
+</div>
+</div>
+</sc-for>
+</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+class Component extends DCLogic {
+renderVals() {
+const T = {
+S: { name: 'SAVAŞÇI', accent: '#b5452f', dark: '#8c2f1d', art: 'repeating-linear-gradient(45deg,#f1d6cc 0 9px,#ecc9bd 9px 18px)', foot: '' },
+B: { name: 'BÜYÜ', accent: '#1d7f86', dark: '#14595f', art: 'repeating-linear-gradient(45deg,#d3eaeb 0 9px,#c0dfe1 9px 18px)', foot: 'Anlık etki' },
+T: { name: 'TUZAK', accent: '#5a4a8a', dark: '#3f3268', art: 'repeating-linear-gradient(45deg,#e0daef 0 9px,#d1c9e5 9px 18px)', foot: 'Gizli oynanır' }
+};
+const R = {
+Y: { label: 'YAYGIN', rim: '#a0795a', ink: '#6b4a32' },
+N: { label: 'NADİR', rim: '#5d8fc2', ink: '#2c5f93' },
+E: { label: 'EFSANEVİ', rim: '#d4a72c', ink: '#7a5c06' }
+};
+const rows = [
+[28, "Kılıç Bileme", 1, "B", 0, 0, "", "Bir dost savaşçıya bu tur +2 saldırı.", "Y"],
+[29, "Şifalı Ot", 1, "B", 0, 0, "", "Hedefe 3 can iyileştir.", "Y"],
+[30, "Fırtına Bulutu", 2, "B", 0, 0, "", "Bir hedefe 3 hasar.", "Y"],
+[31, "Nazar Boncuğu", 2, "B", 0, 0, "", "Bir dost savaşçı bu tur hasar almaz.", "Y"],
+[32, "Pazar Pazarlığı", 2, "B", 0, 0, "", "2 kart çek, 1 kart at.", "N"],
+[33, "Kar Fırtınası", 3, "B", 0, 0, "", "Rakibin tüm savaşçıları gelecek turda saldıramaz.", "N"],
+[34, "Tufan", 4, "B", 0, 0, "", "Tüm savaşçılara 2 hasar.", "N"],
+[35, "Ergenekon'dan Çıkış", 5, "B", 0, 0, "", "Tüm dost savaşçılara kalıcı +2/+2.", "E"],
+[36, "Tuzak Kuyu", 2, "T", 0, 0, "", "Rakibin 3 enerji veya daha ucuz bir savaşçısı saldırınca onu yok et.", "Y"]
+];
+const cards = rows.map(([n, name, cost, t, atk, hp, kw, text, r]) => {
+const ty = T[t], ra = R[r];
+return { n, name, cost, accent: ty.accent, dark: ty.dark, art: ty.art, typeName: ty.name, rim: ra.rim, ink: ra.ink, rarityLabel: ra.label, kw, hasKw: !!kw, text, hasText: !!text, atk, hp, isWarrior: t === 'S', isOther: t !== 'S', foot: ty.foot };
+});
+return { cards };
+}
+}
+</script>
+</body>
+</html>
