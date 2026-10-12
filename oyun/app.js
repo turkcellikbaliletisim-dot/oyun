@@ -6,13 +6,15 @@ import { CHAPTERS, chapterCompleted,chapterOptions } from './chapters.js';
 import { newProfile,validateProfile,loginReward,chapterReward,matchReward,openPack,craftCard,dismantleCard,archiveCard,capacity,CRAFT,DUST,deckOwned,missingDust } from './economy.js';
 import { applyCardArt } from '../kart-prototipi/art.js';
 import { feedbackRecord,saveFeedback,feedbackCSV } from './playtest.js';
+import { GameAudio } from './sound.js';
 
 const $ = id => document.getElementById(id);
 const STORE = 'destan-v02-match';
 const TYPE = { warrior: 'SAVAŞÇI', spell: 'BÜYÜ', trap: 'TUZAK' };
 const RARITY = { common: 'YAYGIN', rare: 'NADİR', legendary: 'EFSANEVİ' };
 let state = null, selected = null, mulligan = new Set(), botTimer, deadline = null;
-let visible = false, timed = false, sound = false, audio, saved = null, storageFailed = false;
+let visible = false, timed = false, sound = false, music=false, saved = null, storageFailed = false;
+const audio=new GameAudio();
 let custom = [...DECKS.starter.cards];
 let chapter = null, completed = [];
 let profile=newProfile(),matchId=null,rewardEligible=false;
@@ -140,6 +142,7 @@ function openMatch(s, options = {}) {
   feedbackEligible=options.feedbackEligible??(options.replay===undefined||Number.isFinite(options.elapsedMs));
   deadline = timed && state.status === 'playing' ? Date.now() + Math.min(45000, Math.max(0, options.remaining ?? 45000)) : null;
   $('setup').hidden = true; $('match').hidden = false; notice(''); render(); persist(); scheduleBot();
+  if(music)audio.music(true);
 }
 $('new-game').addEventListener('submit', event => {
   event.preventDefault();
@@ -156,20 +159,19 @@ $('resume').addEventListener('click', () => { try { openMatch(restoreReplay(save
 $('back').addEventListener('click', () => {
   persist(); elapsedMs=activeElapsed();visible = false; clearTimeout(botTimer); $('match').hidden = true; $('setup').hidden = false; notice('Maçın kaydedildi. Devam etmek için kayıtlı maçı aç.');
   if (storageFailed) notice('Bu tarayıcıda kalıcı kayıt yok. Sayfayı kapatmadan maçı indir.');
+  audio.suspend();
 });
 window.addEventListener('beforeunload', persist);
+window.addEventListener('destan-save',persist);
+document.addEventListener('visibilitychange',()=>{if(document.hidden)audio.suspend();else if(visible&&music)audio.music(true);});
 
-function beep() {
-  if (!sound) return;
-  try {
-    audio ??= new (window.AudioContext || window.webkitAudioContext)(); audio.resume();
-    const oscillator = audio.createOscillator(), gain = audio.createGain();
-    oscillator.frequency.value = state.status === 'finished' ? 660 : 330;
-    gain.gain.setValueAtTime(.035, audio.currentTime); gain.gain.exponentialRampToValueAtTime(.001, audio.currentTime + .12);
-    oscillator.connect(gain); gain.connect(audio.destination); oscillator.start(); oscillator.stop(audio.currentTime + .13);
-  } catch { sound = false; $('sound-toggle').textContent = 'Ses kullanılamıyor'; }
+function beep(action) {
+  if (!sound||document.hidden||!visible) return;
+  audio.effect(action,state?.status==='finished').then(ok=>{if(!ok){sound=false;$('sound-toggle').textContent='Ses desteklenmiyor';}}).catch(()=>{sound=false;$('sound-toggle').textContent='Ses kullanılamıyor';});
 }
 $('sound-toggle').addEventListener('click', () => { sound = !sound; $('sound-toggle').textContent = sound ? 'Ses açık' : 'Ses kapalı'; $('sound-toggle').setAttribute('aria-pressed', String(sound)); if (sound) beep(); });
+$('music-toggle').addEventListener('click',()=>{music=!music;$('music-toggle').textContent=music?'Müzik açık':'Müzik kapalı';$('music-toggle').setAttribute('aria-pressed',String(music));audio.music(music).then(ok=>{if(music&&ok===false){music=false;$('music-toggle').textContent='Müzik desteklenmiyor';}}).catch(()=>{music=false;$('music-toggle').textContent='Müzik kullanılamıyor';});});
+$('audio-volume').addEventListener('input',event=>{audio.volume=Number(event.target.value)/100;});
 function commit(action, p = 0) {
   try {
     const previousTurn = state.turn;
@@ -183,7 +185,7 @@ function commit(action, p = 0) {
     if (timed && state.status === 'playing' && previousTurn !== state.turn) deadline = Date.now() + 45000;
     if (state.status === 'finished') {deadline = null;elapsedMs=spent;}
     $('announcements').textContent=state.status==='finished'?'Maç tamamlandı. Sonuç ve değerlendirme hazır.':`${state.log.at(-1)} ${state.active===0?'Sıra sende.':'Gölge oynuyor.'}`;
-    notice(''); render(); persist(); beep(); scheduleBot();
+    notice(''); render(); persist(); beep(action.type); scheduleBot();
   } catch (e) { notice(e.message); }
 }
 function scheduleBot() {

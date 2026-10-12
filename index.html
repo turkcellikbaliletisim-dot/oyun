@@ -4,6 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#172b28">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="oyun/icon.svg" type="image/svg+xml">
   <title>Destan Diyarları · Anadolu</title>
   <link rel="stylesheet" href="oyun/style.css">
 </head>
@@ -31,11 +33,13 @@
         <button id="resume" type="button" hidden>Kayıtlı maça devam et</button>
         <label class="import">Maç kaydını yükle<input id="import-replay" type="file" accept="application/json,.json"></label>
         <button id="feedback-export" type="button">Maç değerlendirmelerini CSV indir</button>
+        <details><summary>Telefona ekle ve çevrimdışı oyna</summary><p class="muted">Destan Diyarları'nı desteklenen tarayıcılarda ana ekrana ekleyebilirsin. iPhone/iPad'de Safari paylaş menüsünden Ana Ekrana Ekle'yi kullan.</p><button id="install-app" type="button" hidden>Cihaza ekle</button><button id="offline-download" type="button" disabled>40 kartı çevrimdışı indir · yaklaşık 37 MB</button><button id="update-app" type="button" hidden>Yeni sürüme geç · maçın saklanır</button><p id="offline-status" class="muted" role="status">Çevrimdışı hazırlık kontrol ediliyor.</p></details>
         <p class="muted">Ücretsiz yerel prototip. Kart ve altın kazanımı bu tarayıcıda tutulur. Hesap, satın alma ve çevrimiçi lig yok.</p>
       </form>
     </section>
     <section id="match" hidden aria-label="Maç sahası">
-      <div class="match-toolbar"><button id="back">← Ana menü</button><span id="turn-label"></span><span id="timer" aria-live="off"></span><button id="sound-toggle" aria-pressed="false">Ses kapalı</button><button id="export">Maçı indir</button><button id="surrender">Teslim ol</button></div>
+      <div class="match-toolbar"><button id="back">← Ana menü</button><span id="turn-label"></span><span id="timer" aria-live="off"></span><button id="sound-toggle" aria-pressed="false">Ses kapalı</button><button id="music-toggle" aria-pressed="false">Müzik kapalı</button><button id="export">Maçı indir</button><button id="surrender">Teslim ol</button></div>
+      <label class="audio-volume">Ses düzeyi <input id="audio-volume" type="range" min="0" max="100" value="18" aria-label="Ses ve müzik düzeyi"></label>
       <div id="arena" class="arena">
         <div id="foe-hero" class="hero-zone"></div>
         <div id="foe-board" class="board" aria-label="Rakibin savaşçıları"></div>
@@ -60,5 +64,6 @@
   <dialog id="card-detail" aria-labelledby="detail-name"><h2 id="detail-name"></h2><div id="detail-art" class="sigil"></div><p id="detail-stats"></p><p id="detail-text"></p><button id="detail-close" class="primary">Kapat</button></dialog>
   <dialog id="feedback" aria-labelledby="feedback-title"><h2 id="feedback-title">Maç değerlendirmesi</h2><form id="feedback-form"><label>Kart oyunları deneyimin<select id="feedback-experience"><option value="new">Yeni başlıyorum</option><option value="familiar">Biraz deneyimim var</option><option value="experienced">Sık oynarım</option></select></label><label>Bu maç ne kadar eğlenceliydi?<select id="feedback-fun"><option value="1">1 · Hiç eğlenceli değildi</option><option value="2">2</option><option value="3" selected>3</option><option value="4">4</option><option value="5">5 · Çok eğlenceliydi</option></select></label><label>Bir maç daha oynamak ister misin?<select id="feedback-again"><option value="yes">Evet</option><option value="no">Hayır</option></select></label><label>Anlaşılmayan kural veya zorlandığın an<textarea id="feedback-confusion" maxlength="500" rows="4" placeholder="İsteğe bağlı. İsim veya iletişim bilgisi yazma."></textarea></label><p class="muted">Değerlendirme yalnız bu tarayıcıya kaydedilir. CSV dosyasını istediğinde indirip paylaşabilirsin; otomatik gönderim yok.</p><button class="primary" type="submit">Değerlendirmeyi kaydet</button><button id="feedback-close" type="button">Vazgeç</button></form></dialog>
   <script type="module" src="oyun/app.js"></script>
+  <script type="module" src="oyun/pwa.js"></script>
 </body>
 </html>

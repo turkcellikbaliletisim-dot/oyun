@@ -1,0 +1,16 @@
+{
+  "id": "./",
+  "name": "Destan Diyarları",
+  "short_name": "Destan",
+  "lang": "tr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#10211f",
+  "theme_color": "#172b28",
+  "description": "Anadolu'nun 40 kartıyla kendi destanını yaz.",
+  "icons": [
+    { "src": "oyun/icon.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

@@ -9,9 +9,11 @@
 - `oyun/decks.js`: üç yasal 20 kartlık deste.
 - `oyun/chapters.js`: 10 bölüm, diyalog, hazır deste ve görev koşulları.
 - `oyun/app.js`: DOM arayüzü, hedef seçimi, yerel saklama, ses ve isteğe bağlı saat.
+- `oyun/pwa.js`, `sw.js`, `manifest.webmanifest`: kurulum, isteğe bağlı görsel indirme, yalnız statik önbellek ve kullanıcı kontrollü güncelleme.
+- `oyun/sound.js`: dış kayıt kullanmayan prosedürel ses efektleri ve müzik.
 - `oyun/print.js`: aynı veriden 40 kart ve bir kural/deste sayfası üretir.
 
-Node.js 22+ yalnız test/geliştirme için; Python 3 statik servis için. Üçüncü taraf JavaScript paketi yok, `npm install` gerekmiyor. Uygulama dış font, CDN veya analitik isteği yapmaz. İnternet bağlantılı server ya da veritabanı gerekmez. İlk dosya yüklemesinden sonra oyun mantığı yereldir; çevrimdışı yeniden açmayı garanti eden service worker henüz yok.
+Node.js 22+ yalnız test/geliştirme için; Python 3 statik servis için. Üçüncü taraf JavaScript paketi yok, `npm install` gerekmiyor. Uygulama dış font, CDN veya analitik isteği yapmaz. İnternet bağlantılı server ya da veritabanı gerekmez. İlk dosya yüklemesinden sonra oyun mantığı yereldir; service worker uygulama kabuğunu önbelleğe alır; oyuncunun ayrıca indirdiği 40 görselle çevrimdışı yeniden açma doğrulanmıştır.
 
 ## Maç verisi ve tekrar oynatma
 

@@ -2,7 +2,7 @@
 
 ## Mevcut prototip
 
-Koyu yeşil oyun sahası, kâğıt kart yüzeyi, altın vurgu; tür ve nadirlik adları yazılıdır. SAL/CAN değerleri simge ve metinle gösterilir; yalnız renge bağlı değildir. Kart hedefleri çerçeveyle, hazır savaşçılar durum metniyle belirtilir. Klavye odak halkası, Türkçe aria etiketleri, durum mesajı ve hareket azaltma CSS desteği vardır. Yerel sentetik kısa ses isteğe bağlı ve varsayılan kapalıdır. Müzik veya hazır ses kaydı kullanılmaz.
+Koyu yeşil oyun sahası, kâğıt kart yüzeyi, altın vurgu; tür ve nadirlik adları yazılıdır. SAL/CAN değerleri simge ve metinle gösterilir; yalnız renge bağlı değildir. Kart hedefleri çerçeveyle, hazır savaşçılar durum metniyle belirtilir. Klavye odak halkası, Türkçe aria etiketleri, durum mesajı ve hareket azaltma CSS desteği vardır. Yerel prosedürel ses ve başlangıç müziği ayrı ayrı isteğe bağlı, varsayılan kapalıdır. Ses düzeyi ayarlanır; menüye dönme veya sekmeyi gizleme sesi durdurur. Hazır üçüncü taraf ses kaydı kullanılmaz.
 
 Bunlar tam erişilebilirlik sertifikasyonu değildir. Gerçek ekran okuyucu, dokunma, düşük görme ve farklı cihaz kullanıcılarıyla doğrulama gerekir.
 
@@ -39,3 +39,7 @@ Uygulama sistem fontu ve Georgia kullanır; dış font indirme zorunluluğu yok.
 ## Kart inceleme ve klavye iyileştirmeleri
 
 Sahadaki ve eldeki her kartın ayrı **İncele** düğmesi var; kart oynanamaz durumda olsa da ayrıntıları açılır. Açılan pencerede illüstrasyon, tam kural ve sahadaki güncel SAL/CAN görülür. Hedef seçimi klavyeyle hedefe odaklanır; seçili başlangıç kartları aria-pressed ile belirtilir. İçeriğe geç bağlantısı ve sıra/sonuç duyuruları eklendi. 195 CSS px dar görünümde bütün sayfa yatay taşmaz; beşli saha kendi içinde kayabilir. Gerçek ekran okuyucu ve fiziksel cihaz kullanıcı testi ayrı kapıdır.
+
+## Tamamlanan başlangıç ses/müziği
+
+`oyun/sound.js`: kart, saldırı, tur ve sonuç için kısa farklı tonlar; üçgen/sinüs dalgalarıyla üretilen özgün sekiz notalı sakin döngü. Kayıtlı geleneksel enstrüman veya lisanslı dış müzik kullanmaz. Profesyonel ses miksajı ve gerçek cihaz dinleme testi sonraki üretim kontrolüdür.

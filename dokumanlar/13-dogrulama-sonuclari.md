@@ -1,26 +1,39 @@
-# 13 — v0.2 doğrulama sonuçları
+# 12 — Tamamlanan işler ve kalan yayın kapıları
 
-12 Ekim 2026, mevcut bulut makinesi. Sonuçlar yeni yayımlanmış veya yeniden kurulmuş bir ortamda doğrulama anlamına gelmez.
+## Tamamlandı
 
-| Kontrol | Sonuç | Kapsam |
-|---|---|---|
-| `npm test` | 58 geçti, 0 başarısız/atlanan | Motor, 40 kart, 10 bölüm ve yerel ekonomi |
-| `npm run simulate` | 60 maç tamamlandı, 60 tekrar aynı sonucu verdi | Bot, sıra/faz ve saha/el/tuzak sınırları |
-| Bölüm erişilebilirliği | 10 görevin tümü yasal maçta kazanılarak tamamlanabildi | Otomatik pilot; insan zorluğu ölçümü değil |
-| `npm run economy` | 7/30/90 gün ve 440→260 toz hesabı üretildi | Varsayımsal yoğun katılım; gerçek oyuncu kazanımı değil |
-| `python3 tests/browser-smoke.py` | Geçti | Deste/sahiplik, hedefleme, eğitim/bölüm, paket/üretim/parçalama, kayıt, saat, mobil ve baskı |
-| Kart belgesi tekrar üretimi | İçerik değişmedi | canonical kart kaynağı ile belge tutarlılığı |
-| `git diff --check` ve belge bağlantıları | Geçti | Boşluk hataları ve yerel bağlantılar |
-| Baskı PDF | 6 A4 sayfa, 40 adet 63×88 mm kart, taşma kontrolü geçti | Fiziksel yazıcı ölçeği ayrıca kontrol edilmeli |
-| GitHub Actions | İş akışı eklendi; uzak çalışma yapılmadı | Komutlar bu makinede çalıştı |
-| İnsan maçları / gerçek cihazlar / online / ödeme / hukuk | Çalıştırılmadı veya uygulanmadı | 12 belgesindeki açık kapılar |
+Kural v0.2, belirsiz kart etkileşimleri, tutarlı bölüm/lig/takas kapsamı, kesin başlangıç ve test desteleri; 40 kartlı yerel oynanabilir motor; bot; deste oluşturma; 10 bölüm ve görev koşulları; yerel kayıt ve JSON tekrar; yerel koleksiyon, paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri; isteğe bağlı saat, prosedürel ses/müzik ve ses düzeyi; PWA kurulum ve isteğe bağlı 40 resimli çevrimdışı kullanım; 40 ayrı illüstrasyon, güncel kart tuvali/galerisi ve A4 baskı; otomatik motor/tarayıcı testleri. Ekonomi, mimari, sanat, kullanıcı testi ve yayın planları somutlaştırıldı.
 
-Bot karşılaştırmaları: Başlangıç–Bozkır 13/20; Bozkır–Kadim 17/20; Kadim–Başlangıç 8/20. Bunlar hem deste hem bot kararının etkisini içerir; gerçek oyuncu denge oranları olarak sunulmaz. Kontrol botunun karar kalitesi ve görev kartının çekilememesi özellikle sonraki insan/bot testinde incelenecek.
+Ekonomi/online/hukuk belgelerinde “taslak/uygulanmadı” belirtilen işleri yazılı plana dönüştürmek, o sistemleri kurmak veya sonuçlarını doğrulamak değildir.
 
-Yerel uygulama mevcut HTTP sunucusundan açıldı. Node.js 24, Python 3.12 ve headless Chromium kullanıldı. Tarayıcı test araçları uygulamanın çalışma bağımlılığı değildir. Başlatma talimatı bulut yapılandırma taslağında güncellendi; ortam yayımlanmadı.
+## Açık iş listesi
 
-## Kart görselleri ve oyuncu testi araçları
+| Öncelik | İş | Kabul ölçütü | Sorumlu rol |
+|---|---|---|---|
+| P0 | İnsanlarla kural ve denge testi | 30+ gerçek maç kaydı; kritik kural sorunları çözülmüş | Tasarım |
+| P0 | İlk üç bölüm kullanıcı testi | 5+ yeni oyuncu; enerji/faz/hedefleme sorunları kaydedilmiş ve giderilmiş | Ürün + UI |
+| P1 | Hikâye zorluk insan testi | Görev kartı başlangıç garantisi uygulandı; deneme/terk oranı gerçek oyuncularla ölçülecek | Tasarım |
+| P1 | Botun ileri strateji değerlendirmesi | Görünür bilgiyle planlama, ölümcül hamle ve takas/kalkan regresyonları tamam; gerçek oyuncu zorluk testi kaldı | Tasarım |
+| P1 | Gerçek ekran okuyucu ve cihaz testi | Kart inceleme, klavye odakları, duyurular ve dar görünüm kontrolleri tamamlandı | UI |
+| P1 | Görsel inceleme ve ses/müzik | 40 görsel hazır; kültürel doğruluk/hak incelemesi, küçük ekran kullanıcı testi ve ses miksajı/gerçek cihaz dinleme kontrolü | Sanat/ses |
+| P1 | Mobil üretim motoru ve cihaz testi | Kurulabilir web uygulaması hazır; gerçek Android/iOS cihaz ve gerekirse native mağaza paketi testi | Geliştirme |
+| P1 | Ekonomiyi sunucuya taşıma | Yerel sahiplik/garanti/ödülleri güvenilir işlemlere taşıma; ücretsiz ilerleme insan testi | Geliştirme + tasarım |
+| P1 | Yetkili maç sunucusu | Gizli bilgi, saat, hamle ve sonuç doğrulama testleri | Backend |
+| P1 | Hesap/eşleştirme/yeniden bağlantı | Veri kaybı ve çift işlem yok; beta gerçek oyuncularla | Backend |
+| P1 | Şirket/ülke/yaş/hukuk | Gerçek bilgilere göre uzman incelemesi ve nihai metinler | Ürün + hukuk |
+| P2 | Kozmetik ödeme | Ürün tanımı, mağaza doğrulama ve iade senaryoları | Geliştirme + muhasebe |
+| P2 | Analitik ve destek | Veri dayanağı, olay sözlüğü, hata alarmı ve destek akışı | Operasyon |
+| P2 | Bütçe ve oyuncu edinme | Gerçek teklifler, net gelir/gider ve test bütçesi | Ürün |
+| P3 | Yeni diyar/takas/turnuva | Ayrı ürün, denge ve hukuki inceleme | Ürün |
 
-40 karta özgü illüstrasyon, 10 atlas, 6 güncel Claude Design tuvali, 6 bağımsız HTML ve galeri eklendi. Tüm resimler tarayıcıda decode edildi; filtreler, dar görünüm ve beş kart sayfasında metin taşması kontrolleri geçti. PDF 6 A4 sayfadır. Kart ve tuval üretimi tekrar çalıştırıldığında aynı içeriği verdi.
+## Yayın için karar
 
-Bot taktik regresyonları; özel başlangıç elinin kart çoğaltmaması ve görev kartını koruması; geri bildirim doğrulaması, tekilleştirme ve CSV formül koruması test edildi. Tarayıcıda kart inceleme, klavye başlangıç onayı/hedef odağı, maç değerlendirmesi ve CSV indirme kontrol edildi. 195 CSS px genişlikte sayfa taşması yok. Gerçek insan değerlendirmesi veya fiziksel ekran okuyucu testi yapılmadı.
+Mevcut çıktı **yerel oynanabilir prototiptir**. İnsan dengesi, görsel üretim, hesap/sunucu, üretim ekonomisi güvenliği, ödeme ve hukuki kapılar tamamlanmadan ticari mobil oyun olarak hazır denmez. İlk sonraki çalışma, çalışan prototiple gerçek oyuncu testidir; daha fazla kart eklemek değildir.
+
+## Değişiklik sınırı
+
+HTML/Claude tuvali v0.2 verileri ve 40 illüstrasyonla güncellendi; önceki tasarım Git geçmişinde korunur. Kart ve kural değişimi v0.2 canonical kaynakta, otomatik test ve üretilmiş belgeyle birlikte yapılır. Eski maç kaydının aynı sonuç vermesi yalnız aynı kural sürümü için garanti edilir. Üretim sürümüne geçerken kayıt migrasyonu veya açık uyumsuzluk bildirimi gerekir.
+
+## Mobil web ve çevrimdışı kontrol
+
+PWA manifesti, statik önbellek ve isteğe bağlı atlas indirme eklendi. `tests/pwa-browser.py` önce 40 resmi indirdi, ardından tarayıcının internetini kapattı: sayfa yenileme, yeni hikâye maçı, 40 resmin decode edilmesi, galeri ve baskı açılması geçti. Ses/müzik düğmeleri ve WebAudio çalışması tarayıcıda kontrol edildi; gerçek cihazda dinleme/ana ekrana kurulum henüz yapılmadı. PDF otomatik çevrimdışı indirilmez.
