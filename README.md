@@ -11,6 +11,3 @@ Türkiye temalı, beceri odaklı mobil kart savaş oyunu. Kapalı ekonomi: kartl
 6. `06-hukuki-cerceve.md`: kontrol listesi (hukuki tavsiye değildir)
 7. `07-yol-haritasi.md`: 8 aylık plan, ekip, riskler
 8. `08-turkiye-serisi-kartlar.md`: 40 kartlık başlangıç seti (v0.1)
-
-## Kart prototipi (`kart-prototipi/`)
-40 kartın basılabilir tasarımı (A4, 3×3, 63×88 mm). Dosyalar Claude Design tuvalinin kaynak dosyalarıdır (`*.dc.html`, `canvas.json`); düzenlemek için Claude'daki "Türkiye Serisi Kart Prototipi" tuvalini kullanın.
