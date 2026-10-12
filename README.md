@@ -31,6 +31,7 @@ npm test
 npm run simulate
 npm run economy
 npm run docs:cards
+npm run prototype
 ```
 
 `docs:cards`, tek kart kaynağından 08 belgesini yeniler. `economy` yoğun katılım senaryolarını hesaplar. `simulate` 60 bot maçı ve aynı sonuç veren kayıt tekrarını doğrular; insan dengesi testi sayılmaz.
@@ -41,7 +42,7 @@ Python Playwright ve Chromium bulunan ortamda, sunucu açıkken `python3 tests/b
 
 `oyun/baski.html`: güncel 40 kart, beş A4 kart sayfası ve bir deste/kural sayfası. Yazdırma: A4, %100 gerçek boyut, üstbilgi/altbilgi kapalı, arka plan grafikleri açık. Her kart 63×88 mm; fiziksel yazıcıda ilk kartın ölçüsünü kontrol edin. İlk set her karttan bir kopya içerir; iki oyuncunun aynı başlangıç destesi için başlangıç kartlarını dörder kopyaya tamamlayın.
 
-`kart-prototipi/` eski **v0.1 Claude Design arşividir**; özel çalışma zamanına bağlıdır. Güncel oyun ve baskı `oyun/cards.js` verisini kullanır. Eski tuval üzerinde düzenleme yeni motora otomatik aktarılmaz.
+**[kart-prototipi/](kart-prototipi/README.md)** güncel 40 kartın illüstrasyonlarını, galeriyi, PDF'i, bağımsız HTML sayfalarını ve Claude Design tuvalini içerir. `Main.dc.html` ve `Sayfa1.dc.html`–`Sayfa5.dc.html` v0.2 ile güncellendi. Aynı adlı `.html` dosyaları Claude çalışma zamanı gerektirmez. `npm run prototype` tuvali ve sayfaları `oyun/cards.js` ile `kart-prototipi/art.js` kaynaklarından üretir.
 
 ## Belgeler
 
@@ -55,4 +56,4 @@ Python Playwright ve Chromium bulunan ortamda, sunucu açıkken `python3 tests/b
 
 ## Kapsam
 
-Şu anda hesap, online lig, sunucu tarafından korunan koleksiyon, gerçek ödeme, takas, mobil mağaza paketi ve özgün kart illüstrasyonları yok. Oyun harici analitik/font/CDN isteği yapmaz. Yerel istemci ve kayıtlar güvenilir sunucu otoritesinin yerine geçmez. Hukuk/mağaza uygunluğu ve gerçek oyuncu dengesi doğrulanmış değildir.
+Şu anda hesap, online lig, sunucu tarafından korunan koleksiyon, gerçek ödeme, takas, mobil mağaza paketi yok. 40 kartın ayrı illüstrasyonu oluşturuldu; görseller proje için yapay zekâ yardımıyla üretildi. Oyun harici analitik/font/CDN isteği yapmaz. Yerel istemci ve kayıtlar güvenilir sunucu otoritesinin yerine geçmez. Hukuk/mağaza uygunluğu ve gerçek oyuncu dengesi doğrulanmış değildir.

@@ -1,5 +1,6 @@
 import { CARDS } from './cards.js';
 import { DECKS } from './decks.js';
+import { applyCardArt } from '../kart-prototipi/art.js';
 const type = {warrior:'SAVAŞÇI',spell:'BÜYÜ',trap:'TUZAK'};
 const rarity = {common:'YAYGIN',rare:'NADİR',legendary:'EFSANEVİ'};
 const node = (tag,text,cls) => { const el=document.createElement(tag); if(text!==undefined)el.textContent=text; if(cls)el.className=cls; return el; };
@@ -9,7 +10,8 @@ for(let i=0;i<5;i++){
   const grid=node('div',undefined,'grid');
   for(const c of CARDS.slice(i*9,i*9+9)){
     const el=node('article',undefined,`card ${c.rarity}`),head=node('div',undefined,'head');
-    head.append(node('span',c.name),node('span',c.cost,'cost'));el.append(head,node('div',c.type==='warrior'?'⚔':c.type==='spell'?'✦':'◇','art'),node('div',`${type[c.type]} · ${rarity[c.rarity]}`,'type'));
+    const illustration=node('div',undefined,'art');applyCardArt(illustration,c.id);
+    head.append(node('span',c.name),node('span',c.cost,'cost'));el.append(head,illustration,node('div',`${type[c.type]} · ${rarity[c.rarity]}`,'type'));
     const text=node('div',undefined,'text');
     if(c.keywords.length)text.append(node('div',c.keywords.join(' · '),'keywords'));
     if(c.text!==c.keywords.join(' · '))text.append(node('div',c.text));el.append(text);

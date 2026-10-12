@@ -19,3 +19,7 @@ jobs:
         run: |
           npm run docs:cards
           git diff --exit-code -- dokumanlar/08-turkiye-serisi-kartlar.md
+      - name: Kart tuvali ve sayfaları kaynakla eşleşiyor
+        run: |
+          npm run prototype
+          git diff --exit-code -- kart-prototipi

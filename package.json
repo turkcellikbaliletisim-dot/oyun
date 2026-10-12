@@ -9,6 +9,7 @@
     "test": "node --test tests/*.test.js",
     "simulate": "node scripts/simulate.js",
     "economy": "node scripts/economy-report.js",
+    "prototype": "node scripts/generate-prototype.js",
     "docs:cards": "node scripts/generate-cards.js"
   }
 }

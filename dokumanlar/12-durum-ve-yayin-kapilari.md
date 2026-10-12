@@ -2,7 +2,7 @@
 
 ## Tamamlandı
 
-Kural v0.2, belirsiz kart etkileşimleri, tutarlı bölüm/lig/takas kapsamı, kesin başlangıç ve test desteleri; 40 kartlı yerel oynanabilir motor; bot; deste oluşturma; 10 bölüm ve görev koşulları; yerel kayıt ve JSON tekrar; yerel koleksiyon, paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri; isteğe bağlı saat/ses; A4 baskı; otomatik motor/tarayıcı testleri. Ekonomi, mimari, sanat, kullanıcı testi ve yayın planları somutlaştırıldı.
+Kural v0.2, belirsiz kart etkileşimleri, tutarlı bölüm/lig/takas kapsamı, kesin başlangıç ve test desteleri; 40 kartlı yerel oynanabilir motor; bot; deste oluşturma; 10 bölüm ve görev koşulları; yerel kayıt ve JSON tekrar; yerel koleksiyon, paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri; isteğe bağlı saat/ses; 40 ayrı illüstrasyon, güncel kart tuvali/galerisi ve A4 baskı; otomatik motor/tarayıcı testleri. Ekonomi, mimari, sanat, kullanıcı testi ve yayın planları somutlaştırıldı.
 
 Ekonomi/online/hukuk belgelerinde “taslak/uygulanmadı” belirtilen işleri yazılı plana dönüştürmek, o sistemleri kurmak veya sonuçlarını doğrulamak değildir.
 
@@ -15,7 +15,7 @@ Ekonomi/online/hukuk belgelerinde “taslak/uygulanmadı” belirtilen işleri y
 | P1 | Görev kartı çekiş/zorluk ayarı | Görev çekilemediği için terk oranı ve bölüm başına deneme ölçülmüş | Tasarım |
 | P1 | Daha güçlü bot | Gizli bilgi kullanmadan kontrol destesi kararları, regresyon senaryoları | Geliştirme |
 | P1 | Kart ayrıntı/erişilebilirlik | Küçük ekran, 200% zoom, klavye ve ekran okuyucu testi | UI |
-| P1 | 40 özgün çizim ve ses/müzik | Kaynak dosyaları ve hak kayıtları; küçük ekran onayı | Sanat/ses |
+| P1 | Görsel inceleme ve ses/müzik | 40 görsel hazır; kültürel doğruluk/hak incelemesi, küçük ekran kullanıcı testi ve ses/müzik teslimi | Sanat/ses |
 | P1 | Mobil üretim motoru ve cihaz testi | Gerçek Android/iOS sürümü; hedef performans ve kayıt testi | Geliştirme |
 | P1 | Ekonomiyi sunucuya taşıma | Yerel sahiplik/garanti/ödülleri güvenilir işlemlere taşıma; ücretsiz ilerleme insan testi | Geliştirme + tasarım |
 | P1 | Yetkili maç sunucusu | Gizli bilgi, saat, hamle ve sonuç doğrulama testleri | Backend |
@@ -32,4 +32,4 @@ Mevcut çıktı **yerel oynanabilir prototiptir**. İnsan dengesi, görsel üret
 
 ## Değişiklik sınırı
 
-v0.1 HTML/Claude tuvali arşiv olarak korunur. Kart ve kural değişimi v0.2 canonical kaynakta, otomatik test ve üretilmiş belgeyle birlikte yapılır. Eski maç kaydının aynı sonuç vermesi yalnız aynı kural sürümü için garanti edilir. Üretim sürümüne geçerken kayıt migrasyonu veya açık uyumsuzluk bildirimi gerekir.
+HTML/Claude tuvali v0.2 verileri ve 40 illüstrasyonla güncellendi; önceki tasarım Git geçmişinde korunur. Kart ve kural değişimi v0.2 canonical kaynakta, otomatik test ve üretilmiş belgeyle birlikte yapılır. Eski maç kaydının aynı sonuç vermesi yalnız aynı kural sürümü için garanti edilir. Üretim sürümüne geçerken kayıt migrasyonu veya açık uyumsuzluk bildirimi gerekir.

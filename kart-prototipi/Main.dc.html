@@ -1,100 +1,73 @@
 <!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<title>Kart Şablonu</title>
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body{margin:0}
-</style>
-</helmet>
-<div style="width:1180px;height:560px;box-sizing:border-box;padding:48px;background:#f1e9d7;display:flex;flex-direction:column;gap:28px;font-family:'Source Sans 3',sans-serif;color:#1d1a2f">
-<div style="display:flex;flex-direction:column;gap:6px">
-<h1 style="margin:0;font-family:'Alegreya',serif;font-weight:800;font-size:44px;line-height:1">Türkiye Serisi</h1>
-<div style="font-size:16px;color:#4a4458">Kağıt prototip v0.1 · 40 kart · Anadolu Diyarı</div>
-</div>
-<div style="display:flex;gap:40px;align-items:flex-start">
-<div style="display:flex;gap:24px">
-<sc-for list="{{cards}}" as="c" hint-placeholder-count="3">
-<div style="width:238px;height:333px;box-sizing:border-box;padding:6px;background:{{c.rim}};border-radius:12px">
-<div style="width:100%;height:100%;box-sizing:border-box;padding:7px;background:#f7f0e1;border:2px solid {{c.accent}};border-radius:8px;display:flex;flex-direction:column;gap:6px">
-<div style="height:34px;display:flex;align-items:center;justify-content:space-between;gap:6px">
-<div style="flex:1;font-family:'Alegreya',serif;font-weight:800;font-size:16px;line-height:1.05;color:#1d1a2f">{{c.name}}</div>
-<div style="width:30px;height:30px;flex:none;box-sizing:border-box;border-radius:50%;border:2px solid {{c.rim}};background:{{c.accent}};color:#ffffff;font-family:'Alegreya',serif;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center">{{c.cost}}</div>
-</div>
-<div style="height:104px;flex:none;box-sizing:border-box;border-radius:6px;border:1px solid {{c.accent}};background:{{c.art}};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:9px;letter-spacing:0.12em;font-weight:700;color:{{c.dark}}">ÇİZİM ALANI</div>
-<div style="height:14px;flex:none;display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:0.08em;font-weight:700"><span style="color:{{c.dark}}">{{c.typeName}}</span><span style="color:{{c.ink}}">{{c.rarityLabel}}</span></div>
-<div style="flex:1;min-height:0;box-sizing:border-box;padding:6px 8px;background:#fffaf0;border:1px solid #d9ccb0;border-radius:6px;display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:12px;line-height:1.3;color:#2a2638">
-<sc-if value="{{c.hasKw}}" hint-placeholder-val="{{ true }}"><div style="font-weight:700;color:{{c.dark}}">{{c.kw}}</div></sc-if>
-<sc-if value="{{c.hasText}}" hint-placeholder-val="{{ true }}"><div>{{c.text}}</div></sc-if>
-</div>
-<div style="height:32px;flex:none;display:flex;align-items:center;justify-content:space-between">
-<div style="font-size:10px;color:#6b6478">Anadolu Diyarı · {{c.n}}/40</div>
-<sc-if value="{{c.isWarrior}}" hint-placeholder-val="{{ true }}">
-<div style="display:flex;gap:5px">
-<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#b5452f;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">SAL</span>{{c.atk}}</div>
-<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#2f7d5b;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">CAN</span>{{c.hp}}</div>
-</div>
-</sc-if>
-<sc-if value="{{c.isOther}}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;font-weight:700;color:{{c.dark}}">{{c.foot}}</div></sc-if>
-</div>
-</div>
-</div>
-</sc-for>
-</div>
-<div style="width:282px;display:flex;flex-direction:column;gap:18px;font-size:14px;line-height:1.35;color:#2a2638">
-<div style="display:flex;flex-direction:column;gap:8px">
-<div style="font-family:'Alegreya',serif;font-weight:800;font-size:18px;color:#1d1a2f">Kart türleri</div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:18px;height:18px;border-radius:50%;background:#b5452f;flex:none"></div><div>Savaşçı: sahaya çıkar, saldırır ve savunur</div></div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:18px;height:18px;border-radius:50%;background:#1d7f86;flex:none"></div><div>Büyü: anlık etki, tek kullanımlık</div></div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:18px;height:18px;border-radius:50%;background:#5a4a8a;flex:none"></div><div>Tuzak: gizli oynanır, tetiklenince açılır</div></div>
-</div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div style="font-family:'Alegreya',serif;font-weight:800;font-size:18px;color:#1d1a2f">Nadirlik (çerçeve rengi)</div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:14px;border-radius:4px;background:#a0795a;flex:none"></div><div>Yaygın</div></div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:14px;border-radius:4px;background:#5d8fc2;flex:none"></div><div>Nadir</div></div>
-<div style="display:flex;align-items:center;gap:10px"><div style="width:24px;height:14px;border-radius:4px;background:#d4a72c;flex:none"></div><div>Efsanevi (desteye en fazla 1)</div></div>
-</div>
-<div style="display:flex;flex-direction:column;gap:8px">
-<div style="font-family:'Alegreya',serif;font-weight:800;font-size:18px;color:#1d1a2f">Kartı okuma</div>
-<div>Sağ üstteki daire enerji maliyeti. Sağ alttaki rozetler saldırı (SAL) ve can (CAN).</div>
-</div>
-</div>
-</div>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":560}}'>
+<html lang="tr"><head><meta charset="utf-8"><title>Kart şablonu ve rehber · v0.2</title><script src="./support.js"></script></head><body><x-dc><helmet><style>
+*{box-sizing:border-box}body{margin:0;color:#25342b;background:#ece5d4;font-family:system-ui,sans-serif}
+.paper{width:794px;height:1123px;padding:0 40px;background:#fff}.sheet-head{height:62px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#63563e}.grid{display:grid;grid-template-columns:repeat(3,238px);grid-auto-rows:333px;gap:0}.card{width:238px;height:333px;padding:5px;border-radius:14px;box-shadow:inset 0 0 0 1px #6b4c32}.face{width:100%;height:100%;padding:6px;border-radius:9px;background:#f6ecd4;display:flex;flex-direction:column;gap:4px}.head{height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px}.name{font:700 16px/1.05 Georgia,serif;flex:1;min-width:0}.cost{width:28px;height:28px;flex:none;border-radius:50%;background:#286969;border:2px solid #7ca6a0;color:#fff;display:flex;align-items:center;justify-content:center;font:700 18px Georgia,serif}.art{width:100%;height:141px;flex:none;border:1px solid #b8a684;border-radius:6px;background-size:200% 200%;background-repeat:no-repeat;background-color:#d8c9a6}.type{height:11px;flex:none;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.05em;font-weight:700;color:#62503a}.rules{flex:1;min-height:0;background:#fffbef;border:1px solid #d5c6a5;border-radius:5px;padding:4px 6px;display:flex;flex-direction:column;justify-content:center;gap:3px;font-size:10.5px;line-height:1.23}.keyword{font-weight:750;color:#655083}.foot{height:25px;flex:none;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#675b45}.stats{display:flex;gap:4px;font-size:13px;font-weight:800}.sal,.can{padding:3px 6px;border-radius:12px;color:#fff}.sal{background:#a84a32}.can{background:#2e7156}.stats small{font-size:8px}.page-foot{font-size:10px;color:#6c5b43;margin-top:14px}.reference{width:1180px;height:560px;padding:32px 40px;background:#f1e7ce}.reference h1{font:700 40px Georgia,serif;margin:0 0 8px}.reference p{font-size:13px;line-height:1.5}.reference-layout{display:flex;gap:24px;margin-top:22px}.reference-cards{display:flex;gap:12px}.legend{width:300px;font-size:13px;line-height:1.5}.legend h2{font:700 20px Georgia,serif;margin:0 0 10px}.legend p{margin:8px 0}.legend a{color:#28584d}@page{size:A4;margin:0}@media print{body{background:#fff}.paper{width:210mm;height:297mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style></helmet><div class="reference"><h1>Türkiye Serisi</h1><p>40 illüstrasyonlu kart · Anadolu Diyarı · Kurallar v0.2</p><div class="reference-layout"><div class="reference-cards"><sc-for list="{{cards}}" as="c" hint-placeholder-count="3"><article class="card" data-card-id="{{c.id}}" style="background:{{c.rim}}"><div class="face" style="border:2px solid {{c.accent}}"><div class="head"><div class="name">{{c.name}}</div><div class="cost">{{c.cost}}</div></div><div class="art" role="img" aria-label="{{c.artAlt}}" style="background-image:url('{{c.artUrl}}');background-position:{{c.artPosition}}"></div><div class="type"><span>{{c.typeName}}</span><span>{{c.rarityLabel}}</span></div><div class="rules"><sc-if value="{{c.hasKw}}" hint-placeholder-val="{{true}}"><div class="keyword">{{c.kw}}</div></sc-if><sc-if value="{{c.hasText}}" hint-placeholder-val="{{true}}"><div>{{c.text}}</div></sc-if></div><div class="foot"><span>Anadolu · {{c.id}}/40</span><sc-if value="{{c.isWarrior}}" hint-placeholder-val="{{true}}"><div class="stats"><span class="sal"><small>SAL</small> {{c.atk}}</span><span class="can"><small>CAN</small> {{c.hp}}</span></div></sc-if><sc-if value="{{c.isOther}}" hint-placeholder-val="{{false}}"><span>{{c.foot}}</span></sc-if></div></div></article></sc-for></div><aside class="legend"><h2>Kartı okuma</h2><p>Üstteki daire enerji maliyeti. SAL saldırı, CAN can değeridir. Savaşçı hasarı turlar arasında kalır.</p><p><strong>Savaşçı:</strong> sahaya çıkar ve savaşır.<br><strong>Büyü:</strong> anlık etkidir.<br><strong>Tuzak:</strong> gizli kurulur, olay gerçekleşince açılır.</p><h2>Nadirlik</h2><p>Bronz: Yaygın · Mavi: Nadir · Altın: Efsanevi. Nadirlik adı kartta yazılıdır.</p><p>63×88 mm kartlar; beş A4 sayfa. Her kart için ayrı bir illüstrasyon.</p></aside></div></div></x-dc><script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1180,"height":560}}'>
 class Component extends DCLogic {
-renderVals() {
-const T = {
-S: { name: 'SAVAŞÇI', accent: '#b5452f', dark: '#8c2f1d', art: 'repeating-linear-gradient(45deg,#f1d6cc 0 9px,#ecc9bd 9px 18px)', foot: '' },
-B: { name: 'BÜYÜ', accent: '#1d7f86', dark: '#14595f', art: 'repeating-linear-gradient(45deg,#d3eaeb 0 9px,#c0dfe1 9px 18px)', foot: 'Anlık etki' },
-T: { name: 'TUZAK', accent: '#5a4a8a', dark: '#3f3268', art: 'repeating-linear-gradient(45deg,#e0daef 0 9px,#d1c9e5 9px 18px)', foot: 'Gizli oynanır' }
-};
-const R = {
-Y: { label: 'YAYGIN', rim: '#a0795a', ink: '#6b4a32' },
-N: { label: 'NADİR', rim: '#5d8fc2', ink: '#2c5f93' },
-E: { label: 'EFSANEVİ', rim: '#d4a72c', ink: '#7a5c06' }
-};
-const rows = [
-[9, "Tulpar Sürücüsü", 3, "S", 3, 3, "Hızlı", "", "Y"],
-[30, "Fırtına Bulutu", 2, "B", 0, 0, "", "Bir hedefe 3 hasar.", "Y"],
-[36, "Tuzak Kuyu", 2, "T", 0, 0, "", "Rakibin 3 enerji veya daha ucuz bir savaşçısı saldırınca onu yok et.", "Y"]
-];
-const cards = rows.map(([n, name, cost, t, atk, hp, kw, text, r]) => {
-const ty = T[t], ra = R[r];
-return { n, name, cost, accent: ty.accent, dark: ty.dark, art: ty.art, typeName: ty.name, rim: ra.rim, ink: ra.ink, rarityLabel: ra.label, kw, hasKw: !!kw, text, hasText: !!text, atk, hp, isWarrior: t === 'S', isOther: t !== 'S', foot: ty.foot };
-});
-return { cards };
+renderVals() { return { cards: [
+  {
+    "id": 9,
+    "name": "Tulpar Sürücüsü",
+    "cost": 3,
+    "atk": 3,
+    "hp": 3,
+    "kw": "Hızlı",
+    "hasKw": true,
+    "text": "",
+    "hasText": false,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "YAYGIN",
+    "rim": "#a77d4c",
+    "artUrl": "gorseller/09-12.png",
+    "artPosition": "0% 0%",
+    "artAlt": "Tulpar Sürücüsü: Kanatlı beyaz Tulpar üzerindeki binici"
+  },
+  {
+    "id": 30,
+    "name": "Fırtına Bulutu",
+    "cost": 2,
+    "atk": 0,
+    "hp": 0,
+    "kw": "",
+    "hasKw": false,
+    "text": "Seçtiğin oyuncuya veya savaşçıya 3 hasar ver.",
+    "hasText": true,
+    "isWarrior": false,
+    "isOther": true,
+    "typeName": "BÜYÜ",
+    "accent": "#287777",
+    "foot": "ANLIK ETKİ",
+    "rarityLabel": "YAYGIN",
+    "rim": "#a77d4c",
+    "artUrl": "gorseller/29-32.png",
+    "artPosition": "100% 0%",
+    "artAlt": "Fırtına Bulutu: Dağların üstünde şimşekli fırtına bulutu"
+  },
+  {
+    "id": 36,
+    "name": "Tuzak Kuyu",
+    "cost": 2,
+    "atk": 0,
+    "hp": 0,
+    "kw": "",
+    "hasKw": false,
+    "text": "Rakibin 3 enerji veya daha ucuz bir savaşçısı saldırınca onu yok et.",
+    "hasText": true,
+    "isWarrior": false,
+    "isOther": true,
+    "typeName": "TUZAK",
+    "accent": "#67538b",
+    "foot": "GİZLİ OYNANIR",
+    "rarityLabel": "YAYGIN",
+    "rim": "#a77d4c",
+    "artUrl": "gorseller/33-36.png",
+    "artPosition": "100% 100%",
+    "artAlt": "Tuzak Kuyu: Kervan yolunda kamufle edilmiş derin kuyu"
+  }
+] }; }
 }
-}
-</script>
-</body>
-</html>
+</script></body></html>

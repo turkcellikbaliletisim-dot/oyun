@@ -9,10 +9,10 @@ Eski sekiz aylık takvim teslim taahhüdü olmaktan çıkarıldı. İlerleme aş
 - 10 hikâye bölümü, görev doğrulama ve yerel bölüm ilerlemesi.
 - Maç kaydı, JSON aktarım/yeniden oynatma, isteğe bağlı tur saati.
 - Yerel koleksiyon, ücretsiz paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri.
-- Bağımsız A4 baskı ekranı; prototip simgeleri ve temel erişilebilirlik.
+- Bağımsız A4 baskı ekranı; 40 ayrı illüstrasyon ve temel erişilebilirlik.
 - Motor testleri ve otomatik simülasyon; tarayıcı smoke testi.
 
-Bu liste özgün illüstrasyonların, insan denge testlerinin, online sunucunun veya mobil mağaza uygulamasının tamamlandığını söylemez.
+40 kart illüstrasyonu ve görsel sayfaları tamamlandı. İnsan denge testleri, kültürel/hak incelemesi, online sunucu ve mobil mağaza uygulaması ayrı kapılardır.
 
 ## Aşamalar
 

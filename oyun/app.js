@@ -4,12 +4,12 @@ import { createGame, applyAction, legalActions, attackValue, canAttack, exportRe
 import { chooseBotAction } from './bot.js';
 import { CHAPTERS, chapterCompleted } from './chapters.js';
 import { newProfile,validateProfile,loginReward,chapterReward,matchReward,openPack,craftCard,dismantleCard,archiveCard,capacity,CRAFT,DUST,deckOwned,missingDust } from './economy.js';
+import { applyCardArt } from '../kart-prototipi/art.js';
 
 const $ = id => document.getElementById(id);
 const STORE = 'destan-v02-match';
 const TYPE = { warrior: 'SAVAŞÇI', spell: 'BÜYÜ', trap: 'TUZAK' };
 const RARITY = { common: 'YAYGIN', rare: 'NADİR', legendary: 'EFSANEVİ' };
-const SYMBOL = { warrior: '⚔', spell: '✦', trap: '◇' };
 let state = null, selected = null, mulligan = new Set(), botTimer, deadline = null;
 let visible = false, timed = false, sound = false, audio, saved = null, storageFailed = false;
 let custom = [...DECKS.starter.cards];
@@ -190,7 +190,8 @@ function cardNode(c, unit = null, p = 0) {
   const node = elem('button', undefined, `card ${c.rarity}${unit ? ' unit' : ''}`);
   node.type = 'button';
   const header = elem('div', undefined, 'card-header'); header.append(elem('span', c.name, 'card-name'), elem('span', c.cost, 'cost'));
-  node.append(header, elem('div', SYMBOL[c.type], 'sigil'), elem('div', `${TYPE[c.type]} · ${RARITY[c.rarity]}`, 'card-type'), elem('div', c.text, 'card-text'));
+  const illustration=elem('div',undefined,'sigil');applyCardArt(illustration,c.id);
+  node.append(header, illustration, elem('div', `${TYPE[c.type]} · ${RARITY[c.rarity]}`, 'card-type'), elem('div', c.text, 'card-text'));
   if (c.type === 'warrior') {
     node.append(elem('div', c.keywords.join(' · '), 'keywords'));
     const stats = elem('div', undefined, 'stats');

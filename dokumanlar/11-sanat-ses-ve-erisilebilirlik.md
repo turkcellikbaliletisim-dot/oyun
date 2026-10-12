@@ -6,6 +6,10 @@ Koyu yeşil oyun sahası, kâğıt kart yüzeyi, altın vurgu; tür ve nadirlik 
 
 Bunlar tam erişilebilirlik sertifikasyonu değildir. Gerçek ekran okuyucu, dokunma, düşük görme ve farklı cihaz kullanıcılarıyla doğrulama gerekir.
 
+## Tamamlanan kart görselleri
+
+40 ayrı illüstrasyon üretildi; 10 adet 2×2 atlas `kart-prototipi/gorseller/` içinde, kart eşlemesi ve Türkçe alternatif metinler `kart-prototipi/art.js` içinde. Aynı görseller oyun, galeri, güncel Claude Design tuvali ve baskıda kullanılır. Yer tutucu kılıç simgeleri kaldırıldı. Görseller yapay zekâ yardımıyla üretildi.
+
 ## Görsel üretim yönergesi
 
 - Ton: sıcak, destansı, masalsı; korku veya gerçekçi vahşet ilk hedef değil.
@@ -14,7 +18,7 @@ Bunlar tam erişilebilirlik sertifikasyonu değildir. Gerçek ekran okuyucu, dok
 - Nadirlik çerçeveyle birlikte metin/ikon taşımalı; renk körlüğünde kart türü anlaşılmalı.
 - 40 kart için ayrı özgün illüstrasyon ve katmanlı kaynak; küçük ekranda siluet okunmalı. Başlangıç siparişi: Çoban Çırağı, Kervan Bekçisi, Bozkır Okçusu, Zeybek, Tulpar, Mağara Bekçisi, Fırtına Bulutu, Tuzak Kuyu, Şahmaran, Dede Korkut.
 - Sanat tesliminde kaynak dosya, kullanım hakları, atıf gerekleri, revizyon hakkı ve varsa kullanılan dış kaynak kayıtları bulunmalı.
-- Şimdiki çapraz çizgiler ve simgeler üretim illüstrasyonları değildir. Claude Design v0.1 tuvali arşivdir; güncel baskı tek kart kaynağından üretilir.
+- `kart-prototipi` tuvali v0.2 ile güncellendi. Güncel resimler ve baskı tek kart/görsel kaynağından üretilir. Yeni kartlarda aynı görsel dil ve resim eşleme düzeni korunur.
 
 ## UI ve cihaz kabul koşulları
 

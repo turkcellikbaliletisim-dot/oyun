@@ -1,83 +1,199 @@
 <!doctype html>
-<html lang="tr">
-<head>
-<meta charset="utf-8">
-<title>Kart Sayfası 3</title>
-<script src="./support.js"></script>
-</head>
-<body>
-<x-dc>
-<helmet>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Alegreya:wght@700;800&family=Source+Sans+3:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-body{margin:0}
-</style>
-</helmet>
-<div style="width:794px;height:1123px;box-sizing:border-box;padding:0 40px;background:#ffffff;display:flex;flex-direction:column;font-family:'Source Sans 3',sans-serif">
-<div style="height:62px;flex:none;display:flex;align-items:center;justify-content:space-between;font-size:11px;color:#6b6478"><span>Türkiye Serisi · Sayfa 3/5</span><span>Kartları kenarlarından kes (63×88 mm)</span></div>
-<div style="display:grid;grid-template-columns:repeat(3,238px);grid-auto-rows:333px;gap:0">
-<sc-for list="{{cards}}" as="c" hint-placeholder-count="9">
-<div style="width:238px;height:333px;box-sizing:border-box;padding:6px;background:{{c.rim}};border-radius:12px">
-<div style="width:100%;height:100%;box-sizing:border-box;padding:7px;background:#f7f0e1;border:2px solid {{c.accent}};border-radius:8px;display:flex;flex-direction:column;gap:6px">
-<div style="height:34px;display:flex;align-items:center;justify-content:space-between;gap:6px">
-<div style="flex:1;font-family:'Alegreya',serif;font-weight:800;font-size:16px;line-height:1.05;color:#1d1a2f">{{c.name}}</div>
-<div style="width:30px;height:30px;flex:none;box-sizing:border-box;border-radius:50%;border:2px solid {{c.rim}};background:{{c.accent}};color:#ffffff;font-family:'Alegreya',serif;font-weight:800;font-size:18px;display:flex;align-items:center;justify-content:center">{{c.cost}}</div>
-</div>
-<div style="height:104px;flex:none;box-sizing:border-box;border-radius:6px;border:1px solid {{c.accent}};background:{{c.art}};display:flex;align-items:flex-end;justify-content:center;padding-bottom:5px;font-size:9px;letter-spacing:0.12em;font-weight:700;color:{{c.dark}}">ÇİZİM ALANI</div>
-<div style="height:14px;flex:none;display:flex;justify-content:space-between;font-size:10.5px;letter-spacing:0.08em;font-weight:700"><span style="color:{{c.dark}}">{{c.typeName}}</span><span style="color:{{c.ink}}">{{c.rarityLabel}}</span></div>
-<div style="flex:1;min-height:0;box-sizing:border-box;padding:6px 8px;background:#fffaf0;border:1px solid #d9ccb0;border-radius:6px;display:flex;flex-direction:column;justify-content:center;gap:4px;font-size:12px;line-height:1.3;color:#2a2638">
-<sc-if value="{{c.hasKw}}" hint-placeholder-val="{{ true }}"><div style="font-weight:700;color:{{c.dark}}">{{c.kw}}</div></sc-if>
-<sc-if value="{{c.hasText}}" hint-placeholder-val="{{ true }}"><div>{{c.text}}</div></sc-if>
-</div>
-<div style="height:32px;flex:none;display:flex;align-items:center;justify-content:space-between">
-<div style="font-size:10px;color:#6b6478">Anadolu Diyarı · {{c.n}}/40</div>
-<sc-if value="{{c.isWarrior}}" hint-placeholder-val="{{ true }}">
-<div style="display:flex;gap:5px">
-<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#b5452f;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">SAL</span>{{c.atk}}</div>
-<div style="height:26px;min-width:44px;padding:0 9px;box-sizing:border-box;border-radius:13px;background:#2f7d5b;color:#ffffff;display:flex;align-items:center;justify-content:center;gap:4px;font-weight:800;font-size:15px"><span style="font-size:9px;font-weight:700;letter-spacing:0.06em">CAN</span>{{c.hp}}</div>
-</div>
-</sc-if>
-<sc-if value="{{c.isOther}}" hint-placeholder-val="{{ false }}"><div style="font-size:11px;font-weight:700;color:{{c.dark}}">{{c.foot}}</div></sc-if>
-</div>
-</div>
-</div>
-</sc-for>
-</div>
-</div>
-</x-dc>
-<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
+<html lang="tr"><head><meta charset="utf-8"><title>Kart Sayfası 3 · v0.2</title><script src="./support.js"></script></head><body><x-dc><helmet><style>
+*{box-sizing:border-box}body{margin:0;color:#25342b;background:#ece5d4;font-family:system-ui,sans-serif}
+.paper{width:794px;height:1123px;padding:0 40px;background:#fff}.sheet-head{height:62px;display:flex;justify-content:space-between;align-items:center;font-size:11px;color:#63563e}.grid{display:grid;grid-template-columns:repeat(3,238px);grid-auto-rows:333px;gap:0}.card{width:238px;height:333px;padding:5px;border-radius:14px;box-shadow:inset 0 0 0 1px #6b4c32}.face{width:100%;height:100%;padding:6px;border-radius:9px;background:#f6ecd4;display:flex;flex-direction:column;gap:4px}.head{height:32px;flex:none;display:flex;align-items:center;justify-content:space-between;gap:6px}.name{font:700 16px/1.05 Georgia,serif;flex:1;min-width:0}.cost{width:28px;height:28px;flex:none;border-radius:50%;background:#286969;border:2px solid #7ca6a0;color:#fff;display:flex;align-items:center;justify-content:center;font:700 18px Georgia,serif}.art{width:100%;height:141px;flex:none;border:1px solid #b8a684;border-radius:6px;background-size:200% 200%;background-repeat:no-repeat;background-color:#d8c9a6}.type{height:11px;flex:none;display:flex;justify-content:space-between;font-size:9px;letter-spacing:.05em;font-weight:700;color:#62503a}.rules{flex:1;min-height:0;background:#fffbef;border:1px solid #d5c6a5;border-radius:5px;padding:4px 6px;display:flex;flex-direction:column;justify-content:center;gap:3px;font-size:10.5px;line-height:1.23}.keyword{font-weight:750;color:#655083}.foot{height:25px;flex:none;display:flex;justify-content:space-between;align-items:center;font-size:9px;color:#675b45}.stats{display:flex;gap:4px;font-size:13px;font-weight:800}.sal,.can{padding:3px 6px;border-radius:12px;color:#fff}.sal{background:#a84a32}.can{background:#2e7156}.stats small{font-size:8px}.page-foot{font-size:10px;color:#6c5b43;margin-top:14px}.reference{width:1180px;height:560px;padding:32px 40px;background:#f1e7ce}.reference h1{font:700 40px Georgia,serif;margin:0 0 8px}.reference p{font-size:13px;line-height:1.5}.reference-layout{display:flex;gap:24px;margin-top:22px}.reference-cards{display:flex;gap:12px}.legend{width:300px;font-size:13px;line-height:1.5}.legend h2{font:700 20px Georgia,serif;margin:0 0 10px}.legend p{margin:8px 0}.legend a{color:#28584d}@page{size:A4;margin:0}@media print{body{background:#fff}.paper{width:210mm;height:297mm;print-color-adjust:exact;-webkit-print-color-adjust:exact}}
+</style></helmet><div class="paper"><div class="sheet-head"><span>Türkiye Serisi · Sayfa 3/5 · v0.2</span><span>Kartları kenarlarından kes · 63×88 mm</span></div><div class="grid"><sc-for list="{{cards}}" as="c" hint-placeholder-count="9"><article class="card" data-card-id="{{c.id}}" style="background:{{c.rim}}"><div class="face" style="border:2px solid {{c.accent}}"><div class="head"><div class="name">{{c.name}}</div><div class="cost">{{c.cost}}</div></div><div class="art" role="img" aria-label="{{c.artAlt}}" style="background-image:url('{{c.artUrl}}');background-position:{{c.artPosition}}"></div><div class="type"><span>{{c.typeName}}</span><span>{{c.rarityLabel}}</span></div><div class="rules"><sc-if value="{{c.hasKw}}" hint-placeholder-val="{{true}}"><div class="keyword">{{c.kw}}</div></sc-if><sc-if value="{{c.hasText}}" hint-placeholder-val="{{true}}"><div>{{c.text}}</div></sc-if></div><div class="foot"><span>Anadolu · {{c.id}}/40</span><sc-if value="{{c.isWarrior}}" hint-placeholder-val="{{true}}"><div class="stats"><span class="sal"><small>SAL</small> {{c.atk}}</span><span class="can"><small>CAN</small> {{c.hp}}</span></div></sc-if><sc-if value="{{c.isOther}}" hint-placeholder-val="{{false}}"><span>{{c.foot}}</span></sc-if></div></div></article></sc-for></div><div class="page-foot">A4 · %100 ölçek · üstbilgi/altbilgi kapalı · arka plan grafikleri açık</div></div></x-dc><script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":794,"height":1123}}'>
 class Component extends DCLogic {
-renderVals() {
-const T = {
-S: { name: 'SAVAŞÇI', accent: '#b5452f', dark: '#8c2f1d', art: 'repeating-linear-gradient(45deg,#f1d6cc 0 9px,#ecc9bd 9px 18px)', foot: '' },
-B: { name: 'BÜYÜ', accent: '#1d7f86', dark: '#14595f', art: 'repeating-linear-gradient(45deg,#d3eaeb 0 9px,#c0dfe1 9px 18px)', foot: 'Anlık etki' },
-T: { name: 'TUZAK', accent: '#5a4a8a', dark: '#3f3268', art: 'repeating-linear-gradient(45deg,#e0daef 0 9px,#d1c9e5 9px 18px)', foot: 'Gizli oynanır' }
-};
-const R = {
-Y: { label: 'YAYGIN', rim: '#a0795a', ink: '#6b4a32' },
-N: { label: 'NADİR', rim: '#5d8fc2', ink: '#2c5f93' },
-E: { label: 'EFSANEVİ', rim: '#d4a72c', ink: '#7a5c06' }
-};
-const rows = [
-[19, "Karagöz", 5, "S", 3, 5, "", "Oynanınca rakibe 2 hasar.", "N"],
-[20, "Hacivat", 5, "S", 3, 5, "", "Oynanınca bir dost savaşçıya +2 can.", "N"],
-[21, "Bozkurt", 6, "S", 5, 6, "", "Sahadaki her diğer dost savaşçı için +1 saldırı.", "N"],
-[22, "Ocak Topçusu", 6, "S", 5, 5, "", "Oynanınca rakibin bir savaşçısına 3 hasar.", "Y"],
-[23, "Dede Korkut", 5, "S", 3, 6, "", "Her turun başında üst kartı gör, istersen destenin altına at.", "E"],
-[24, "Hızır", 6, "S", 4, 6, "", "Oynanınca tüm dost savaşçıların canı tam dolar.", "E"],
-[25, "Simurg", 7, "S", 6, 8, "Uçan", "", "E"],
-[26, "Ergenekon Demircisi", 7, "S", 5, 7, "", "Oynanınca bu maçta yok edilen bir dost savaşçıyı geri getir.", "E"],
-[27, "Kızılelma", 8, "S", 8, 8, "", "Oynanınca tüm rakip savaşçılara 2 hasar.", "E"]
-];
-const cards = rows.map(([n, name, cost, t, atk, hp, kw, text, r]) => {
-const ty = T[t], ra = R[r];
-return { n, name, cost, accent: ty.accent, dark: ty.dark, art: ty.art, typeName: ty.name, rim: ra.rim, ink: ra.ink, rarityLabel: ra.label, kw, hasKw: !!kw, text, hasText: !!text, atk, hp, isWarrior: t === 'S', isOther: t !== 'S', foot: ty.foot };
-});
-return { cards };
+renderVals() { return { cards: [
+  {
+    "id": 19,
+    "name": "Karagöz",
+    "cost": 5,
+    "atk": 3,
+    "hp": 5,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca rakibe 2 hasar.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "NADİR",
+    "rim": "#6c9fc4",
+    "artUrl": "gorseller/17-20.png",
+    "artPosition": "0% 100%",
+    "artAlt": "Karagöz: Kırmızı giysili Karagöz gölge kuklası"
+  },
+  {
+    "id": 20,
+    "name": "Hacivat",
+    "cost": 5,
+    "atk": 3,
+    "hp": 5,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca başka bir dost savaşçının mevcut ve azami canını kalıcı 2 artır.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "NADİR",
+    "rim": "#6c9fc4",
+    "artUrl": "gorseller/17-20.png",
+    "artPosition": "100% 100%",
+    "artAlt": "Hacivat: Yeşil giysili Hacivat gölge kuklası"
+  },
+  {
+    "id": 21,
+    "name": "Bozkurt",
+    "cost": 6,
+    "atk": 5,
+    "hp": 6,
+    "kw": "",
+    "hasKw": false,
+    "text": "Sahadaki her diğer dost savaşçı için +1 saldırı.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "NADİR",
+    "rim": "#6c9fc4",
+    "artUrl": "gorseller/21-24.png",
+    "artPosition": "0% 0%",
+    "artAlt": "Bozkurt: Dağ zirvesinde görkemli bozkurt"
+  },
+  {
+    "id": 22,
+    "name": "Ocak Topçusu",
+    "cost": 6,
+    "atk": 5,
+    "hp": 5,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca seçtiğin bir rakip savaşçıya 3 hasar ver.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "YAYGIN",
+    "rim": "#a77d4c",
+    "artUrl": "gorseller/21-24.png",
+    "artPosition": "100% 0%",
+    "artAlt": "Ocak Topçusu: Tunç topun yanındaki topçu"
+  },
+  {
+    "id": 23,
+    "name": "Dede Korkut",
+    "cost": 5,
+    "atk": 3,
+    "hp": 6,
+    "kw": "",
+    "hasKw": false,
+    "text": "Kendi turunun başında, çekişten önce üst kartına bak; tut veya destenin altına koy.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "EFSANEVİ",
+    "rim": "#d5ae42",
+    "artUrl": "gorseller/21-24.png",
+    "artPosition": "0% 100%",
+    "artAlt": "Dede Korkut: Ateş başında kopuz çalan Dede Korkut"
+  },
+  {
+    "id": 24,
+    "name": "Hızır",
+    "cost": 6,
+    "atk": 4,
+    "hp": 6,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca tüm dost savaşçıların canı tam dolar.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "EFSANEVİ",
+    "rim": "#d5ae42",
+    "artUrl": "gorseller/21-24.png",
+    "artPosition": "100% 100%",
+    "artAlt": "Hızır: Pınar başında şifa ışığı taşıyan Hızır"
+  },
+  {
+    "id": 25,
+    "name": "Simurg",
+    "cost": 7,
+    "atk": 6,
+    "hp": 8,
+    "kw": "Uçan",
+    "hasKw": true,
+    "text": "",
+    "hasText": false,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "EFSANEVİ",
+    "rim": "#d5ae42",
+    "artUrl": "gorseller/25-28.png",
+    "artPosition": "0% 0%",
+    "artAlt": "Simurg: Güneş önünde mücevher renkli kanatlarıyla Simurg"
+  },
+  {
+    "id": 26,
+    "name": "Ergenekon Demircisi",
+    "cost": 7,
+    "atk": 5,
+    "hp": 7,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca mezarlığından seçtiğin bir dost savaşçıyı temel değerleriyle geri getir. Oynanınca etkisi tekrarlanmaz; boş yer gerekir.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "EFSANEVİ",
+    "rim": "#d5ae42",
+    "artUrl": "gorseller/25-28.png",
+    "artPosition": "100% 0%",
+    "artAlt": "Ergenekon Demircisi: Örste kızgın demir döven Ergenekon demircisi"
+  },
+  {
+    "id": 27,
+    "name": "Kızılelma",
+    "cost": 8,
+    "atk": 8,
+    "hp": 8,
+    "kw": "",
+    "hasKw": false,
+    "text": "Oynanınca tüm rakip savaşçılara 2 hasar.",
+    "hasText": true,
+    "isWarrior": true,
+    "isOther": false,
+    "typeName": "SAVAŞÇI",
+    "accent": "#a64d35",
+    "foot": "",
+    "rarityLabel": "EFSANEVİ",
+    "rim": "#d5ae42",
+    "artUrl": "gorseller/25-28.png",
+    "artPosition": "0% 100%",
+    "artAlt": "Kızılelma: Bulutlardaki altın şehrin üstünde ışıldayan kızıl elma"
+  }
+] }; }
 }
-}
-</script>
-</body>
-</html>
+</script></body></html>

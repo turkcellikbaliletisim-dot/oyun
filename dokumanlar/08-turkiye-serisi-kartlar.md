@@ -1,6 +1,6 @@
 # 08 — Türkiye Serisi: 40 kart (v0.2)
 
-Bu dosya `oyun/cards.js` kaynağından `npm run docs:cards` ile üretilir. Kart değişikliklerini önce o kaynakta yapın. Kesin zamanlama ve sınırlar için [oyun kurallarına](02-oyun-kurallari.md) bakın. Eski Claude Design kaynakları v0.1 arşividir; güncel baskı `oyun/baski.html` üzerinden alınır.
+Bu dosya `oyun/cards.js` kaynağından `npm run docs:cards` ile üretilir. Kart değişikliklerini önce o kaynakta yapın. Kesin zamanlama ve sınırlar için [oyun kurallarına](02-oyun-kurallari.md) bakın. Claude Design tuvali ve bağımsız kart sayfaları `kart-prototipi/` içinde v0.2 olarak güncellenir. Güncel baskı `oyun/baski.html` üzerinden alınır.
 
 20 kartlık deste; aynı karttan en çok 2, her farklı efsaneviden 1 kopya. Y: Yaygın, N: Nadir, E: Efsanevi. Hasar turlar arasında kalıcıdır.
 
@@ -65,4 +65,4 @@ Bu dosya `oyun/cards.js` kaynağından `npm run docs:cards` ile üretilir. Kart 
 
 ## Görsel kaynaklar
 
-İsimler tarihî ve kültürel anlatılardan esinlenir. Bu durum modern görseller, çeviriler ve müzikler için otomatik kullanım hakkı sağlamaz. Prototipte soyut simgeler kullanılır; özgün illüstrasyon ve hak belgeleri yayın kapısıdır.
+İsimler tarihî ve kültürel anlatılardan esinlenir. Bu durum modern görseller, çeviriler ve müzikler için otomatik kullanım hakkı sağlamaz. 40 kart için proje özelinde yapay zekâ yardımıyla üretilmiş ayrı illüstrasyonlar kullanılır. Görsel eşlemesi ve kaynak dosyaları `kart-prototipi/art.js` ve `kart-prototipi/gorseller/` içindedir; kültürel doğruluk ve yayın hakları incelemesi ayrıca yapılmalıdır.
