@@ -1,0 +1,71 @@
+name: Final second skin validation
+on:
+  push:
+    branches: [yeni-gorsel-2-20261012]
+    paths: [.github/workflows/skin-v2-final-check.yml]
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pillow numpy scipy
+      - run: python scripts/skin_v2_polish.py
+      - name: Reopen and checksum every requested PNG and OGG
+        run: |
+          python - <<'PY'
+          import hashlib,json
+          from pathlib import Path
+          from PIL import Image
+          import numpy as np
+          root=Path('native/skin')
+          m=json.loads((root/'manifest_v2.json').read_text())
+          expected=json.loads(Path('dokumanlar/skin_v2_expected.json').read_text())
+          assert set(m['assets'])==set(expected) and len(expected)==114
+          for name,size in expected.items():
+              p=root/name
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==m['assets'][name]['sha256'],name
+              im=Image.open(p);im.load();assert list(im.size)==size,name
+              if im.mode=='RGBA':
+                  a=np.array(im.getchannel('A'))
+                  assert a.min()==0 and a.max()>0,name
+                  assert max(a[0].max(),a[-1].max(),a[:,0].max(),a[:,-1].max())==0,name
+          assert len(m['audio'])==14
+          for name,row in m['audio'].items():
+              p=root/'audio'/name
+              assert p.read_bytes()[:4]==b'OggS'
+              assert hashlib.sha256(p.read_bytes()).hexdigest()==row['sha256']
+              assert row['sample_rate']==44100 and row['peak_after_decode']<1
+          assert not list(root.rglob('*.ttf')) and not list(root.rglob('*.otf'))
+          print('PASS: 114 PNGs, 14 OGGs, requested dimensions, hashes, alpha, and no font binaries.')
+          PY
+      - name: Save only verified cleanup
+        run: |
+          set -eu
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add native/skin/enemy_06.png native/skin/enemy_10.png native/skin/hero_player_alt1.png native/skin/manifest_v2.json dokumanlar/yeni-gorsel-2/portraits.jpg dokumanlar/yeni-gorsel-2/build-summary.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'Yeni gorsel 2: final transparent portrait cleanup and complete validation'
+            git push origin HEAD:yeni-gorsel-2-20261012
+          fi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: destan-skin-v2-final
+          retention-days: 7
+          path: |
+            native/skin/*.png
+            native/skin/*.json
+            native/skin/*.md
+            native/skin/audio/
+            dokumanlar/YENI-GORSEL-2.md
+            dokumanlar/skin_v2_expected.json
+            dokumanlar/skin_v2_sources.json
+            dokumanlar/yeni-gorsel-2/
+            scripts/skin_v2_*.py
+            scripts/skin_v2_fonts.command
