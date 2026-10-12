@@ -79,6 +79,8 @@ func run() -> void:
 	app.muted = false
 	app.play_sound()
 	check(app.audio.stream != null, "Native sound stream missing")
+	for skin_file in ["logo.png", "divider.png", "scrollbar.png", "end_turn_ready.png", "button_red.png", "icon_net_ok.png", "icon_net_bad.png"]:
+		check(app.skin(skin_file) != null, "Skin file not loadable: " + skin_file)
 	await create_timer(0.2).timeout
 	app.queue_free()
 	await process_frame

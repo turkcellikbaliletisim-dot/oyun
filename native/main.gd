@@ -95,6 +95,26 @@ func skin_box(file: String, edge_x: int = 100, edge_y: int = 32, pad_x: int = 24
 	box.content_margin_bottom = pad_y
 	return box
 
+func skin_button(node: Button, file: String, edge_x: int = 100, edge_y: int = 32) -> void:
+	var box = skin_box(file, edge_x, edge_y)
+	if box == null:
+		return
+	for state in ["normal", "hover", "pressed", "focus"]:
+		node.add_theme_stylebox_override(state, box)
+
+func divider(parent: Node) -> void:
+	var tex = skin("divider.png")
+	if tex == null:
+		parent.add_child(HSeparator.new())
+		return
+	var line = TextureRect.new()
+	line.texture = tex
+	line.custom_minimum_size = Vector2(0, 30)
+	line.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	line.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	line.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(line)
+
 func build_shell() -> void:
 	var palette = Theme.new()
 	palette.default_font_size = 18
@@ -116,6 +136,10 @@ func build_shell() -> void:
 		var field = skin_box("input_field.png", 33, 22, 18, 8)
 		if field != null:
 			palette.set_stylebox(state, "LineEdit", field)
+	var grabber = skin_box("scrollbar.png", 20, 20, 0, 0)
+	if grabber != null:
+		for state in ["grabber", "grabber_highlight", "grabber_pressed"]:
+			palette.set_stylebox(state, "VScrollBar", grabber)
 	palette.set_color("font_color", "LineEdit", Color("f1dfb2"))
 	palette.set_color("font_color", "Button", Color("f1dfb2"))
 	palette.set_color("font_disabled_color", "Button", Color("829093"))
@@ -350,6 +374,15 @@ func render() -> void:
 		render_match()
 
 func render_lobby() -> void:
+	var logo = skin("logo.png")
+	if logo != null:
+		var mark = TextureRect.new()
+		mark.texture = logo
+		mark.custom_minimum_size = Vector2(0, 150)
+		mark.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(mark)
 	label("ANADOLU'DA YOLCULUK", content, 26)
 	if account.is_empty():
 		label("Node sunucusunu başlat ve Bağlan'a bas.", content)
@@ -375,6 +408,7 @@ func render_lobby() -> void:
 	if account.queued:
 		button("Lig aramasını iptal et", actions, func(): mutate("queue/cancel", {}))
 	button("Deste oluştur", actions, render_deck_builder)
+	divider(content)
 	label("HESABI KORU", content, 23)
 	label("Kurtarma anahtarı hesaba erişim verir. Güvenli bir yere kaydet; yalnız ilk oluşturulduğunda indirilir.", content, 16)
 	if not recovery_key.is_empty():
@@ -385,6 +419,7 @@ func render_lobby() -> void:
 	content.add_child(recover_input)
 	button("Hesabı kurtar", content, recover_account)
 	if not account.history.is_empty():
+		divider(content)
 		label("SON MAÇLAR", content, 23)
 		for match_entry in account.history:
 			button("%s · %s" % [match_entry.kind, match_entry.result], content, func(): open_match(match_entry.id))
@@ -525,7 +560,10 @@ func render_match() -> void:
 					label("Değiştirilecek kartları seç. Görev kartı korunur.", content, 16)
 					button("Bu elle başla" if mulligan_indices.is_empty() else "%d kartı değiştir" % mulligan_indices.size(), decisions, func(): move({"type": "mulligan", "indices": mulligan_indices.duplicate()}))
 				else:
-					button(action_name(action), decisions, func(): move(action))
+					var turn_button = button(action_name(action), decisions, func(): move(action))
+					if action.type == "end":
+						turn_button.custom_minimum_size = Vector2(200, 64)
+						skin_button(turn_button, "end_turn_ready.png", 90, 60)
 		if not selected.is_empty():
 			label("HEDEF SEÇ", content, 21)
 			var targets = HFlowContainer.new()
@@ -553,7 +591,8 @@ func render_match() -> void:
 		if mulligan_indices.has(index):
 			label("✓ Değiştirilecek: " + cards[int(mine.hand[index])].name, content, 15)
 	label("Tuzakların: " + ", ".join(mine.traps.map(func(trap): return cards[int(trap.id)].name)), content, 15)
-	button("Lobiye dön / teslim ol", content, func():
+	divider(content)
+	var leave_button = button("Lobiye dön / teslim ol", content, func():
 		if state.status == "finished":
 			leave_match()
 		else:
@@ -563,6 +602,7 @@ func render_match() -> void:
 			dialog.canceled.connect(dialog.queue_free)
 			add_child(dialog)
 			dialog.popup_centered())
+	skin_button(leave_button, "button_red.png")
 	label("\n".join(state.log.slice(maxi(0, state.log.size() - 8))), content, 14)
 
 func leave_match() -> void:

@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-12 22:45 UTC (3. saatlik çalışma; önceki: 21:45, 20:40 UTC) (saatlik otomatik çalışma, dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
+Son güncelleme: 2026-10-12 23:55 UTC (4. saatlik çalışma; önceki: 22:45, 21:45, 20:40 UTC) (saatlik otomatik çalışma, dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
 
 ## Yapılanlar
+- 2026-10-12 23:55 UTC: main'de yeni commit yok (e336526). ChatGPT'nin `gorsel-kalite/denetim-20261013` notu (GORSEL-KALITE-DENETIMI.md) bu dala merge edildi. **Düzeltilen görseller:** `icon_net_ok/bad.png` artık Wi-Fi simgesi (altın halka; kötü olan üstü çizili, kırmızı), `logo.png` `logo_wordmark.png`'den 1024x512 olarak yeniden üretildi (atlas kırpımı değil). **Yeni bağlamalar (`native/main.gd`):** lobide `logo.png`, `divider.png` ayırıcıları, `scrollbar.png` (VScrollBar grabber), `end_turn_ready.png` (tur bitir butonu), `button_red.png` (teslim ol). `integration.gd` içine skin dosyası yüklenebilirlik testi eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2 linux). Görsel doğrulama (ekran görüntüsü) hâlâ Mac'te yapılmalı.
 - 2026-10-12 22:45 UTC: main'de yeni commit yok (e336526). ChatGPT'nin `gorsel-kalite/denetim-20261013` notundaki hata düzeltildi: `native/integration.gd` OGG akışında olmayan `.data` okuyordu → `audio.stream != null` kontrolüne çevrildi. Godot 4.7.2 (linux) bu ortamda indirilip **`npm run test:native` GEÇTİ** (40 atlas, tam eğitim, ödül/paket, replay, reconnect, kurtarma). `npm test`: 74/74. Yeni bağlamalar: `input_field.png` (LineEdit 9-slice 33/22/33/22), buton `focus` durumu altın doku, `play_sound(ad)` ile olay sesleri (`pack_open`, `victory`, `defeat`, varsayılan `click`).
 - 2026-10-12 21:45 UTC: main'de yeni commit yok (e336526); `otomatik/saatlik` zaten güncel. İlk görsel bağlama yapıldı (`native/main.gd`): `skin()`/`skin_box()` yardımcıları, tüm butonlarda `button_dark/gold.png` 9-slice (100,32,100,32), `background.png` tam ekran arka plan, `audio/click.ogg` tıklama sesi. Dosya yoksa eski düz stile geri düşer. **Godot ile test edilemedi** (bu ortamda Godot yok); Mac'te `npm run test:native` çalıştırılmalı. `npm test`: 74/74.
 - 2026-10-12 20:40 UTC: `main` incelendi. "Yeni görsel" ve "Yeni görsel 2" paketleri main'de; `yeni-gorsel-2-20261012` dalı main'den yalnızca 4 CI workflow dosyası kadar fazla, `yeni-gorsel-import-20261012` eski bir alt kümedir (yeni içerik yok).
@@ -18,9 +19,9 @@ Son güncelleme: 2026-10-12 22:45 UTC (3. saatlik çalışma; önceki: 21:45, 20
 4. Sesler geçici prosedürel; kulakla/oyun içi miks onayı yok.
 
 ## Yapılması gereken kod işleri (öncelik sırasıyla)
-- [ ] `main.gd`: (button_gold/dark, input_field bağlandı) kalan: `button_red.png`, `panel.png` (kenar değeri manifestte yok, 800x800), `chip_*`, `scrollbar.png`, `divider.png` bağla (9-slice kenar değerleri `manifest_v2.json` içinde).
+- [ ] `main.gd`: (button_gold/dark, input_field, button_red, scrollbar, divider bağlandı) kalan: `panel.png` (kenar değeri manifestte yok, 800x800), `chip_*` (9-slice kenar değerleri `manifest_v2.json` içinde).
 - [ ] Arka plan/sahne: `background.png`/`background_land.png`, `table_center.png`, `lane.png`/`lane_enemy.png`, `scene_play/story/friends/chest.png`.
-- [ ] Giriş ekranı: `splash.png`, `logo.png`, `logo_wordmark.png`, `loading_bar_frame/fill.png`, `progress_frame/fill.png`.
+- [ ] Giriş ekranı: `splash.png`, (`logo.png` lobide bağlandı) `logo_wordmark.png`, `loading_bar_frame/fill.png`, `progress_frame/fill.png`.
 - [ ] Yatay maç ekranı düzeni (landscape): `background_land.png` + hat düzeni; şu an dikey akış.
 - [ ] Paket açılış/sandık animasyonu: `chest_closed → chest_open`, `pack_reveal_burst.png`, `pack_open.ogg`.
 - [ ] Hedef halkası (`target_ring.png`) ve sürükleme oku (`drag_arrow.png`).
@@ -35,8 +36,7 @@ Son güncelleme: 2026-10-12 22:45 UTC (3. saatlik çalışma; önceki: 21:45, 20
 
 | Dosya | Boyut | Kısa prompt |
 |---|---|---|
-| `icon_net_ok.png` / `icon_net_bad.png` (yeniden çiz) | mevcut boyut | Yeşil / kırmızı Wi-Fi (bağlantı) simgesi, altın çerçeveli yuvarlak, şeffaf arka plan; mücevher OLMAYACAK. |
-| `logo.png` (yeniden üret) | mevcut boyut | `logo_wordmark.png` kaynağından yüksek çözünürlüklü küçültme; atlas kırpımı kullanma. |
+| `icon_net_ok.png` / `icon_net_bad.png` (isteğe bağlı, daha süslü) | 256x256 | Geçici vektör Wi-Fi simgeleri yapıldı; istenirse aynı fikirle boyalı/dokulu sürüm. |
 | `hero_player_alt3.png` .. `alt5.png` | `hero_player.png` ile aynı | Aynı çizim stili ve çerçevede, farklı yaş/cinsiyet/kıyafetle Anadolu destan kahramanı portresi, şeffaf arka plan. |
 | `loading_tip_panel.png` (isteğe bağlı) | 900x160 | Yüklenme ipucu için ahşap-altın kenarlı koyu parşömen şerit, orta düz, şeffaf dış. |
 | `badge_rank_*.png` (isteğe bağlı) | 128x128 | Bronz/gümüş/altın rütbe rozeti, Türk motifli, şeffaf arka plan. |
