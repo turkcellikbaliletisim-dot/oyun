@@ -1,0 +1,62 @@
+name: Finish second skin package
+on:
+  push:
+    branches: [yeni-gorsel-2-20261012]
+    paths: [.github/workflows/skin-v2-finish.yml]
+permissions:
+  contents: write
+concurrency:
+  group: skin-v2-finish
+  cancel-in-progress: false
+jobs:
+  finish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Import checksum-verified packaging script
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --location --retry 1 --connect-timeout 15 --max-time 90 'https://at.adobe.com/fNhRdIZppFSf4G9P' -o "$RUNNER_TEMP/finish.zip"
+          echo "7bff4bbda115ada3a0f557de93d48b34c408b1b7d86789dc9aade6540de229da  $RUNNER_TEMP/finish.zip" | sha256sum -c -
+          python - <<'PY'
+          import os, zipfile
+          from pathlib import Path
+          with zipfile.ZipFile(Path(os.environ['RUNNER_TEMP'])/'finish.zip') as z:
+              assert z.namelist()==['scripts/skin_v2_finish.py']
+              Path('scripts/skin_v2_finish.py').write_bytes(z.read('scripts/skin_v2_finish.py'))
+          PY
+      - name: Install packaging dependencies
+        run: python -m pip install --disable-pip-version-check pillow numpy scipy fonttools cairosvg soundfile
+      - name: Complete assets and run technical validation
+        run: python scripts/skin_v2_finish.py
+      - name: Check file coverage and no distributed fonts
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          m=json.loads(Path('native/skin/manifest_v2.json').read_text())
+          assert m['png_count']==114 and not m['missing_png'] and not m['errors']
+          assert m['audio_files_generated']==14
+          assert len(list(Path('native/skin/audio').glob('*.ogg')))==14
+          assert not list(Path('native/skin').rglob('*.ttf'))
+          assert not list(Path('native/skin').rglob('*.otf'))
+          print('114 PNG files and 14 OGG files validated. No font binaries distributed.')
+          PY
+      - name: Commit on isolated branch only
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'yeni-gorsel-2-20261012'
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add scripts/skin_v2_finish.py native/skin dokumanlar/YENI-GORSEL-2.md dokumanlar/yeni-gorsel-2
+          git diff --cached --stat
+          if ! git diff --cached --quiet; then
+            git commit -m 'Yeni gorsel 2: finish 114 PNGs, 14 provisional OGGs, font installer and QA'
+            git push origin HEAD:yeni-gorsel-2-20261012
+          fi
