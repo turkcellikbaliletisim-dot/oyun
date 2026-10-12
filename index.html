@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="tr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#172b28">
+  <title>Destan Diyarları · Anadolu</title>
+  <link rel="stylesheet" href="oyun/style.css">
+</head>
+<body>
+  <header class="masthead">
+    <a class="wordmark" href="./">✧ DESTAN DİYARLARI <small>ANADOLU · PROTOTİP v0.2</small></a>
+    <nav aria-label="Gezinme"><button id="collection-open">Koleksiyon</button><button id="help-open">Nasıl oynanır?</button><a href="oyun/baski.html">Kartları bas</a><a href="dokumanlar/02-oyun-kurallari.md">Kurallar</a></nav>
+  </header>
+  <main>
+    <section id="setup" class="setup">
+      <div class="intro"><span class="eyebrow">BİR DESTAN ANLAT. BİR DİYARI KORU.</span><h1>Efsaneler<br>senin elinde.</h1><p>Anadolu’nun 40 kartıyla desteni kur. Gölge’ye karşı savaş, tuzakları açığa çıkar ve kendi destanını yaz.</p><div class="pills"><span>20 kartlık deste</span><span>20 can</span><span>Tek oyunculu</span></div></div>
+      <form id="new-game" class="panel">
+        <h2>Destanı başlat</h2>
+        <label>Oyun modu<select id="mode"><option value="practice">Serbest maç · tüm kartlar açık</option><option value="story">Hikâye · Anadolu’nun 10 bölümü</option></select></label>
+        <div id="chapter-picker" hidden><label>Bölüm<select id="chapter"></select></label><p id="chapter-description" class="muted"></p></div>
+        <label>Senin desten<select id="deck" name="deck"></select></label>
+        <p id="deck-description" class="muted"></p>
+        <label class="checkbox"><input id="owned-only" type="checkbox"> Yalnız koleksiyonumdaki kartlarla oyna <small>Kapalıyken serbest maçta tüm kartları deneyebilirsin. Hikâye desteleri ödünç verilir.</small></label>
+        <details><summary>Kendi desteni oluştur</summary><p class="muted">Tam 20 kart. Bir karttan en fazla 2, her efsanevi karttan 1 kopya. Prototipte tüm kartlar açık.</p><div id="deck-builder" class="builder"></div><p id="deck-total"></p><button type="button" id="use-custom">Bu desteyi kullan</button></details>
+        <label>Gölge’nin destesi<select id="opponent" name="opponent"></select></label>
+        <label>Maç tohumu<input id="seed" name="seed" type="number" min="0" max="4294967295" step="1" value="42" required><small>Aynı deste ve tohum, aynı başlangıcı oluşturur.</small></label>
+        <label class="checkbox"><input id="timed" type="checkbox"> 45 saniyelik turlar <small>Kapalıyken süre baskısı olmadan öğren.</small></label>
+        <button class="primary" type="submit">Maça başla <span aria-hidden="true">→</span></button>
+        <button id="resume" type="button" hidden>Kayıtlı maça devam et</button>
+        <label class="import">Maç kaydını yükle<input id="import-replay" type="file" accept="application/json,.json"></label>
+        <p class="muted">Ücretsiz yerel prototip. Kart ve altın kazanımı bu tarayıcıda tutulur. Hesap, satın alma ve çevrimiçi lig yok.</p>
+      </form>
+    </section>
+    <section id="match" hidden aria-label="Maç sahası">
+      <div class="match-toolbar"><button id="back">← Ana menü</button><span id="turn-label"></span><span id="timer" aria-live="off"></span><button id="sound-toggle" aria-pressed="false">Ses kapalı</button><button id="export">Maçı indir</button><button id="surrender">Teslim ol</button></div>
+      <div id="arena" class="arena">
+        <div id="foe-hero" class="hero-zone"></div>
+        <div id="foe-board" class="board" aria-label="Rakibin savaşçıları"></div>
+        <div class="battle-line"><span id="phase-label"></span><span>✧ KADİM MÜHÜR ✧</span><button id="end-turn" class="primary">Turu bitir →</button></div>
+        <div id="my-board" class="board" aria-label="Senin savaşçıların"></div>
+        <div id="my-hero" class="hero-zone"></div>
+      </div>
+      <div id="decision" class="decision" hidden></div>
+      <div id="chapter-task" class="decision" hidden></div>
+      <div class="hand-heading"><h2>Elindeki kartlar</h2><span id="hand-count"></span></div>
+      <div id="hand" class="hand"></div>
+      <div id="selection" class="selection" hidden><span id="selection-text"></span><button id="cancel-selection">Vazgeç</button></div>
+      <div id="result" class="result" hidden></div>
+      <details class="match-log"><summary>Destan kaydı · son hamleler</summary><ol id="log"></ol></details>
+    </section>
+    <p id="notice" role="status" aria-live="polite"></p>
+  </main>
+  <footer>Bir kağıt prototipinden doğan ilk oynanabilir sürüm. Denge çalışması sürüyor.</footer>
+  <dialog id="help"><h2>İlk maçın</h2><ol><li>Başlangıçta değiştirmek istediğin kartlara dokun, ardından elini onayla.</li><li>Mavi enerji sayısı kadar kart oynayabilirsin. Hedef isteyen kartı seçtikten sonra parlayan hedefe dokun.</li><li>Sahadaki hazır savaşçını seç, ardından rakibi veya bir rakip savaşçıyı seç. Her savaşçı turda bir kez saldırır.</li><li>İlk saldırıdan sonra kart oynayamazsın. Kartlarını önce oyna!</li><li>Koruyucu varsa önce onu geçmelisin. Hasar turlar arasında kalır. Rakibin canını sıfıra indirerek kazan.</li></ol><p>Hızlı hemen saldırır. Zehirli, hasar verdiği savaşçıyı yok eder. Uçan’a yerdeki savaşçı saldırmaz; büyü, tuzak ve yetenekler onu etkileyebilir.</p><p>Maç 20 tam turda biter; canı fazla olan kazanır, eşitlik beraberliktir. Bot bir eğitim rakibidir.</p><button id="help-close" class="primary">Anladım</button></dialog>
+  <dialog id="collection"><div class="collection-heading"><h2>Kart koleksiyonun</h2><button id="collection-close">Kapat</button></div><p id="wallet"></p><p id="quests" class="muted"></p><button id="open-pack" class="primary">Paket aç</button><p id="pack-result" role="status"></p><p id="archive-info"></p><p class="muted">Yerel ve ücretsiz ekonomi denemesi. Gerçek para yok. Üretim ve parçalama tek kopya işler; parçalama geri alınmaz. Maç kayıtları ekonomik ödül olarak içeri alınmaz.</p><div id="collection-cards"></div></dialog>
+  <dialog id="card-detail"><h2 id="detail-name"></h2><p id="detail-stats"></p><p id="detail-text"></p><button id="detail-close" class="primary">Kapat</button></dialog>
+  <script type="module" src="oyun/app.js"></script>
+</body>
+</html>

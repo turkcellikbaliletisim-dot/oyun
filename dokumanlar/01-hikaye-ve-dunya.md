@@ -28,7 +28,11 @@ Efsaneler unutuldukça silinir. Sen, kendi diyarının efsanelerini kartlara dö
 - Sezon 2: Doğu Diyarı (Japon efsaneleri)
 - Sezon 3: Nil Diyarı (Mısır)
 - Sezon 4: Kuzey Diyarı (İskandinav)
-- Her sezon yeni kart seti, yeni Mühür parçası ve yeni hikâye bölümleri getirir. Efsaneler yalnızca halk anlatılarından ve kamuya ait kaynaklardan seçilir, görseller özgün çizilir.
+- Sezon 5: Mührün Kalbi — beşinci parçanın saklandığı, dört diyarın birleştiği final bölgesi. Yeni ülke seti gerektirmeyen ortak hikâye finali. Böylece dört diyar ve beş mühür parçası tutarlı olur.
+- İlk dört sezon yeni kart seti, bir Mühür parçası ve yeni hikâye bölümleri getirir; beşinci sezon ortak finaldir. Bunlar gelecek içerik taslağıdır, uygulanmış sezonlar değildir. Efsaneler yalnızca halk anlatılarından ve kamuya ait kaynaklardan seçilir, görseller özgün çizilir.
 
 ## Hikâyenin oyundaki yeri
 Hikâye oyunun ana ekseni değil, oyuncuyu maça çeken bir çerçeve. İlk haftada oyuncu hikâyeden çok maçın tadına bakar, bu yüzden bölümler kısa tutulur ve her bölüm bir mekanik öğretir.
+
+## İlk prototip kapsamı
+Yalnız Anadolu Diyarı seçilebilir. Yerel prototip 10 bölüm içerir; bölüm kart ödülleri yerel koleksiyona verilir; başka diyarlar henüz uygulanmaz. İlk maç senaryolu eğitimdir; sonraki maçlar botla oynanır.

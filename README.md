@@ -1,16 +1,58 @@
-# Destan Diyarları (çalışma adı)
+# Destan Diyarları
 
-Türkiye temalı, beceri odaklı mobil kart savaş oyunu. Kapalı ekonomi: kartlar ve oyun içi değerler paraya veya kripto'ya çevrilemez.
+Türkiye temalı kart savaş oyununun **oynanabilir v0.2 prototipi**. 40 kart, bot rakip, üç hazır deste, deste oluşturma, 10 hikâye bölümü, yerel koleksiyon ekonomisi, kayıt ve basılabilir kartlar içerir. Ticari mobil yayın değil; insan denge testleri ve üretim gereksinimleri sürüyor.
 
-## Dokümanlar (`dokumanlar/`)
-1. `01-hikaye-ve-dunya.md`: Diyarlar, Kadim Mühür, Unutuş, karakterler
-2. `02-oyun-kurallari.md`: tur akışı, savaş, sınırlar, tuzaklar, lig sistemi
-3. `03-hikaye-bolumleri.md`: Sezon 1'in ilk 10 bölümü
-4. `04-ilk-hafta-deneyimi.md`: oyuncunun ilk 7 günü, metrikler
-5. `05-ekonomi-ve-gelir.md`: kapalı ekonomi, paketler, takas, gelir modeli
-6. `06-hukuki-cerceve.md`: kontrol listesi (hukuki tavsiye değildir)
-7. `07-yol-haritasi.md`: 8 aylık plan, ekip, riskler
-8. `08-turkiye-serisi-kartlar.md`: 40 kartlık başlangıç seti (v0.1)
+## Çalıştırma
 
-## Kart prototipi (`kart-prototipi/`)
-40 kartın basılabilir tasarımı (A4, 3×3, 63×88 mm). Dosyalar Claude Design tuvalinin kaynak dosyalarıdır (`*.dc.html`, `canvas.json`); düzenlemek için Claude'daki "Türkiye Serisi Kart Prototipi" tuvalini kullanın.
+Gerekenler: Python 3, modern tarayıcı. Testler için Node.js 22+. Harici JavaScript paketi yok; `npm install` gerekmez.
+
+```sh
+cd /workspace/oyun
+npm start
+```
+
+Alternatif: `python3 -m http.server 8000 --bind 127.0.0.1` (depo kökünde). Sunucu kökündeki `index.html` oyundur. Uygulamayı HTTP üzerinden açın; `file://` ile ES modülleri yüklenmeyebilir. Mevcut bir sunucu varsa ikinci süreç başlatmayın.
+
+## Oyna
+
+1. Serbest maçta üç hazır desteden birini seç veya 20 kartlık kendi desteni oluştur. Serbest denemede tüm kartlar açıktır; istersen yalnız sahip olduğun kartlarla oynarsın. Koleksiyon ekranında altınla ücretsiz paket aç, tozla üret veya kart parçala.
+2. Koleksiyon ekranında giriş ödülü, görevler, paket garantisi ve sahip olduğun kartları gör. Finalde eksik kart arşivi açılır. Bu ekonomi yereldir ve gerçek para içermez.
+3. Hikâye modunda Anadolu'nun 10 bölümünü sırayla oyna. Görevi yerine getirip kazanırsan sonraki bölüm açılır.
+4. Başlangıç elinde değiştirmek istediğin kartlara dokun, onayla.
+5. Önce kartlarını oyna, sonra hazır savaşçıyla hedef seçip saldır. Bir savaşçı turda bir kez saldırır; ilk saldırıdan sonra kart oynanmaz.
+6. Ana menüden kayıtlı maça devam edebilirsin. JSON indir/yükle aynı kurallarla maçı yeniden oluşturur. Tarayıcı verileri silinirse yerel ilerleme kaybolur; kayıt bulut hesabı değildir.
+
+45 saniyelik tur isteğe bağlı; varsayılan çalışma süresiz. Aynı deste ve tohum aynı başlangıcı verir. Bot eğitim rakibidir, ileri rekabetçi yapay zekâ değildir. Ses isteğe bağlıdır.
+
+## Kontroller
+
+```sh
+npm test
+npm run simulate
+npm run economy
+npm run docs:cards
+```
+
+`docs:cards`, tek kart kaynağından 08 belgesini yeniler. `economy` yoğun katılım senaryolarını hesaplar. `simulate` 60 bot maçı ve aynı sonuç veren kayıt tekrarını doğrular; insan dengesi testi sayılmaz.
+
+Python Playwright ve Chromium bulunan ortamda, sunucu açıkken `python3 tests/browser-smoke.py` gerçek tarayıcı akışını test eder. Bu test aracı oyunun çalışma bağımlılığı değildir.
+
+## Kartları bas
+
+`oyun/baski.html`: güncel 40 kart, beş A4 kart sayfası ve bir deste/kural sayfası. Yazdırma: A4, %100 gerçek boyut, üstbilgi/altbilgi kapalı, arka plan grafikleri açık. Her kart 63×88 mm; fiziksel yazıcıda ilk kartın ölçüsünü kontrol edin. İlk set her karttan bir kopya içerir; iki oyuncunun aynı başlangıç destesi için başlangıç kartlarını dörder kopyaya tamamlayın.
+
+`kart-prototipi/` eski **v0.1 Claude Design arşividir**; özel çalışma zamanına bağlıdır. Güncel oyun ve baskı `oyun/cards.js` verisini kullanır. Eski tuval üzerinde düzenleme yeni motora otomatik aktarılmaz.
+
+## Belgeler
+
+- [Kurallar v0.2](dokumanlar/02-oyun-kurallari.md), [40 kart](dokumanlar/08-turkiye-serisi-kartlar.md)
+- [Dünya](dokumanlar/01-hikaye-ve-dunya.md), [10 bölüm](dokumanlar/03-hikaye-bolumleri.md), [ilk hafta](dokumanlar/04-ilk-hafta-deneyimi.md)
+- [Sayısal ekonomi taslağı](dokumanlar/05-ekonomi-ve-gelir.md), [hukuk inceleme dosyası](dokumanlar/06-hukuki-cerceve.md)
+- [Üretim planı](dokumanlar/07-yol-haritasi.md), [teknik mimari](dokumanlar/09-teknik-mimari.md)
+- [Test ve denge](dokumanlar/10-test-ve-denge-plani.md), [sanat/ses/erişilebilirlik](dokumanlar/11-sanat-ses-ve-erisilebilirlik.md)
+- [Doğrulama sonuçları](dokumanlar/13-dogrulama-sonuclari.md)
+- [Tamamlanan işler ve kalan yayın kapıları](dokumanlar/12-durum-ve-yayin-kapilari.md)
+
+## Kapsam
+
+Şu anda hesap, online lig, sunucu tarafından korunan koleksiyon, gerçek ödeme, takas, mobil mağaza paketi ve özgün kart illüstrasyonları yok. Oyun harici analitik/font/CDN isteği yapmaz. Yerel istemci ve kayıtlar güvenilir sunucu otoritesinin yerine geçmez. Hukuk/mağaza uygunluğu ve gerçek oyuncu dengesi doğrulanmış değildir.

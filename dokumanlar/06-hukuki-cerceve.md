@@ -1,41 +1,45 @@
-# 06 - Hukuki Çerçeve (kontrol listesi)
+# 06 — Hukuk ve yayın inceleme dosyası
 
-> Bu dosya genel bilgi içindir, hukuki tavsiye değildir. Lansmandan önce bir teknoloji hukuku avukatıyla görüşülmelidir.
+Bu belge inceleme kapsamını tanımlar; hukuki uygunluk veya yayın izni vermez. Güncel ülke mevzuatı ve mağaza şartları bu görevde dış kaynaklardan doğrulanmadı. Hedef pazar, şirket, yaş grubu ve veri sağlayıcıları kesinleşince yetkin danışmanla değerlendirilmelidir.
 
-## Temel prensip
-Şansa bağlı sonuç + para girişi + paraya çevrilebilir çıkış bir arada olursa yapı kumar sayılma riski taşır. Bu oyunda en az ikisi bilinçli olarak kapalıdır: kartlar paraya çevrilemez, para ödülü oyuncu harcamasından beslenmez.
+## Ürün kararı
 
-## Kontrol listesi
-| Konu | Yapılacak |
-|------|-----------|
-| Para çıkışı | Kart ve oyun içi değer nakde/kripto'ya çevrilemez, oyuncu pazarı yok |
-| Rastgele paket | Fiyat sabit, garantili içerik, oranlar açıkça yayınlanır |
-| Para ödülü | Sadece sponsor bütçesinden, katılım ücretsiz, sonuç beceriye bağlı |
-| Yaş | 18 yaş altı için harcama limiti ve ebeveyn onayı |
-| Ödeme | Mağazaların kendi ödeme sistemi (App Store, Google Play); operatör faturası için ödeme aracısı |
-| Kişisel veri | KVKK uyumu: aydınlatma metni, açık rıza, çocuk verisi hassasiyeti |
-| Marka ve telif | Özgün karakter ve görsel, başka oyunların isim ve tasarımı kopyalanmaz |
-| Vergi | KDV ve gelir kaydı için muhasebeci |
-| Kullanım şartları | Hesap, iade, yasaklama kuralları yazılı |
-| Kripto | Başta kullanma. Eklenecekse önce hukuki inceleme gerekir |
+Yerel prototipte hesap, ödeme, reklam, kullanıcı takası ve dış analitik yok. Maç, hikâye ilerlemesi ve ücretsiz koleksiyon/altın/toz kayıtları tarayıcıda tutulur. Gerçek ödeme yoktur. Yayımlanacak sürüm için başlangıç adayı: Türkiye, Anadolu seti, ücretsiz kart kazanımı ve kozmetik gelir. Bu aday karar yayın yetkisi değildir.
 
-## Ülke bazlı dikkat
-- Rastgele kart paketleri bazı ülkelerde (örneğin Belçika, Hollanda) kumar tartışması yaşadı. İlk lansmanda Türkiye ve riski düşük pazarlarla başla.
-- Yeni ülkeye açılmadan önce o ülkenin oyun içi satın alma ve çocuk koruma kuralları kontrol edilir.
+Kapalı ekonomi tek başına rastgele ücretli paket veya turnuvanın hukuki sınıflandırmasını belirlemez. Beceri odaklı olmak rastgele çekişi ortadan kaldırmaz. Halk anlatısı kullanımı da modern görsel/çeviri/müzik haklarını otomatik sağlamaz.
 
-## Turnuva ve ödül
-- Ödül havuzunu sponsor verir, oyuncu harcamasından toplanmaz.
-- Katılım için paket alma şartı olmaz.
-- Çekiliş veya talih unsuru taşıyan ödül dağıtımı yapılmaz, sıralama beceriye dayanır.
-- Ödül vergisi ve stopaj muhasebeyle netleştirilir.
+## Karar ve belge listesi
 
-## Mağaza kuralları
-- Rastgele paketlerde oranları açıkça göstermek mağazalarca beklenir.
-- Dijital ürünlerde mağazanın kendi ödeme sistemi kullanılır, komisyon ona göre planlanır.
+| Gereksinim | Hazırlanacak kanıt | Sorumlu rol |
+|---|---|---|
+| Hedef yaş ve ülkeler | Ürün kapsamı, yaş derecelendirme değerlendirmesi | Ürün sahibi + hukuk |
+| Şirket/işletmeci | Şirket adı, adres, iletişim, sözleşme tarafı | Ürün sahibi + muhasebe |
+| Kişisel veri | Veri envanteri, amaç/dayanak, saklama, aktarım, silme, sağlayıcı sözleşmeleri | Geliştirici + hukuk |
+| Çocuk koruması | Yaş ve ebeveyn akışı, izin, harcama sınırı, destek | Ürün + hukuk |
+| Ödeme | Mağaza sözleşmesi, ürün tanımı, doğrulama, iade prosedürü | Geliştirici + muhasebe |
+| Paketler | Uygulanacak gerçek oranlar, garanti, kopya koruması ve açıklama | Tasarım + hukuk |
+| Marka/telif | Ad/marka araştırması, sanat/font/ses lisansları, sanatçı sözleşmeleri | Ürün + sanat |
+| Kullanım şartları | Hesap, yaptırım, itiraz, servis, sanal ürün, iade | Hukuk |
+| Gizlilik/aydınlatma | Gerçek veri akışına uygun metin, izin arayüzü | Hukuk + geliştirici |
+| Turnuva/takas | Ek inceleme; ilk sürümde yok | Ürün + hukuk |
 
-## Avukata sorulacaklar
-1. Beceri ve şans dengesi: bu kural setinde sonuç hukuken beceri oyunu sayılır mı?
-2. Takas özelliği para değeri doğurur mu, nasıl sınırlanmalı?
-3. Sponsorlu turnuva ödülünün vergi ve izin durumu.
-4. Şirket yapısı ve sorumluluk (şahıs veya şirket).
-5. Kullanım şartları ve gizlilik metni taslağı.
+## Veri envanteri başlangıç taslağı
+
+| Veri | Yerel prototip | Online sürüm önerisi / açık karar |
+|---|---|---|
+| Maç tohumu/hamleler | Tarayıcı localStorage; kullanıcı JSON olarak indirebilir | Sunucuda hata/itiraz amacıyla sınırlı saklama; süre hukukla seçilecek |
+| Hikâye ve koleksiyon ilerlemesi | Aynı tarayıcı; hesap yok | Hesaba bağlı; hesap silmeyle ilişkilendirilecek |
+| E-posta/kimlik | Toplanmaz | Sağlayıcı ve hesap yöntemi seçilmeden toplanmaz |
+| Ödeme bilgisi | Toplanmaz | Ham kart bilgisi uygulamada tutulmaz; mağaza işlem kimliği ihtiyacı incelenir |
+| Analitik | Dış servise gönderilmez | 04 sözlüğü üzerinden minimizasyon ve uygun dayanak |
+| IP/servis kayıtları | Uygulama dış analitik kullanmaz; hosting logları ayrı değerlendirilir | Hosting sağlayıcısı, log kapsamı ve süreleri envantere alınmalı |
+
+Yerel tarayıcı verisini silmek için tarayıcının site verilerini temizleme işlevi kullanılabilir. İndirilen JSON dosyalarını kullanıcı ayrıca siler. Sunucu hesabı silme, erişim talebi ve ihlal müdahalesi üretim sürümünün ayrı kabul koşullarıdır.
+
+## İncelemeye sunulacak metin iskeletleri
+
+- Gizlilik: işletmeci ve iletişim → veri kategorileri/amaç/dayanak → sağlayıcı/aktarım → saklama/silme → kullanıcı hakları/başvuru → çocuklar → değişiklik bildirimi.
+- Kullanım şartları: hizmet kapsamı/yaş → hesap güvenliği → sanal ürünlerin kapsamı → ödeme/iade → yasak davranış → yaptırım/itiraz → kesinti/kapanış → uyuşmazlık/iletişim.
+- Satın alma açıklaması: gerçek ürün içeriği/fiyatı → rastgelelik varsa tam açıklama → harcama koruması → mağaza iade yolu → destek.
+
+Şirket, sağlayıcı ve ülke bilgileri bilinmediğinden bu iskeletler kullanıcıya sunulacak nihai sözleşme değildir. Uydurma şirket bilgisi veya incelenmemiş metinle yayın yapılmaz.

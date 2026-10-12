@@ -1,52 +1,49 @@
-# 07 - Yol Haritası ve Ekip
+# 07 — Üretim planı ve karar kapıları
+
+Eski sekiz aylık takvim teslim taahhüdü olmaktan çıkarıldı. İlerleme aşağıdaki kanıt kapılarıyla yönetilir. Süre ve bütçe, atanmış ekibin kapasitesine göre ayrıca tahminlenir.
+
+## Tamamlanan teknik temel
+
+- Tek kart kaynağı, 40 kart etkisi, v0.2 maç kuralları.
+- Tarayıcıda çevrimdışı/yerel bot maçı, üç hazır deste ve deste oluşturma.
+- 10 hikâye bölümü, görev doğrulama ve yerel bölüm ilerlemesi.
+- Maç kaydı, JSON aktarım/yeniden oynatma, isteğe bağlı tur saati.
+- Yerel koleksiyon, ücretsiz paket/garanti, üretim/parçalama ve günlük/haftalık/bölüm ödülleri.
+- Bağımsız A4 baskı ekranı; prototip simgeleri ve temel erişilebilirlik.
+- Motor testleri ve otomatik simülasyon; tarayıcı smoke testi.
+
+Bu liste özgün illüstrasyonların, insan denge testlerinin, online sunucunun veya mobil mağaza uygulamasının tamamlandığını söylemez.
 
 ## Aşamalar
-| Dönem | Hedef | Çıktı |
-|-------|-------|-------|
-| Ay 1 | Kural ve kart tasarımı | Kural kitapçığı, 40 kartlık set, kağıt prototip |
-| Ay 2 | Kağıt prototip testi | 30+ maç, denge güncellemesi (v0.2) |
-| Ay 3-4 | Dijital prototip | Tek ekranlı oynanabilir mobil sürüm, yapay zekâ rakip |
-| Ay 5 | Kapalı beta | 50-100 oyuncu, hikâye bölüm 1-10, geri bildirim |
-| Ay 6 | Ödeme ve hukuk | Mağaza ödemesi, kullanım şartları, gizlilik, yaş koruması |
-| Ay 7 | Yumuşak lansman | Türkiye'de sınırlı yayın, ölçüm (geri dönüş, ödeme oranı) |
-| Ay 8+ | Genişleme | Sezon 2, takas, sponsorlu turnuva, yeni ülkeler |
 
-## Teknik seçenekler
-- **Oyun motoru:** Unity (mobil için yaygın) veya Godot (hafif, ücretsiz).
-- **Sunucu:** Firebase veya PlayFab gibi hazır servisler (hesap, eşleşme, veritabanı).
-- **Ödeme:** Mağaza içi satın alma, ardından operatör faturası için ödeme aracısı.
-- **Analitik:** Geri dönüş ve ekonomi metriklerini ilk günden ölç.
-- **Hile önleme:** Maç sonucu ve kart verisi sunucuda doğrulanır.
+| Kapı | İşler | Çıkış ölçütü |
+|---|---|---|
+| A — Kural/oynanış | İnsanlarla 30+ kayıtlı keşif maçı; kart metni ve kullanıcı sürtünmesini incele | Belirsizlik listesi kapalı; maç süresi, ilk oyuncu ve deste sonuçları kayıtlı |
+| B — Kullanıcı deneyimi | İlk 3 bölümü yeni oyuncularla dene; mobil hedefleme ve görev çekişini ölç | Dış yardımsız temel hamle; önemli UI sorunları giderilmiş |
+| C — Mobil üretim | Motor/platform kararı; cihaz profilleri; özgün sanat/ses; dağıtım sürümü | Hedef gerçek cihazlarda performans, kayıt ve erişilebilirlik testleri |
+| D — Online beta | Yetkili sunucu, hesap, eşleştirme, yeniden bağlantı, servis ölçümü | Hile/geçersiz hamle ve bağlantı testleri; 50–100 gerçek beta oyuncusu |
+| E — Ekonomi/yayın | Yerel ekonomiyi sunucuya taşıma ve ücretsiz ilerleme doğrulaması, gerekiyorsa kozmetik ödeme, hukuk/mağaza/işletim | Gerçek ürün ve veri akışına uygun inceleme; satın alma/iade testleri |
+| F — Genişleme | Yeni diyarlar, takas veya sponsorlu turnuva | Her özelliğin ayrı denge, operasyon ve hukuki değerlendirmesi |
 
-## Ekip rolleri
-| Rol | Görev |
-|-----|-------|
-| Oyun tasarımcısı | Kural, denge, ekonomi (sen başlayabilirsin) |
-| Geliştirici | Mobil istemci ve sunucu |
-| 2D sanatçı | Kart illüstrasyonları, arayüz |
-| Ses ve müzik | Kısa efekt ve müzik seti (dışarıdan alınabilir) |
-| Topluluk yöneticisi | Beta ve geri bildirim |
-| Avukat ve muhasebeci | Danışman olarak |
+## Teknik karar
 
-## İlk 30 gün yapılacaklar
-1. Kartları kağıda bas veya yaz, 3-5 kişiyle oyna.
-2. Her maçtan sonra not al: en güçlü, en zayıf, en sıkıcı kart.
-3. Kural kitapçığını v0.2'ye güncelle.
-4. 10 kartın taslak illüstrasyonunu yaptır, görsel dilini belirle.
-5. Avukatla ilk görüşmeyi yap (özellikle takas, ödül, yaş koruması).
-6. Oyun adını ve markayı kontrol et (benzer isim var mı, alan adı alınabilir mi).
+İlk doğrulama için bağımlılıksız JavaScript tarayıcı prototipi seçildi; düşük kurulum maliyetiyle gerçek hamleler test edilir. Bu bir Unity/Godot mobil üretim seçimi değildir. Mobil motoru insan testleri sonrası ekip yetkinliği, hedef cihaz ve maliyetle seçin. Web prototipin UI'dan bağımsız kuralları ve olay testleri yeni motora taşımada referanstır.
 
-## Riskler
-| Risk | Önlem |
-|------|-------|
-| Denge bozuk, oyun sıkıcı | Erken kağıt prototip ve beta |
-| Sanat maliyeti yüksek | Az kartla başla, stil basit tut |
-| Yasal belirsizlik | İlk günden avukat, kapalı ekonomi |
-| Oyuncu yok | Topluluk, turnuva, Türkiye temasıyla yerel odak |
-| Sunucu ve geliştirme maliyeti | Hazır servisler, küçük ekip |
+## Sorumluluk ve kapsam
 
-## Başarı ölçütleri (yumuşak lansman)
-- 1. gün geri dönüş: %35+
-- 7. gün geri dönüş: %12+
-- Eğitimi bitirme: %70+
-- Ödeme yapan oranı: %2-4
+Ürün/tasarım: kurallar, hedef oyuncu, denge ve ekonomi. Geliştirme: motor, UI, test, hesap/sunucu ve yayın. Sanat: görsel yönerge, kart illüstrasyonları ve haklar. Ses: efekt/müzik ve lisans. Topluluk/destek: beta, geri bildirim, itiraz. Hukuk/muhasebe: şirket, veri, ödeme ve ülke incelemesi. Gerçek kişi atamaları ürün sahibi tarafından yapılmalı; depoda atanmış çalışan varmış gibi yazılmaz.
+
+Her iş için sahibi, tahmini gün, bağımlılık, maliyet ve kabul testi görev kaydına eklenir. İlk kapsam yalnız Anadolu, 40 kart ve sağlam maç çekirdeği. İlk yayında takas, ücretli rastgele paket, para ödülü ve çoklu diyar yok.
+
+## Bütçe çalışma şablonu
+
+| Kalem | Adet/süre | Birim maliyet | Toplam | Tekrarlayan mı? |
+|---|---|---|---|---|
+| Geliştirme | Atanacak kişi-ay | Teklif alınacak | Hesaplanacak | Evet |
+| 40 kart sanatı + UI | Sanat yönergesine göre | Teklif alınacak | Hesaplanacak | İçerik başına |
+| Ses/müzik | Efekt listesi + parça | Teklif alınacak | Hesaplanacak | İçerik başına |
+| Hukuk/muhasebe | Kapsam/ülke | Teklif alınacak | Hesaplanacak | Kısmen |
+| Sunucu/servis | Aktif oyuncu ve maç yükü | Sağlayıcı ölçümü | Hesaplanacak | Evet |
+| Beta/destek/pazarlama | Hedef oyuncu/süre | Test bütçesi | Hesaplanacak | Evet |
+
+Gerçek teklifler ve ekip bilgisi olmadan maliyet uydurulmaz. Oynanış doğrulanmadan büyük sanat veya reklam bütçesi bağlanmaz.

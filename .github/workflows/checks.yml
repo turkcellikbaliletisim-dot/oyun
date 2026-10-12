@@ -1,0 +1,21 @@
+name: Oyun kontrolleri
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  engine:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: npm test
+      - run: npm run simulate
+      - run: npm run economy
+      - name: Kart belgesi kaynakla eşleşiyor
+        run: |
+          npm run docs:cards
+          git diff --exit-code -- dokumanlar/08-turkiye-serisi-kartlar.md
