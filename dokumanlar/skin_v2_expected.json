@@ -1,0 +1,458 @@
+{
+  "logo_wordmark.png": [
+    1600,
+    400
+  ],
+  "app_icon.png": [
+    1024,
+    1024
+  ],
+  "app_icon_foreground.png": [
+    1024,
+    1024
+  ],
+  "splash.png": [
+    1242,
+    2688
+  ],
+  "loading_bar_frame.png": [
+    800,
+    80
+  ],
+  "loading_bar_fill.png": [
+    800,
+    64
+  ],
+  "icon_play.png": [
+    256,
+    256
+  ],
+  "icon_story.png": [
+    256,
+    256
+  ],
+  "icon_cards.png": [
+    256,
+    256
+  ],
+  "icon_deck.png": [
+    256,
+    256
+  ],
+  "icon_settings.png": [
+    256,
+    256
+  ],
+  "icon_sound_on.png": [
+    256,
+    256
+  ],
+  "icon_sound_off.png": [
+    256,
+    256
+  ],
+  "icon_back.png": [
+    256,
+    256
+  ],
+  "icon_close.png": [
+    256,
+    256
+  ],
+  "icon_check.png": [
+    256,
+    256
+  ],
+  "icon_lock.png": [
+    256,
+    256
+  ],
+  "icon_gold.png": [
+    256,
+    256
+  ],
+  "icon_dust.png": [
+    256,
+    256
+  ],
+  "icon_energy_full.png": [
+    256,
+    256
+  ],
+  "icon_energy_empty.png": [
+    256,
+    256
+  ],
+  "icon_turn.png": [
+    256,
+    256
+  ],
+  "icon_deck_count.png": [
+    256,
+    256
+  ],
+  "icon_rarity_common.png": [
+    256,
+    256
+  ],
+  "icon_rarity_rare.png": [
+    256,
+    256
+  ],
+  "icon_rarity_legendary.png": [
+    256,
+    256
+  ],
+  "icon_type_warrior.png": [
+    256,
+    256
+  ],
+  "icon_type_spell.png": [
+    256,
+    256
+  ],
+  "icon_type_trap.png": [
+    256,
+    256
+  ],
+  "icon_league.png": [
+    256,
+    256
+  ],
+  "icon_net_ok.png": [
+    256,
+    256
+  ],
+  "icon_net_bad.png": [
+    256,
+    256
+  ],
+  "icon_surrender.png": [
+    256,
+    256
+  ],
+  "icon_replay.png": [
+    256,
+    256
+  ],
+  "header_bar.png": [
+    1170,
+    160
+  ],
+  "nav_bar.png": [
+    1170,
+    200
+  ],
+  "nav_active.png": [
+    256,
+    256
+  ],
+  "drag_arrow.png": [
+    256,
+    256
+  ],
+  "target_ring.png": [
+    256,
+    256
+  ],
+  "chip_gold.png": [
+    400,
+    120
+  ],
+  "chip_dust.png": [
+    400,
+    120
+  ],
+  "chip_filter.png": [
+    300,
+    100
+  ],
+  "chip_filter_active.png": [
+    300,
+    100
+  ],
+  "badge_count.png": [
+    128,
+    128
+  ],
+  "badge_new.png": [
+    256,
+    128
+  ],
+  "toast_banner.png": [
+    1200,
+    260
+  ],
+  "result_victory.png": [
+    1200,
+    700
+  ],
+  "result_defeat.png": [
+    1200,
+    700
+  ],
+  "input_field.png": [
+    800,
+    120
+  ],
+  "progress_frame.png": [
+    800,
+    40
+  ],
+  "progress_fill.png": [
+    800,
+    40
+  ],
+  "scrollbar.png": [
+    64,
+    400
+  ],
+  "divider.png": [
+    1000,
+    60
+  ],
+  "tooltip_panel.png": [
+    600,
+    300
+  ],
+  "end_turn_ready.png": [
+    700,
+    260
+  ],
+  "end_turn_wait.png": [
+    700,
+    260
+  ],
+  "lane_enemy.png": [
+    1024,
+    400
+  ],
+  "table_center.png": [
+    1024,
+    1024
+  ],
+  "backdrop.png": [
+    1170,
+    2532
+  ],
+  "scene_play.png": [
+    1200,
+    800
+  ],
+  "scene_story.png": [
+    1200,
+    800
+  ],
+  "scene_chest.png": [
+    1200,
+    800
+  ],
+  "scene_friends.png": [
+    1200,
+    800
+  ],
+  "chest_closed.png": [
+    512,
+    512
+  ],
+  "chest_open.png": [
+    512,
+    512
+  ],
+  "chapter_01.png": [
+    1200,
+    600
+  ],
+  "chapter_02.png": [
+    1200,
+    600
+  ],
+  "chapter_03.png": [
+    1200,
+    600
+  ],
+  "chapter_04.png": [
+    1200,
+    600
+  ],
+  "chapter_05.png": [
+    1200,
+    600
+  ],
+  "chapter_06.png": [
+    1200,
+    600
+  ],
+  "chapter_07.png": [
+    1200,
+    600
+  ],
+  "chapter_08.png": [
+    1200,
+    600
+  ],
+  "chapter_09.png": [
+    1200,
+    600
+  ],
+  "chapter_10.png": [
+    1200,
+    600
+  ],
+  "enemy_01.png": [
+    512,
+    512
+  ],
+  "enemy_02.png": [
+    512,
+    512
+  ],
+  "enemy_03.png": [
+    512,
+    512
+  ],
+  "enemy_04.png": [
+    512,
+    512
+  ],
+  "enemy_05.png": [
+    512,
+    512
+  ],
+  "enemy_06.png": [
+    512,
+    512
+  ],
+  "enemy_07.png": [
+    512,
+    512
+  ],
+  "enemy_08.png": [
+    512,
+    512
+  ],
+  "enemy_09.png": [
+    512,
+    512
+  ],
+  "enemy_10.png": [
+    512,
+    512
+  ],
+  "hero_player_alt1.png": [
+    512,
+    512
+  ],
+  "hero_player_alt2.png": [
+    512,
+    512
+  ],
+  "pack_reveal_burst.png": [
+    1024,
+    1024
+  ],
+  "empty_collection.png": [
+    600,
+    400
+  ],
+  "offline.png": [
+    800,
+    600
+  ],
+  "fx_hit.png": [
+    256,
+    256
+  ],
+  "fx_slash.png": [
+    256,
+    256
+  ],
+  "fx_heal.png": [
+    256,
+    256
+  ],
+  "fx_fire.png": [
+    256,
+    256
+  ],
+  "fx_frost.png": [
+    256,
+    256
+  ],
+  "fx_flood.png": [
+    256,
+    256
+  ],
+  "fx_shield.png": [
+    256,
+    256
+  ],
+  "fx_summon.png": [
+    256,
+    256
+  ],
+  "fx_death.png": [
+    256,
+    256
+  ],
+  "fx_glow_ready.png": [
+    256,
+    256
+  ],
+  "fx_glow_legend.png": [
+    256,
+    256
+  ],
+  "fx_number_bg.png": [
+    256,
+    256
+  ],
+  "fx_spark.png": [
+    64,
+    64
+  ],
+  "fx_dust.png": [
+    64,
+    64
+  ],
+  "frame_unit.png": [
+    512,
+    680
+  ],
+  "frame_spell.png": [
+    512,
+    680
+  ],
+  "frame_trap.png": [
+    512,
+    680
+  ],
+  "frame_legend.png": [
+    512,
+    680
+  ],
+  "button_gold.png": [
+    600,
+    180
+  ],
+  "button_dark.png": [
+    600,
+    180
+  ],
+  "button_red.png": [
+    600,
+    180
+  ],
+  "gem_mana.png": [
+    256,
+    256
+  ],
+  "gem_attack.png": [
+    256,
+    256
+  ],
+  "gem_health.png": [
+    256,
+    256
+  ]
+}

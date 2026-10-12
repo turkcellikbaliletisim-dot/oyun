@@ -1,0 +1,2514 @@
+{
+  "package": "Yeni gorsel 2",
+  "png_count": 68,
+  "expected_png_count": 114,
+  "missing_png": [
+    "logo_wordmark.png",
+    "app_icon.png",
+    "app_icon_foreground.png",
+    "splash.png",
+    "loading_bar_frame.png",
+    "backdrop.png",
+    "scene_story.png",
+    "scene_chest.png",
+    "scene_friends.png",
+    "chest_closed.png",
+    "chest_open.png",
+    "chapter_01.png",
+    "chapter_02.png",
+    "chapter_03.png",
+    "chapter_04.png",
+    "chapter_05.png",
+    "chapter_06.png",
+    "chapter_07.png",
+    "chapter_08.png",
+    "chapter_09.png",
+    "chapter_10.png",
+    "enemy_01.png",
+    "enemy_02.png",
+    "enemy_03.png",
+    "enemy_04.png",
+    "enemy_05.png",
+    "enemy_06.png",
+    "enemy_07.png",
+    "enemy_08.png",
+    "enemy_09.png",
+    "enemy_10.png",
+    "hero_player_alt1.png",
+    "hero_player_alt2.png",
+    "pack_reveal_burst.png",
+    "empty_collection.png",
+    "offline.png",
+    "frame_unit.png",
+    "frame_spell.png",
+    "frame_trap.png",
+    "frame_legend.png",
+    "button_gold.png",
+    "button_dark.png",
+    "button_red.png",
+    "gem_mana.png",
+    "gem_attack.png",
+    "gem_health.png"
+  ],
+  "errors": [
+    "Font validation: Lilita One is missing: 'İşŞğĞ'"
+  ],
+  "font_binaries_in_package": false,
+  "fonts_validated": false,
+  "audio_files_generated": 0,
+  "audio_status": "pending: no connected sound-effects or music generation service",
+  "device_or_gameplay_tested": false,
+  "pixel_size_preview": "dokumanlar/yeni-gorsel-2/actual-size.png",
+  "assets": {
+    "scene_play.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:32960499-80ab-4c47-8bc5-62139cd093c1",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "34b0b49b00be94cb53d1e8fa92029d254e8d04fbbab1da1d9442787ea6d32c2e",
+      "resample_scale": 0.5208333333333334,
+      "matte_method": "scene",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": false,
+      "file": "native/skin/scene_play.png",
+      "size": [
+        1200,
+        800
+      ],
+      "mode": "RGB",
+      "bytes": 1053982,
+      "sha256": "1b077f244b72251b02c44773877c4821bed346bca17d46e10623483e7fc0d102"
+    },
+    "icon_play.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:f8c0af42-699c-4263-aa40-177459c9153e",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "5efeebcb723a115205e5151330fe0b5538baaed0f8b4260a08ac6bcd74c87264",
+      "source_visible_bounds": [
+        0,
+        88,
+        859,
+        1024
+      ],
+      "resample_scale": 0.25,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        20,
+        11,
+        235,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_play.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 61579,
+      "sha256": "464381d92a924df2f59e9bc1dd938d825d70e3aeba7db75760856b5fa89b8074",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.55902099609375,
+      "edge_alpha_max": 0
+    },
+    "icon_cards.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ae3a594c-d838-42d4-944c-18be43dc9031",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "0e9c327490a4310e9866b368c1b196a38d12200dc4c5c903e58f199c86053c82",
+      "source_visible_bounds": [
+        0,
+        118,
+        935,
+        1024
+      ],
+      "resample_scale": 0.25026737967914436,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        14,
+        245,
+        241
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_cards.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 64476,
+      "sha256": "a25852ab9b3f2ae05829c1b17647536baa91602c02d67f173fbe5d9f36b80782",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.50701904296875,
+      "edge_alpha_max": 0
+    },
+    "icon_deck.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:811cf500-56e5-441f-b9b6-43555df7db9c",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "5afcf38b539bfd970520952bcd4548e10298c533eeeeff6b36db39750127a875",
+      "source_visible_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        223,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_deck.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 64521,
+      "sha256": "23cfa5da66971d5786734a61fd3d01feffca6a16c3352cbf6c92ae4448206fd5",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.615203857421875,
+      "edge_alpha_max": 0
+    },
+    "icon_settings.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:aeb3ba35-5bec-4c7d-9e0a-f0ea75e1b8cd",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "5543808a777b949b1bedfdbe9a282a39ea6e908156f4a1615cf1950f603e2b25",
+      "source_visible_bounds": [
+        0,
+        40,
+        977,
+        1024
+      ],
+      "resample_scale": 0.23780487804878048,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        13,
+        11,
+        244,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_settings.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 89897,
+      "sha256": "1b8fbecedb6a482a2c6b5a07ec84ec54609e55d9bb9a6d1f46f9629ecd492fc3",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4779815673828125,
+      "edge_alpha_max": 0
+    },
+    "icon_sound_on.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:9a9df464-6919-4fa9-98e9-665543f9cf27",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "3782b2dcdabdd525d8725b4bf6a05871a6d668a10499c99914675f4059aa1ebf",
+      "source_visible_bounds": [
+        0,
+        54,
+        978,
+        1024
+      ],
+      "resample_scale": 0.2392638036809816,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        12,
+        245,
+        244
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_sound_on.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 90514,
+      "sha256": "f379ffae555fac1b7731424c44bf7c00b3e9168349d299f21bf7774c5cff5ab8",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.394989013671875,
+      "edge_alpha_max": 0
+    },
+    "icon_sound_off.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:f2855e80-fe9a-4f47-8728-34327cb3ceac",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "14d3f224a375ba2890a37f7cd89300bf2b77be4f3c90161b799f99b69e169972",
+      "source_visible_bounds": [
+        0,
+        40,
+        1023,
+        1024
+      ],
+      "resample_scale": 0.2287390029325513,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        15,
+        236,
+        240
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_sound_off.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 89649,
+      "sha256": "6eef797abaa100b8215bab730308e4629b8ea3dcb7450d4699183df966e40924",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4058990478515625,
+      "edge_alpha_max": 0
+    },
+    "icon_back.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:66619ec1-41f2-49bf-ad58-7ac13524da5b",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "c9f789a6e70dad915f2ba572368ecd5486ece33c88369e24ecb090d0e34adb9e",
+      "source_visible_bounds": [
+        0,
+        34,
+        1023,
+        1024
+      ],
+      "resample_scale": 0.2287390029325513,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        44,
+        209,
+        241
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_back.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 50262,
+      "sha256": "39048e6ba2c576661beb8b2030f965bae922d6c442a4b2aa522f07c69b4ff306",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.673828125,
+      "edge_alpha_max": 0
+    },
+    "icon_close.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:aa7e430c-4cc8-4b7f-b1d4-ffd9a1904281",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "db63368357b2992f3fce69d013b40a6ecea95904665a9032e11498a577b8a4aa",
+      "source_visible_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        29,
+        245,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_close.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 66578,
+      "sha256": "26b573336f5957cc0dac244d9058ad08fce1fd6b3ae45f295f2f4e0611113af7",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.510467529296875,
+      "edge_alpha_max": 0
+    },
+    "icon_check.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:c7c7d6a8-1ddf-40cc-9f9a-7c2feb17ab7d",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "5e630e75605e01cf8c9bcbb21826b1d1f2ae38a1790d799084f3312be5ed1537",
+      "source_visible_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        245
+      ],
+      "matte_method": "magenta",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_check.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 85886,
+      "sha256": "0fd52bd5cd1c0d982031c41e46102cd3a91d59b6b542694ec45808ae4752128a",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3315582275390625,
+      "edge_alpha_max": 0
+    },
+    "icon_story.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:8fc930b6-c4f1-4b74-8d05-cdaf31fe2c45",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "3116aa1240950e9493b15a3920edc91bd444d543432c751e83b03754d92054b5",
+      "source_visible_bounds": [
+        0,
+        75,
+        959,
+        1024
+      ],
+      "resample_scale": 0.2440041710114703,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        18,
+        240,
+        244
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_story.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 82660,
+      "sha256": "690c3abd86e4adda29f0e7bbda4c80af78a774eecfa03a25e8a2add7e19905fe",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.461822509765625,
+      "edge_alpha_max": 0
+    },
+    "icon_lock.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:a7154786-0563-43df-bfca-09f9bc81a6f0",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "371724aed0b3b2f4593ece8cb716c360d3c5e3fddc951731add8d3a96f324aab",
+      "source_visible_bounds": [
+        0,
+        92,
+        930,
+        1024
+      ],
+      "resample_scale": 0.2510729613733906,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        244,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_lock.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 62719,
+      "sha256": "4ca979d2310054be5fa1519a08d76c4063b8ddddca8a616726ffdb627cbb7e6d",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.570343017578125,
+      "edge_alpha_max": 0
+    },
+    "icon_gold.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ca47ec49-ce2b-4c03-a1a4-2a104fbadf02",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "9b7e5205c3d23992a06985cf85b2e9fdb1c5e8d5f8f9875ccd586fcf94041f65",
+      "source_visible_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_gold.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 54867,
+      "sha256": "092b4f4e9f6f55e579165bef6009ef8444a8a941aa707e27e055fec105da8dcb",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.631378173828125,
+      "edge_alpha_max": 0
+    },
+    "icon_dust.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:607b417a-5395-4460-a524-2b3c99c5ef7e",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "0325e03d0d6d99488b55987b4b2f398f33d6c80a8707c72f9c791b92520d07e4",
+      "source_visible_bounds": [
+        0,
+        214,
+        942,
+        1024
+      ],
+      "resample_scale": 0.2484076433121019,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        27,
+        245,
+        228
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_dust.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 53741,
+      "sha256": "fc19e725e26e9df6c8862a6f58b6476e8a3017b7cc9d6bb329d4b771ae868bc3",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6860809326171875,
+      "edge_alpha_max": 0
+    },
+    "icon_energy_full.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:c0f27c20-af49-4821-906d-2e6b7af1e625",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "69a5facfc84db2df016b117b8d9a009355cc6b52b2dba8f09719f7c5b5474ddd",
+      "source_visible_bounds": [
+        0,
+        134,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        26,
+        161,
+        229
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_energy_full.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 22103,
+      "sha256": "74af0456b461bdd3df2f52453b02b671c206645b24817d19abce2bf5ffab9d41",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8528289794921875,
+      "edge_alpha_max": 0
+    },
+    "icon_energy_empty.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:32a7fe51-a1ba-4194-a6b9-d7cfe56a31e6",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "e0c3bc179eeff196886c4f7dc74797eba3939fa9412ffa18125cef8190e636af",
+      "source_visible_bounds": [
+        0,
+        134,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        26,
+        161,
+        229
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_energy_empty.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 21363,
+      "sha256": "3184c6d0fe981376d7944d56593c617ee8101434f37ad086f01ed098b2073fbe",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8532257080078125,
+      "edge_alpha_max": 0
+    },
+    "icon_turn.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:aa28bde6-cf6b-42f1-80c7-f994f748f4b5",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "84e2d3669a9bf9ef9d616b156653652be90615141b345fe8880218a76fe730b7",
+      "source_visible_bounds": [
+        0,
+        98,
+        871,
+        1024
+      ],
+      "resample_scale": 0.2526997840172786,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        18,
+        11,
+        238,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_turn.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 57977,
+      "sha256": "4f7d86ff717a24d72fca1e9f74c42cd13410a8b20134f8ef0da7ba70a0f28b81",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.63482666015625,
+      "edge_alpha_max": 0
+    },
+    "icon_deck_count.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:3a20bfc2-ddae-4b69-a566-bcd3b3f1fcef",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "c33090def50218e57e6a6d37bd3ddef881879d5839a7fd42b2a304d379cf3aa2",
+      "source_visible_bounds": [
+        0,
+        174,
+        891,
+        1024
+      ],
+      "resample_scale": 0.26262626262626265,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        16,
+        245,
+        239
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_deck_count.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 61747,
+      "sha256": "ad480a904db86c238f216d111c8d266519c714d428024fb6fdc3c0fbfbb254e1",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6217041015625,
+      "edge_alpha_max": 0
+    },
+    "icon_rarity_common.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:2637c344-48ba-4b39-8953-b733ca0d3d62",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "b7271e3f616629da6569889661f698db29ea2e3483cc1980d13e413d5b9d9932",
+      "source_visible_bounds": [
+        0,
+        175,
+        843,
+        1024
+      ],
+      "resample_scale": 0.2756183745583039,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        12,
+        11,
+        244,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_rarity_common.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 50980,
+      "sha256": "65be6105f203589abfa77b99a8040ba45a5fc0aebb9045ace1aa79a300c48ac9",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6494903564453125,
+      "edge_alpha_max": 0
+    },
+    "icon_rarity_rare.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:7eb23739-9f01-42d3-a37b-9ab3c2d617c0",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "934b1da058f2db3535b80b5aa432c54fb18befa9714abbaac6346c8cf11d8a90",
+      "source_visible_bounds": [
+        0,
+        39,
+        986,
+        1024
+      ],
+      "resample_scale": 0.23732251521298176,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_rarity_rare.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 86457,
+      "sha256": "88a1e8c6a81b0b40bb9d81f031ac7ab7ab95db749b39862571698d7adc80a263",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.381927490234375,
+      "edge_alpha_max": 0
+    },
+    "icon_rarity_legendary.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:f5caac2b-456a-4d97-9622-303f072a4830",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "c77407db377a88cefed7dd08470270b8d806058e6fc7852eb2f151a5398155c9",
+      "source_visible_bounds": [
+        0,
+        94,
+        860,
+        1024
+      ],
+      "resample_scale": 0.25161290322580643,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        20,
+        11,
+        236,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_rarity_legendary.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 54707,
+      "sha256": "f66ec343878cc7821a9cecbc6b77026802181ad9d703328f6cdc6850e7183aad",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6460113525390625,
+      "edge_alpha_max": 0
+    },
+    "icon_type_warrior.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:e526981b-e40b-467f-bb2f-67138fb7a1bc",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "390f85991d1b6e3e67cfef5619e5110830b4e2f010764a8f69873b8ff394397f",
+      "source_visible_bounds": [
+        0,
+        132,
+        866,
+        1024
+      ],
+      "resample_scale": 0.2623318385650224,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        14,
+        11,
+        241,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_type_warrior.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 55107,
+      "sha256": "8c1bdcdc17eef1423129920fadcdc57b4827aadf714fb601773ff3afc0a1d4de",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.5693817138671875,
+      "edge_alpha_max": 0
+    },
+    "icon_type_spell.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:41308bda-a373-4465-a4d5-e6d9cfb19e1a",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "409d06f51211802968d38f65c025a8a4fcd95340ff0352e94e10f984227bf99c",
+      "source_visible_bounds": [
+        0,
+        56,
+        969,
+        1024
+      ],
+      "resample_scale": 0.24148606811145512,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_type_spell.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 67190,
+      "sha256": "127452fb1fd68047bd5b37350e02e03e4c8a65a0ae98e7de41e12f3c8062c125",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.407318115234375,
+      "edge_alpha_max": 0
+    },
+    "icon_type_trap.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:960153c1-e3b3-4cd9-9edb-556b76eb4bb9",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "73ac13c887de62831b2ffc56e0371dd251e2487511fc50f43f00f97648589cda",
+      "source_visible_bounds": [
+        0,
+        69,
+        935,
+        1024
+      ],
+      "resample_scale": 0.2450261780104712,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        13,
+        13,
+        242,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_type_trap.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 65820,
+      "sha256": "f8c320caae1231aaa974252433b35f30a7afec5d72ebdfcd9922ef06342160cc",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4607086181640625,
+      "edge_alpha_max": 0
+    },
+    "icon_league.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:53e756e8-9883-4973-a161-b15a0270ab59",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "36e783be160fbf1ba204ee1d2d42e15606df6718a2b0bf82555cd533815d08ef",
+      "source_visible_bounds": [
+        0,
+        144,
+        943,
+        1024
+      ],
+      "resample_scale": 0.24814422057264052,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        19,
+        245,
+        237
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_league.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 85852,
+      "sha256": "ea680291b8091455e9abf649d123c5a7d56fa63faf953ee21f33d7c3cea5b6f1",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4979095458984375,
+      "edge_alpha_max": 0
+    },
+    "icon_net_ok.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:df51ce36-2c5b-4f35-9ec4-b6fb56ea9e37",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "944495c014854111bdb3b3d68e5f194f04825bca8da864ccd91b7499da997682",
+      "source_visible_bounds": [
+        0,
+        181,
+        795,
+        1024
+      ],
+      "resample_scale": 0.2775800711743772,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        17,
+        11,
+        238,
+        245
+      ],
+      "matte_method": "magenta",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_net_ok.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 49012,
+      "sha256": "f9845fa94b2c3fa183fd3d3dd77a6b7ff93a6c07db52ffbf4235fa1d3187e422",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.63592529296875,
+      "edge_alpha_max": 0
+    },
+    "icon_net_bad.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:08ce95e6-469f-40e9-aa03-63fa28ebcc7c",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "09ece86ac84c34235da3fa79b68a98053131d46a7535df2f91937b7b461e516e",
+      "source_visible_bounds": [
+        0,
+        189,
+        795,
+        1024
+      ],
+      "resample_scale": 0.28023952095808385,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        16,
+        11,
+        239,
+        245
+      ],
+      "matte_method": "magenta",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_net_bad.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 44359,
+      "sha256": "96beeb54057ea4aa25caa4e38ab84fb46316b4e9cfdb0cdc807a841b0e3f5f7b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.663238525390625,
+      "edge_alpha_max": 0
+    },
+    "icon_surrender.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:b60f8fdc-2a76-41ca-a998-38bf33800538",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "5a23cbddf987a96e2ac7f0e8adc41c60d5e30a1534753deb3108541a50300fbc",
+      "source_visible_bounds": [
+        0,
+        0,
+        1024,
+        1024
+      ],
+      "resample_scale": 0.228515625,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_surrender.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 91931,
+      "sha256": "b9b8174998e711e849e37d2611204a28bcff281338cd84aab97f12bfabeac02f",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3753509521484375,
+      "edge_alpha_max": 0
+    },
+    "icon_replay.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:2d87ead3-390c-4a28-a92d-6f9ec2272df3",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "52b78c9aaf7aae0f42df583da57b56d3175acda6f90e7845801d34e42c388c74",
+      "source_visible_bounds": [
+        0,
+        198,
+        853,
+        1024
+      ],
+      "resample_scale": 0.27432590855803046,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        14,
+        245,
+        241
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/icon_replay.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 43799,
+      "sha256": "cc3dc79b6866249ac2f5f699c65be6e4159582d19ad0fe17ae51045af73b3b6b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6411590576171875,
+      "edge_alpha_max": 0
+    },
+    "header_bar.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:16c26fb7-b9e0-4936-964c-f20bf38a6e9d",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "1b2099738416b69b08f77c578decab7b72cc9ab6314a3fe75ea8cc4c311f2bb7",
+      "source_visible_bounds": [
+        0,
+        652,
+        2688,
+        1536
+      ],
+      "resample_scale": 0.16515837104072398,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        363,
+        7,
+        807,
+        153
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/header_bar.png",
+      "size": [
+        1170,
+        160
+      ],
+      "mode": "RGBA",
+      "bytes": 45890,
+      "sha256": "8a4584a6b243f78f4e4bcc3051515f4a2976bad7a2b516dd40da5a1409e95d45",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8752350427350427,
+      "edge_alpha_max": 0
+    },
+    "nav_bar.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:4f2decb6-bd7a-4eac-b802-94ac503c30ca",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "2c62be88ca279df2d3d6d3fbd002030d3c19ef6c6b94a45133cfabeccde2778f",
+      "source_visible_bounds": [
+        0,
+        585,
+        2645,
+        1536
+      ],
+      "resample_scale": 0.19348054679284962,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        329,
+        8,
+        841,
+        192
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/nav_bar.png",
+      "size": [
+        1170,
+        200
+      ],
+      "mode": "RGBA",
+      "bytes": 77416,
+      "sha256": "d0198e7a65c574157b588df17167c7cce2c1ae8683ae896dc72fcd31cfd32d7e",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8277179487179487,
+      "edge_alpha_max": 0
+    },
+    "nav_active.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:c62f75d6-8222-4695-a606-10e9e15cc034",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "80785b4278cb08405d7595568b93d6a8381fdb5190a70ef207a3c487c8e8384f",
+      "source_visible_bounds": [
+        1,
+        146,
+        875,
+        1023
+      ],
+      "resample_scale": 0.2668187001140251,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        49,
+        11,
+        244,
+        207
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/nav_active.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 31837,
+      "sha256": "e3c8dbeff06af6b132071c0f6bcc467f42684d40d5e252dc1c47bce090fc5816",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.806549072265625,
+      "edge_alpha_max": 0
+    },
+    "chip_gold.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:46ee05cc-ca8f-4b51-9f4f-ad694e30d962",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "2bb482b8a0d434b8e5182804a79ce0d639b543480cca4ed2a5f85002595b953f",
+      "source_visible_bounds": [
+        0,
+        0,
+        2016,
+        1152
+      ],
+      "resample_scale": 0.0954861111111111,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        104,
+        5,
+        296,
+        115
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/chip_gold.png",
+      "size": [
+        400,
+        120
+      ],
+      "mode": "RGBA",
+      "bytes": 25583,
+      "sha256": "9f25bcc1be882feb71fe712ec037fc5cfe00a281c4266cf138bbf29a550212c9",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7562708333333333,
+      "edge_alpha_max": 0
+    },
+    "chip_dust.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:871825cc-8ae1-4851-b4c5-81423d606411",
+      "source_size": [
+        2032,
+        1168
+      ],
+      "source_sha256": "6a1bc846b8ab8e3e23eafdeb6b0b665946ca9dd0f707e589590e6adf9c5deefc",
+      "source_visible_bounds": [
+        0,
+        0,
+        2032,
+        1168
+      ],
+      "resample_scale": 0.09417808219178082,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        104,
+        5,
+        295,
+        115
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/chip_dust.png",
+      "size": [
+        400,
+        120
+      ],
+      "mode": "RGBA",
+      "bytes": 26117,
+      "sha256": "6735a369738dce4729701ded538de9e88d717b2ced02d7c625a792967fec97f3",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7575,
+      "edge_alpha_max": 0
+    },
+    "chip_filter.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:dcbcef8d-26cf-40bc-89a2-90bf58bc7573",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "014a1c7821911ba8b1a3b3489cd42b89210323eefbabced54daef741e8b9e392",
+      "source_visible_bounds": [
+        0,
+        331,
+        1726,
+        1152
+      ],
+      "resample_scale": 0.1120584652862363,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        53,
+        4,
+        245,
+        96
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/chip_filter.png",
+      "size": [
+        300,
+        100
+      ],
+      "mode": "RGBA",
+      "bytes": 12894,
+      "sha256": "02b74d078e72e08e93d51f7a763f263b5a4d4220310c120377c01fe045b6673a",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7122666666666667,
+      "edge_alpha_max": 0
+    },
+    "chip_filter_active.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:61c6cc2a-03d5-436e-9d48-3af829c93c3b",
+      "source_size": [
+        2032,
+        1168
+      ],
+      "source_sha256": "d35a1a5c1e7dda79afe86ba53657510867e3715e0a91e4123f98489c3ac5ea46",
+      "source_visible_bounds": [
+        0,
+        161,
+        1735,
+        1168
+      ],
+      "resample_scale": 0.0913604766633565,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        70,
+        8,
+        228,
+        96
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/chip_filter_active.png",
+      "size": [
+        300,
+        100
+      ],
+      "mode": "RGBA",
+      "bytes": 12210,
+      "sha256": "7c9d509e4ee68e3791eb49d40179e803d89aba1d775838911d5adb07bcf5ef5b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7634,
+      "edge_alpha_max": 0
+    },
+    "badge_count.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:2114929b-fca1-497d-999c-a39b87662fa2",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "69266fe666abc6aec340f3fb7bfab7f101ee570daf1f2d6c7a34f0571af2c98f",
+      "source_visible_bounds": [
+        0,
+        94,
+        931,
+        1024
+      ],
+      "resample_scale": 0.12459720730397422,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        6,
+        6,
+        122,
+        122
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/badge_count.png",
+      "size": [
+        128,
+        128
+      ],
+      "mode": "RGBA",
+      "bytes": 19138,
+      "sha256": "f42d4416850f7038e5283830e7fb439973540ddfc50bedad9f8b4d3d99875e43",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4495849609375,
+      "edge_alpha_max": 0
+    },
+    "badge_new.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:20197e29-f19e-423c-9deb-f2a032783c6c",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "e83b3913ebe3d3d09d998038a0e3a219efa4995b6b88c26840e55aba0ccda774",
+      "source_visible_bounds": [
+        0,
+        328,
+        1895,
+        1152
+      ],
+      "resample_scale": 0.12348284960422164,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        13,
+        245,
+        115
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/badge_new.png",
+      "size": [
+        256,
+        128
+      ],
+      "mode": "RGBA",
+      "bytes": 20422,
+      "sha256": "fdf8aff1db83242bc6e55dbc272db8f01d90a473468ce190b26b6d122c35ee4a",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.708343505859375,
+      "edge_alpha_max": 0
+    },
+    "toast_banner.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:5b368d35-a956-4457-9e7e-d67ac4894f9e",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "62d21a0aa2d56abc47ae09c79079f1ae2e5ac8a21ca28d73d2f478be5a60f91b",
+      "source_visible_bounds": [
+        0,
+        368,
+        2688,
+        1536
+      ],
+      "resample_scale": 0.20376712328767124,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        326,
+        11,
+        874,
+        249
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/toast_banner.png",
+      "size": [
+        1200,
+        260
+      ],
+      "mode": "RGBA",
+      "bytes": 135497,
+      "sha256": "1a6c54249bed1dddc890894281e94b3b6c3c8be10756840bdf77cee6de1f20b0",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7229198717948718,
+      "edge_alpha_max": 0
+    },
+    "result_victory.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:d561d677-2a64-4734-a300-8add41ab7455",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "9c921f044506627484a5eeb9a4471f9b30c400c5acd764871ae8783b8fc5f5e9",
+      "source_visible_bounds": [
+        0,
+        28,
+        2636,
+        1536
+      ],
+      "resample_scale": 0.4188163884673748,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        48,
+        34,
+        1152,
+        666
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/result_victory.png",
+      "size": [
+        1200,
+        700
+      ],
+      "mode": "RGBA",
+      "bytes": 871725,
+      "sha256": "d761396a9e43a249b8c36bbdbc4c53e735cd1e7a8f5b4c62f243786da2c1c8fb",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4692976190476191,
+      "edge_alpha_max": 0
+    },
+    "result_defeat.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:a3022aec-884d-4051-b4e5-7ce3740443f0",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "dac32dc5733f0d6fa04a358e22a6051a3b437090d6abaff08f06a7133715218f",
+      "source_visible_bounds": [
+        0,
+        0,
+        2688,
+        1536
+      ],
+      "resample_scale": 0.4107142857142857,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        48,
+        34,
+        1152,
+        665
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/result_defeat.png",
+      "size": [
+        1200,
+        700
+      ],
+      "mode": "RGBA",
+      "bytes": 950000,
+      "sha256": "9ecd84eacb6abfd627fd06881c5110e0bc5017f212fd8130cddba07316f8a25a",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.17068571428571427,
+      "edge_alpha_max": 0
+    },
+    "input_field.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:dbf91ed8-23c6-4f5a-a9a8-4c2ce3db2407",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "c8e8d24cfe4356c1c0864c179c44b0537e83a07c14bac90a1c11a74b465fdbbb",
+      "source_visible_bounds": [
+        0,
+        409,
+        1979,
+        1152
+      ],
+      "resample_scale": 0.1480484522207268,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        253,
+        5,
+        546,
+        115
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/input_field.png",
+      "size": [
+        800,
+        120
+      ],
+      "mode": "RGBA",
+      "bytes": 28401,
+      "sha256": "42289a222ab37fe5f28ac005f5fdb3a3dd29a3a49c4b77987081b15ddd7c6810",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8157395833333333,
+      "edge_alpha_max": 0
+    },
+    "progress_frame.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:49a6dac0-0d44-430d-ae9d-3cfdd5b77362",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "76de91863ff85e528b5fe8d7361c66fb76f6b254da7b471f12905677fee971fd",
+      "source_visible_bounds": [
+        0,
+        506,
+        1903,
+        1152
+      ],
+      "resample_scale": 0.05572755417956656,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        347,
+        2,
+        453,
+        38
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/progress_frame.png",
+      "size": [
+        800,
+        40
+      ],
+      "mode": "RGBA",
+      "bytes": 3507,
+      "sha256": "ffb206536bd77489128676d5edcd3285e92f08c729b872947e004dbd24725ca5",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.96159375,
+      "edge_alpha_max": 0
+    },
+    "progress_fill.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:5ece4760-2970-4a2c-bedb-5369ce5bb304",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "eab8017b8220407a2f96758d98993130f789ab5cab5915e6e47eee7377a6a30d",
+      "resample_scale": 0.3968253968253968,
+      "horizontal_seam_identical": true,
+      "matte_method": "tile",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/progress_fill.png",
+      "size": [
+        800,
+        40
+      ],
+      "mode": "RGB",
+      "bytes": 22622,
+      "sha256": "b7809e5f2ca1bab1abff1a7443058d01dfb1a7719324ae624fd316741df4f1e4"
+    },
+    "loading_bar_fill.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:5ece4760-2970-4a2c-bedb-5369ce5bb304",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "eab8017b8220407a2f96758d98993130f789ab5cab5915e6e47eee7377a6a30d",
+      "resample_scale": 0.3968253968253968,
+      "horizontal_seam_identical": true,
+      "matte_method": "tile",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/loading_bar_fill.png",
+      "size": [
+        800,
+        64
+      ],
+      "mode": "RGB",
+      "bytes": 35640,
+      "sha256": "17ae573cc4d01a4c23d9ff2fcce544a8eb0171f1c7d83db7c4a585b75a534c3e"
+    },
+    "scrollbar.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:a952bfd1-91f9-4f5b-a9f7-09d572285ff5",
+      "source_size": [
+        896,
+        1152
+      ],
+      "source_sha256": "67ebf2359c19f1a16cfc3d3dd6876aa934e8e29701dc0b7fe6dcd4fe9cdb48be",
+      "source_visible_bounds": [
+        0,
+        56,
+        511,
+        1152
+      ],
+      "resample_scale": 0.11350293542074363,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        3,
+        138,
+        61,
+        262
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/scrollbar.png",
+      "size": [
+        64,
+        400
+      ],
+      "mode": "RGBA",
+      "bytes": 4421,
+      "sha256": "fd0ea75851ae3b0b24118ca670616a6e8e8e4c284a7d79c25acbb0ac36fa1b82",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.932109375,
+      "edge_alpha_max": 0
+    },
+    "divider.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:eba1958d-48a5-4945-97ed-576c1c693493",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "5e0afc1506c8e7503ee5c2aba75b00f05196292cbc403c4d4b13d4523d02b3b3",
+      "source_visible_bounds": [
+        0,
+        661,
+        2622,
+        1536
+      ],
+      "resample_scale": 0.061714285714285715,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        419,
+        3,
+        581,
+        57
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/divider.png",
+      "size": [
+        1000,
+        60
+      ],
+      "mode": "RGBA",
+      "bytes": 3515,
+      "sha256": "084770c2bce6063c662f566a02a95b20e1daa22300dccbcb80a4624f320ee03e",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.9818833333333333,
+      "edge_alpha_max": 0
+    },
+    "tooltip_panel.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:13ac8171-cf22-4fea-ad06-f6c9e8fbe9ae",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "b39e210625adb295ce4b672438004df4c82d120b3bbb5ec063cc9a91d91cd402",
+      "source_visible_bounds": [
+        0,
+        198,
+        1940,
+        1152
+      ],
+      "resample_scale": 0.2845360824742268,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        24,
+        14,
+        576,
+        285
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/tooltip_panel.png",
+      "size": [
+        600,
+        300
+      ],
+      "mode": "RGBA",
+      "bytes": 111174,
+      "sha256": "8817753fb7f26053df365895d47147475b5cb2c5fea15109744480b05c55b6d0",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4039333333333333,
+      "edge_alpha_max": 0
+    },
+    "drag_arrow.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:5c030e72-2da2-4f36-93cf-11b2b9c85b1e",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "616404039aba859da3a57fdcb06b61046d10b29c0ee6e9d39ff18d0980c3b153",
+      "source_visible_bounds": [
+        0,
+        170,
+        667,
+        1024
+      ],
+      "resample_scale": 0.27400468384074944,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        134,
+        11,
+        219,
+        199
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/drag_arrow.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 16038,
+      "sha256": "68a5be45dcbf6be86d52dfbf281909291e4c716d0c4edc0aefa86a4528e000fe",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.8972930908203125,
+      "edge_alpha_max": 0
+    },
+    "target_ring.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ad3e0239-a2c7-4644-8c4b-e575f3aa62ef",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "ee0348752d660b8d9ea810e49a8905e237b0472ed0849601985d4c253e9aad3f",
+      "source_visible_bounds": [
+        4,
+        62,
+        968,
+        1024
+      ],
+      "resample_scale": 0.24273858921161826,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        24,
+        11,
+        245,
+        231
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/target_ring.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 62442,
+      "sha256": "4e9e11c6631a77e28a095f48b1625e1103d9b035b4910e8a3eac0f4ce0198654",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.660247802734375,
+      "edge_alpha_max": 0
+    },
+    "end_turn_ready.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:2cf20b5a-7e2b-426c-8da9-a707296363fc",
+      "source_size": [
+        2016,
+        1152
+      ],
+      "source_sha256": "f094498afa92cebec030bf2341ebf1604854a21a1d1aaff6a25002c3c965d0b2",
+      "source_visible_bounds": [
+        0,
+        0,
+        2016,
+        1152
+      ],
+      "resample_scale": 0.2065972222222222,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        142,
+        11,
+        558,
+        249
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/end_turn_ready.png",
+      "size": [
+        700,
+        260
+      ],
+      "mode": "RGBA",
+      "bytes": 100115,
+      "sha256": "37688e12f6169d369e27d45d7d2debbd7b83481095995f7e08cff12f501f90c8",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7278736263736264,
+      "edge_alpha_max": 0
+    },
+    "end_turn_wait.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:6f9fbf9d-6a4b-425f-8cb0-a385ac471212",
+      "source_size": [
+        2032,
+        1168
+      ],
+      "source_sha256": "77775569452659fddb1dee8b58f18a36b25bd6e5d10b0b810eb34eb60f6b5217",
+      "source_visible_bounds": [
+        0,
+        37,
+        2032,
+        1168
+      ],
+      "resample_scale": 0.21043324491600354,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        136,
+        64,
+        564,
+        249
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/end_turn_wait.png",
+      "size": [
+        700,
+        260
+      ],
+      "mode": "RGBA",
+      "bytes": 80940,
+      "sha256": "72f81ec1b24e83b43c261f7069ab17eb6fed80be8b2193f2e9a44f99ac44710e",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.7534505494505495,
+      "edge_alpha_max": 0
+    },
+    "lane_enemy.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:13d8a20b-909b-4e0f-860b-a52f5ba80178",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "2917cecf50ed9fac85e80507147587882d35fc3ca5f7e614ca4b9806c3e314fe",
+      "resample_scale": 0.38095238095238093,
+      "matte_method": "scene",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/lane_enemy.png",
+      "size": [
+        1024,
+        400
+      ],
+      "mode": "RGB",
+      "bytes": 370164,
+      "sha256": "1aff7154e6ab50677fa4de81b64bd2c1b9c8e37d4ec51a3921392e96904c4129"
+    },
+    "table_center.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:d729a73b-df6f-471c-be0a-0cfb4db20121",
+      "source_size": [
+        2048,
+        2048
+      ],
+      "source_sha256": "d2dc7e94609a9a0bdc1fe94ebd470865d0b295c1c221167c20b64a52b6159850",
+      "source_visible_bounds": [
+        0,
+        74,
+        1977,
+        2048
+      ],
+      "resample_scale": 0.4764795144157815,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        41,
+        41,
+        983,
+        982
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/table_center.png",
+      "size": [
+        1024,
+        1024
+      ],
+      "mode": "RGBA",
+      "bytes": 1179951,
+      "sha256": "7e2b218aad7141fc615f1743d87b141165b0efa006145497b0629edbf0bce737",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.3769245147705078,
+      "edge_alpha_max": 0
+    },
+    "fx_hit.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:91469255-b39a-4240-86f4-de05c193045b",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "b037fc3e588ce06d1cac43c7d739a4a132495ccb56fb1e07fc3a76f516b32c73",
+      "source_visible_bounds": [
+        100,
+        77,
+        934,
+        944
+      ],
+      "resample_scale": 0.2698961937716263,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        15,
+        12,
+        240,
+        244
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_hit.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 61082,
+      "sha256": "d745bcc63e29b922520214ce38f4ddcca45f9b208524e98bb8dd0912242c9ca8",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.5711517333984375,
+      "edge_alpha_max": 0
+    },
+    "fx_slash.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:212f7d63-1793-404e-b7e2-b091a2d9a4ac",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "0bf962911dd4413b268d9376ae833eb0be05ba8980a0b240a2d9d63aa59ad9e0",
+      "source_visible_bounds": [
+        4,
+        77,
+        926,
+        1024
+      ],
+      "resample_scale": 0.2470960929250264,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        38,
+        11,
+        242,
+        231
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_slash.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 43279,
+      "sha256": "a7747f99676e1e1e133dacfe2eca7504a960ad8f366e63fdb9ebd967abd00a4c",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.716033935546875,
+      "edge_alpha_max": 0
+    },
+    "fx_heal.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:6bf504a5-b996-4291-8ab0-ac345d58d74f",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "74819a6e5bc879edd7ce8ff10aba2f05d0d2965564ea2ddeade7a245b03e6bcd",
+      "source_visible_bounds": [
+        0,
+        165,
+        832,
+        1023
+      ],
+      "resample_scale": 0.2727272727272727,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        74,
+        11,
+        241,
+        196
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_heal.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 55784,
+      "sha256": "9c99b39e4f577b40f67748adb8656c079ec5237d15545e8f05ab904be8f67d87",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.648101806640625,
+      "edge_alpha_max": 0
+    },
+    "fx_fire.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:b00f0b83-ea1c-4936-8bc4-71203430a388",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "6d717aa9d43990ec740d4b96576d472d89fbd5899041c344aa0aaf052d89c570",
+      "source_visible_bounds": [
+        135,
+        63,
+        889,
+        934
+      ],
+      "resample_scale": 0.26865671641791045,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        26,
+        11,
+        229,
+        245
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_fire.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 67792,
+      "sha256": "2a81b53a1f07965e3b83e240e28c9faead00e10b0763101d8e523d030723e79b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.4773101806640625,
+      "edge_alpha_max": 0
+    },
+    "fx_frost.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:6c273b39-e14d-46d9-a454-7cd3ee054afd",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "4b07cbf9ec9ceff9b05c6b68af183a2e145164a9e388e08228efe8a22ef56e1b",
+      "source_visible_bounds": [
+        4,
+        53,
+        955,
+        1024
+      ],
+      "resample_scale": 0.24098867147270855,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        29,
+        11,
+        242,
+        234
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_frost.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 78620,
+      "sha256": "0abd776333291637e0b2b74b5aa5adc29123a477abbc4a195dc5e6bd36de158e",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.5503997802734375,
+      "edge_alpha_max": 0
+    },
+    "fx_flood.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:d476e553-5163-47cc-8558-1a7a21d25be4",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "1ae5ad53e79f60579e98ec9ae184ad3c8f86adea4ed3b4694b320a328acfdd42",
+      "source_visible_bounds": [
+        1,
+        136,
+        893,
+        1024
+      ],
+      "resample_scale": 0.2623318385650224,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        44,
+        11,
+        245,
+        209
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_flood.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 54524,
+      "sha256": "d458acfaa0ea0e72c609cc6ab42e5586c38e0345e0419fa0523df0568b7fbad0",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6356658935546875,
+      "edge_alpha_max": 0
+    },
+    "fx_shield.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:4e8569c7-04df-4ba1-98ed-8c8f7eeb6b2e",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "2647aa032f098e14477fab13b2662db7b0eca0cb0319320340e2eb8f90b9a61b",
+      "source_visible_bounds": [
+        4,
+        208,
+        923,
+        1023
+      ],
+      "resample_scale": 0.2546245919477693,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        35,
+        25,
+        245,
+        190
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_shield.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 48847,
+      "sha256": "ee7326a6bceac2a3274f3f8012df3a05888a414126d693e9301363238b4e38b9",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.5753936767578125,
+      "edge_alpha_max": 0
+    },
+    "fx_summon.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:2dce1522-9de6-4438-9260-3b15165b5586",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "24ce1533577a077560244355b188524e46cbb42fe0fe3d316f9beef4e67f10d5",
+      "source_visible_bounds": [
+        1,
+        120,
+        865,
+        1024
+      ],
+      "resample_scale": 0.2588495575221239,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        69,
+        12,
+        240,
+        206
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_summon.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 46500,
+      "sha256": "e7d87a97bdffdd977c2d711cf25e4d44ac9272b75a299f7779c31561bab78211",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.6901702880859375,
+      "edge_alpha_max": 0
+    },
+    "fx_death.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:4bd940f5-4595-4409-b2ba-0e87c934b4f7",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "24421b379941105c6857ed331091623a392d8766f122d1c639d10c97082604e4",
+      "source_visible_bounds": [
+        0,
+        87,
+        943,
+        1024
+      ],
+      "resample_scale": 0.24814422057264052,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        11,
+        11,
+        245,
+        244
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_death.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 55448,
+      "sha256": "a8d20208b2b32ec47eff5e27e2f28149f98bb260d83fcc8b0438a4569dc7207b",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.54571533203125,
+      "edge_alpha_max": 0
+    },
+    "fx_spark.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:b3564b28-b8f7-4f3f-b693-b7e01ef8095a",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "7cc1b9703c8384b951b2d98a83c21595f30e3a1597e7cdf782af0eab6197b861",
+      "source_visible_bounds": [
+        0,
+        287,
+        735,
+        1023
+      ],
+      "resample_scale": 0.07880434782608696,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        26,
+        3,
+        61,
+        38
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_spark.png",
+      "size": [
+        64,
+        64
+      ],
+      "mode": "RGBA",
+      "bytes": 2425,
+      "sha256": "a864719dcd8dfc5079308d339ede5446e747af6472f6237acec7577c448d3883",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.708984375,
+      "edge_alpha_max": 0
+    },
+    "fx_dust.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:3890759d-7731-474f-9375-63c1743b5110",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "9a99ddd5a5238c16c2a3c60d3eb344980c812bfeb7653371ef048834ed7f27b1",
+      "source_visible_bounds": [
+        4,
+        173,
+        864,
+        1023
+      ],
+      "resample_scale": 0.06744186046511629,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        14,
+        3,
+        61,
+        50
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_dust.png",
+      "size": [
+        64,
+        64
+      ],
+      "mode": "RGBA",
+      "bytes": 3670,
+      "sha256": "ac30fc387ec8ab561f4b3fd3bb4402882fe9db54ba50343367b4a75ec64c368b",
+      "alpha_min": 0,
+      "alpha_max": 193,
+      "transparent_fraction": 0.558837890625,
+      "edge_alpha_max": 0
+    },
+    "fx_glow_ready.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:82f52b05-a7a8-4b55-8045-899dc2828603",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "61c0cc848d7ba3b575a895ea6a0b39b21e57284711ced21379c137a4e7440d05",
+      "source_visible_bounds": [
+        0,
+        202,
+        723,
+        1024
+      ],
+      "resample_scale": 0.2846715328467153,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        111,
+        11,
+        231,
+        187
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_glow_ready.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 25585,
+      "sha256": "e7be6d0ba6bae6cd00742efb849b2f4a2c18b3ae52e767169fba52c1cef7e190",
+      "alpha_min": 0,
+      "alpha_max": 254,
+      "transparent_fraction": 0.8572845458984375,
+      "edge_alpha_max": 0
+    },
+    "fx_glow_legend.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:e8a018bc-5cc9-48b0-ad61-12283f146752",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "6f1047cf012d7f8457266e3dd31cb3807f8cd97f706bd6077747984931d5e065",
+      "source_visible_bounds": [
+        0,
+        2,
+        739,
+        1024
+      ],
+      "resample_scale": 0.22896281800391388,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        43,
+        11,
+        212,
+        245
+      ],
+      "matte_method": "black",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_glow_legend.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 20707,
+      "sha256": "64533352b0246b6230b4f7f333703623d1596188c0f0c5d328a4dcfebb6663d3",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.894012451171875,
+      "edge_alpha_max": 0
+    },
+    "fx_number_bg.png": {
+      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:9e177d79-6e61-40df-b276-1108699b8d3c",
+      "source_size": [
+        1024,
+        1024
+      ],
+      "source_sha256": "9415c833c1394daf3b53725854709ad4707226f036ae8fd09dcf1700da9b5190",
+      "source_visible_bounds": [
+        0,
+        106,
+        907,
+        1024
+      ],
+      "resample_scale": 0.2549019607843137,
+      "padding_fraction": 0.04,
+      "content_bounds_px": [
+        12,
+        11,
+        243,
+        245
+      ],
+      "matte_method": "green",
+      "generated_independently": true,
+      "source_at_least_2x_each_dimension": true,
+      "file": "native/skin/fx_number_bg.png",
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "bytes": 38097,
+      "sha256": "43c48356aa5ea22a34661fe5f1a54abe34f1021add163f1e0ba4a2ee30a2293d",
+      "alpha_min": 0,
+      "alpha_max": 255,
+      "transparent_fraction": 0.5293426513671875,
+      "edge_alpha_max": 0
+    }
+  }
+}

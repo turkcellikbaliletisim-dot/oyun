@@ -1,0 +1,555 @@
+{
+  "scene_play": {
+    "url": "32960499-80ab-4c47-8bc5-62139cd093c1",
+    "size": [
+      1200,
+      800
+    ],
+    "kind": "scene"
+  },
+  "icon_play": {
+    "url": "f8c0af42-699c-4263-aa40-177459c9153e",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_story_rejected": {
+    "url": "36f46834-6336-4bef-aae0-e33ec94d470f",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "reject",
+    "reason": "wrong shield and swords instead of open scroll"
+  },
+  "icon_cards": {
+    "url": "ae3a594c-d838-42d4-944c-18be43dc9031",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_deck": {
+    "url": "811cf500-56e5-441f-b9b6-43555df7db9c",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_settings": {
+    "url": "aeb3ba35-5bec-4c7d-9e0a-f0ea75e1b8cd",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_sound_on": {
+    "url": "9a9df464-6919-4fa9-98e9-665543f9cf27",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_sound_off": {
+    "url": "f2855e80-fe9a-4f47-8728-34327cb3ceac",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_back": {
+    "url": "66619ec1-41f2-49bf-ad58-7ac13524da5b",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_close": {
+    "url": "aa7e430c-4cc8-4b7f-b1d4-ffd9a1904281",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_check": {
+    "url": "c7c7d6a8-1ddf-40cc-9f9a-7c2feb17ab7d",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "magenta"
+  },
+  "icon_story": {
+    "url": "8fc930b6-c4f1-4b74-8d05-cdaf31fe2c45",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_lock": {
+    "url": "a7154786-0563-43df-bfca-09f9bc81a6f0",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_gold": {
+    "url": "ca47ec49-ce2b-4c03-a1a4-2a104fbadf02",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_dust": {
+    "url": "607b417a-5395-4460-a524-2b3c99c5ef7e",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_energy_full": {
+    "url": "c0f27c20-af49-4821-906d-2e6b7af1e625",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_energy_empty": {
+    "url": "32a7fe51-a1ba-4194-a6b9-d7cfe56a31e6",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_turn": {
+    "url": "aa28bde6-cf6b-42f1-80c7-f994f748f4b5",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_deck_count": {
+    "url": "3a20bfc2-ddae-4b69-a566-bcd3b3f1fcef",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_rarity_common": {
+    "url": "2637c344-48ba-4b39-8953-b733ca0d3d62",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_rarity_rare": {
+    "url": "7eb23739-9f01-42d3-a37b-9ab3c2d617c0",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_rarity_legendary": {
+    "url": "f5caac2b-456a-4d97-9622-303f072a4830",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_type_warrior": {
+    "url": "e526981b-e40b-467f-bb2f-67138fb7a1bc",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_type_spell": {
+    "url": "41308bda-a373-4465-a4d5-e6d9cfb19e1a",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_type_trap": {
+    "url": "960153c1-e3b3-4cd9-9edb-556b76eb4bb9",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_league": {
+    "url": "53e756e8-9883-4973-a161-b15a0270ab59",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_net_ok": {
+    "url": "df51ce36-2c5b-4f35-9ec4-b6fb56ea9e37",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "magenta"
+  },
+  "icon_net_bad": {
+    "url": "08ce95e6-469f-40e9-aa03-63fa28ebcc7c",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "magenta"
+  },
+  "icon_surrender": {
+    "url": "b60f8fdc-2a76-41ca-a998-38bf33800538",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "icon_replay": {
+    "url": "2d87ead3-390c-4a28-a92d-6f9ec2272df3",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "header_bar": {
+    "url": "16c26fb7-b9e0-4936-964c-f20bf38a6e9d",
+    "size": [
+      1170,
+      160
+    ],
+    "kind": "green"
+  },
+  "nav_bar": {
+    "url": "4f2decb6-bd7a-4eac-b802-94ac503c30ca",
+    "size": [
+      1170,
+      200
+    ],
+    "kind": "green"
+  },
+  "nav_active": {
+    "url": "c62f75d6-8222-4695-a606-10e9e15cc034",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "chip_gold": {
+    "url": "46ee05cc-ca8f-4b51-9f4f-ad694e30d962",
+    "size": [
+      400,
+      120
+    ],
+    "kind": "green"
+  },
+  "chip_dust": {
+    "url": "871825cc-8ae1-4851-b4c5-81423d606411",
+    "size": [
+      400,
+      120
+    ],
+    "kind": "green"
+  },
+  "chip_filter": {
+    "url": "dcbcef8d-26cf-40bc-89a2-90bf58bc7573",
+    "size": [
+      300,
+      100
+    ],
+    "kind": "green"
+  },
+  "chip_filter_active": {
+    "url": "61c6cc2a-03d5-436e-9d48-3af829c93c3b",
+    "size": [
+      300,
+      100
+    ],
+    "kind": "green"
+  },
+  "badge_count": {
+    "url": "2114929b-fca1-497d-999c-a39b87662fa2",
+    "size": [
+      128,
+      128
+    ],
+    "kind": "green"
+  },
+  "badge_new": {
+    "url": "20197e29-f19e-423c-9deb-f2a032783c6c",
+    "size": [
+      256,
+      128
+    ],
+    "kind": "green"
+  },
+  "toast_banner": {
+    "url": "5b368d35-a956-4457-9e7e-d67ac4894f9e",
+    "size": [
+      1200,
+      260
+    ],
+    "kind": "green"
+  },
+  "result_victory": {
+    "url": "d561d677-2a64-4734-a300-8add41ab7455",
+    "size": [
+      1200,
+      700
+    ],
+    "kind": "green"
+  },
+  "result_defeat": {
+    "url": "a3022aec-884d-4051-b4e5-7ce3740443f0",
+    "size": [
+      1200,
+      700
+    ],
+    "kind": "green"
+  },
+  "input_field": {
+    "url": "dbf91ed8-23c6-4f5a-a9a8-4c2ce3db2407",
+    "size": [
+      800,
+      120
+    ],
+    "kind": "green"
+  },
+  "progress_frame": {
+    "url": "49a6dac0-0d44-430d-ae9d-3cfdd5b77362",
+    "size": [
+      800,
+      40
+    ],
+    "kind": "green"
+  },
+  "progress_fill": {
+    "url": "5ece4760-2970-4a2c-bedb-5369ce5bb304",
+    "size": [
+      800,
+      40
+    ],
+    "kind": "tile"
+  },
+  "loading_bar_fill": {
+    "url": "5ece4760-2970-4a2c-bedb-5369ce5bb304",
+    "size": [
+      800,
+      64
+    ],
+    "kind": "tile"
+  },
+  "scrollbar": {
+    "url": "a952bfd1-91f9-4f5b-a9f7-09d572285ff5",
+    "size": [
+      64,
+      400
+    ],
+    "kind": "green"
+  },
+  "divider": {
+    "url": "eba1958d-48a5-4945-97ed-576c1c693493",
+    "size": [
+      1000,
+      60
+    ],
+    "kind": "green"
+  },
+  "tooltip_panel": {
+    "url": "13ac8171-cf22-4fea-ad06-f6c9e8fbe9ae",
+    "size": [
+      600,
+      300
+    ],
+    "kind": "green"
+  },
+  "drag_arrow": {
+    "url": "5c030e72-2da2-4f36-93cf-11b2b9c85b1e",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "target_ring": {
+    "url": "ad3e0239-a2c7-4644-8c4b-e575f3aa62ef",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "end_turn_ready": {
+    "url": "2cf20b5a-7e2b-426c-8da9-a707296363fc",
+    "size": [
+      700,
+      260
+    ],
+    "kind": "green"
+  },
+  "end_turn_wait": {
+    "url": "6f9fbf9d-6a4b-425f-8cb0-a385ac471212",
+    "size": [
+      700,
+      260
+    ],
+    "kind": "green"
+  },
+  "lane_enemy": {
+    "url": "13d8a20b-909b-4e0f-860b-a52f5ba80178",
+    "size": [
+      1024,
+      400
+    ],
+    "kind": "scene"
+  },
+  "table_center": {
+    "url": "d729a73b-df6f-471c-be0a-0cfb4db20121",
+    "size": [
+      1024,
+      1024
+    ],
+    "kind": "green"
+  },
+  "fx_hit": {
+    "url": "91469255-b39a-4240-86f4-de05c193045b",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_slash": {
+    "url": "212f7d63-1793-404e-b7e2-b091a2d9a4ac",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_heal": {
+    "url": "6bf504a5-b996-4291-8ab0-ac345d58d74f",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_fire": {
+    "url": "b00f0b83-ea1c-4936-8bc4-71203430a388",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_frost": {
+    "url": "6c273b39-e14d-46d9-a454-7cd3ee054afd",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_flood": {
+    "url": "d476e553-5163-47cc-8558-1a7a21d25be4",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_shield": {
+    "url": "4e8569c7-04df-4ba1-98ed-8c8f7eeb6b2e",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_summon": {
+    "url": "2dce1522-9de6-4438-9260-3b15165b5586",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_death": {
+    "url": "4bd940f5-4595-4409-b2ba-0e87c934b4f7",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  },
+  "fx_spark": {
+    "url": "b3564b28-b8f7-4f3f-b693-b7e01ef8095a",
+    "size": [
+      64,
+      64
+    ],
+    "kind": "black"
+  },
+  "fx_dust": {
+    "url": "3890759d-7731-474f-9375-63c1743b5110",
+    "size": [
+      64,
+      64
+    ],
+    "kind": "black"
+  },
+  "fx_glow_ready": {
+    "url": "82f52b05-a7a8-4b55-8045-899dc2828603",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_glow_legend": {
+    "url": "e8a018bc-5cc9-48b0-ad61-12283f146752",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "black"
+  },
+  "fx_number_bg": {
+    "url": "9e177d79-6e61-40df-b276-1108699b8d3c",
+    "size": [
+      256,
+      256
+    ],
+    "kind": "green"
+  }
+}
