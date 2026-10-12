@@ -1,0 +1,569 @@
+{
+  "package": "Yeni gorsel",
+  "version": 1,
+  "stage": "prototype-assets-from-generated-atlas",
+  "source": {
+    "file": "../../dokumanlar/yeni-gorsel-kaynak.png",
+    "size": [
+      1536,
+      1024
+    ]
+  },
+  "notes": [
+    "19 PNG assets extracted from an AI-generated atlas; raster crops are resampled to the requested output sizes, not individually generated at native output resolution.",
+    "No runtime code changed. Existing cards and fonts are unchanged. No font files included.",
+    "Source labels are excluded from exported assets. Transparent assets have real alpha channels.",
+    "Frame artwork windows and hero ring centers are transparent. Hero portraits in this prototype retain their illustrated decorative rings.",
+    "Inspect at intended in-game display size before final production use."
+  ],
+  "assets": {
+    "background.png": {
+      "size": [
+        1170,
+        2532
+      ],
+      "mode": "RGB",
+      "source_crop": [
+        15,
+        7,
+        210,
+        390
+      ],
+      "source_crop_size": [
+        195,
+        383
+      ],
+      "sha256": "96fff0f7439ed5d3ea9b5abc80eba924310c73733c0ee45aa0afe809075f3903"
+    },
+    "background_land.png": {
+      "size": [
+        2532,
+        1170
+      ],
+      "mode": "RGB",
+      "source_crop": [
+        226,
+        86,
+        734,
+        325
+      ],
+      "source_crop_size": [
+        508,
+        239
+      ],
+      "sha256": "9025260dd0ce38b42cdd525af59ef1fedfa105fe9fd958b7e92ac88dec7ed514"
+    },
+    "frame_unit.png": {
+      "size": [
+        512,
+        680
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        750,
+        62,
+        933,
+        327
+      ],
+      "source_crop_size": [
+        183,
+        265
+      ],
+      "sha256": "1b055060ab4a05984e4daeb44b0db794fc35815e3111f5c1646135bcb6f3c8cf",
+      "alpha_bbox": [
+        26,
+        6,
+        486,
+        674
+      ],
+      "transparent_pixel_fraction": 0.4216,
+      "content_inset": [
+        26,
+        6
+      ],
+      "transparent_window_bbox": [
+        90,
+        120,
+        419,
+        436
+      ]
+    },
+    "frame_spell.png": {
+      "size": [
+        512,
+        680
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        945,
+        52,
+        1128,
+        326
+      ],
+      "source_crop_size": [
+        183,
+        274
+      ],
+      "sha256": "e68182b47ea0fd7597120aa9757c491666a461bd4fb1eff14e3b946ab8b44412",
+      "alpha_bbox": [
+        39,
+        6,
+        473,
+        674
+      ],
+      "transparent_pixel_fraction": 0.4682,
+      "content_inset": [
+        39,
+        6
+      ],
+      "transparent_window_bbox": [
+        98,
+        148,
+        414,
+        447
+      ]
+    },
+    "frame_trap.png": {
+      "size": [
+        512,
+        680
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1139,
+        58,
+        1317,
+        325
+      ],
+      "source_crop_size": [
+        178,
+        267
+      ],
+      "sha256": "880f75a7e0fc53d97322470ac9e04ae5263eea949487afa2358f81f67d8eb083",
+      "alpha_bbox": [
+        44,
+        6,
+        467,
+        674
+      ],
+      "transparent_pixel_fraction": 0.4992,
+      "content_inset": [
+        44,
+        6
+      ],
+      "transparent_window_bbox": [
+        108,
+        146,
+        403,
+        456
+      ]
+    },
+    "frame_legend.png": {
+      "size": [
+        512,
+        680
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1326,
+        28,
+        1524,
+        330
+      ],
+      "source_crop_size": [
+        198,
+        302
+      ],
+      "sha256": "249ef11b72604dc84edf10af115e4070f217e5611f6636b712ec681679295f8b",
+      "alpha_bbox": [
+        37,
+        6,
+        475,
+        674
+      ],
+      "transparent_pixel_fraction": 0.4869,
+      "content_inset": [
+        37,
+        6
+      ],
+      "transparent_window_bbox": [
+        105,
+        182,
+        407,
+        461
+      ]
+    },
+    "card_back.png": {
+      "size": [
+        512,
+        680
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        24,
+        451,
+        213,
+        723
+      ],
+      "source_crop_size": [
+        189,
+        272
+      ],
+      "sha256": "280b8534271cd3e941797c4e13fef1ed259e110d16e4230468e8893286e74835",
+      "alpha_bbox": [
+        26,
+        6,
+        486,
+        674
+      ],
+      "transparent_pixel_fraction": 0.1198,
+      "content_inset": [
+        26,
+        6
+      ]
+    },
+    "button_gold.png": {
+      "size": [
+        600,
+        180
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        242,
+        426,
+        566,
+        501
+      ],
+      "source_crop_size": [
+        324,
+        75
+      ],
+      "sha256": "e0488deda2754c26f80b99722e05563a6a94cb3b7a3db831f6a503fe9120e496",
+      "alpha_bbox": [
+        6,
+        24,
+        594,
+        156
+      ],
+      "transparent_pixel_fraction": 0.3466,
+      "content_inset": [
+        6,
+        24
+      ]
+    },
+    "button_dark.png": {
+      "size": [
+        600,
+        180
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        242,
+        532,
+        568,
+        610
+      ],
+      "source_crop_size": [
+        326,
+        78
+      ],
+      "sha256": "b22adb43c8d2accb651e9021d35d322a12438b0673f328d8c89c0bf8b1cd5afb",
+      "alpha_bbox": [
+        6,
+        24,
+        594,
+        155
+      ],
+      "transparent_pixel_fraction": 0.3434,
+      "content_inset": [
+        6,
+        24
+      ]
+    },
+    "button_red.png": {
+      "size": [
+        600,
+        180
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        242,
+        642,
+        568,
+        718
+      ],
+      "source_crop_size": [
+        326,
+        76
+      ],
+      "sha256": "e2b5e40c94cbe78c35815823e9843db7c969e3055da2c3472df02d9d09ca1abf",
+      "alpha_bbox": [
+        6,
+        22,
+        594,
+        157
+      ],
+      "transparent_pixel_fraction": 0.3358,
+      "content_inset": [
+        6,
+        22
+      ]
+    },
+    "panel.png": {
+      "size": [
+        800,
+        800
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        596,
+        426,
+        899,
+        713
+      ],
+      "source_crop_size": [
+        303,
+        287
+      ],
+      "sha256": "60c9c69a6e8108d562e354e903f0182a60752156e27a1727acc9f465d0478113",
+      "alpha_bbox": [
+        6,
+        26,
+        794,
+        774
+      ],
+      "transparent_pixel_fraction": 0.1137,
+      "content_inset": [
+        6,
+        26
+      ]
+    },
+    "gem_mana.png": {
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        920,
+        426,
+        1044,
+        560
+      ],
+      "source_crop_size": [
+        124,
+        134
+      ],
+      "sha256": "927c7c8360250768acda210eb4277a591e22a8085ef8ae6f83bc5b9f89569035",
+      "alpha_bbox": [
+        14,
+        4,
+        242,
+        252
+      ],
+      "transparent_pixel_fraction": 0.4274,
+      "content_inset": [
+        14,
+        4
+      ]
+    },
+    "gem_attack.png": {
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1057,
+        426,
+        1181,
+        559
+      ],
+      "source_crop_size": [
+        124,
+        133
+      ],
+      "sha256": "ba451cd050935ba67668fdbcb5019fc303f8c2785008a1541d8dca620de84983",
+      "alpha_bbox": [
+        12,
+        4,
+        244,
+        252
+      ],
+      "transparent_pixel_fraction": 0.3869,
+      "content_inset": [
+        12,
+        4
+      ]
+    },
+    "gem_health.png": {
+      "size": [
+        256,
+        256
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1192,
+        426,
+        1316,
+        560
+      ],
+      "source_crop_size": [
+        124,
+        134
+      ],
+      "sha256": "1c2d2ca51818e896dc1454fd8af5f2c83c13207294928320e66b15d9e10e4f07",
+      "alpha_bbox": [
+        13,
+        4,
+        243,
+        252
+      ],
+      "transparent_pixel_fraction": 0.4053,
+      "content_inset": [
+        13,
+        4
+      ]
+    },
+    "hero_ring.png": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1326,
+        400,
+        1520,
+        601
+      ],
+      "source_crop_size": [
+        194,
+        201
+      ],
+      "sha256": "f388d6929d83eae6584a6e20829cb2a6378175149083756a114202bc62ad53be",
+      "alpha_bbox": [
+        8,
+        6,
+        503,
+        506
+      ],
+      "transparent_pixel_fraction": 0.5178,
+      "content_inset": [
+        8,
+        6
+      ],
+      "transparent_window_bbox": [
+        107,
+        100,
+        401,
+        409
+      ]
+    },
+    "lane.png": {
+      "size": [
+        1024,
+        400
+      ],
+      "mode": "RGB",
+      "source_crop": [
+        922,
+        663,
+        1211,
+        786
+      ],
+      "source_crop_size": [
+        289,
+        123
+      ],
+      "sha256": "d375d5d655afd525c7caa568af38a06824addcd765f4eb3354d4e04c564bf4b8"
+    },
+    "logo.png": {
+      "size": [
+        1024,
+        512
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        1240,
+        641,
+        1493,
+        840
+      ],
+      "source_crop_size": [
+        253,
+        199
+      ],
+      "sha256": "d2acda9bb8c5fafa3c4311481d29991e0442bb2701e3ef319d1fb666be1fab00",
+      "alpha_bbox": [
+        202,
+        6,
+        822,
+        506
+      ],
+      "transparent_pixel_fraction": 0.6797,
+      "content_inset": [
+        202,
+        6
+      ]
+    },
+    "hero_player.png": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        169,
+        750,
+        401,
+        980
+      ],
+      "source_crop_size": [
+        232,
+        230
+      ],
+      "sha256": "ef7110590ea91dc7deb43719d6da10e9a2f443f1baa33a463080e8087ab65061",
+      "alpha_bbox": [
+        0,
+        2,
+        512,
+        509
+      ],
+      "transparent_pixel_fraction": 0.2095,
+      "content_inset": [
+        0,
+        2
+      ]
+    },
+    "hero_foe.png": {
+      "size": [
+        512,
+        512
+      ],
+      "mode": "RGBA",
+      "source_crop": [
+        414,
+        750,
+        650,
+        980
+      ],
+      "source_crop_size": [
+        236,
+        230
+      ],
+      "sha256": "0d5bcfb6cc5dcc85dd9b8d8ca115e2d964ea94f6e7023b71d06d56383110bee7",
+      "alpha_bbox": [
+        1,
+        0,
+        511,
+        512
+      ],
+      "transparent_pixel_fraction": 0.2124,
+      "content_inset": [
+        1,
+        0
+      ]
+    }
+  }
+}
