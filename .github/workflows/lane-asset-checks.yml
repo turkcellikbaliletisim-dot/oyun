@@ -1,0 +1,19 @@
+name: Lane asset integrity
+on:
+  push:
+    paths: ['native/skin/**', 'native/mobile.gd', 'native/landscape_match.gd', 'scripts/*lane_refresh*.py', 'dokumanlar/serit-yenileme-kaynak/**', '.github/workflows/lane-asset-checks.yml']
+  pull_request:
+    paths: ['native/skin/**', 'native/mobile.gd', 'native/landscape_match.gd', 'scripts/*lane_refresh*.py', 'dokumanlar/serit-yenileme-kaynak/**', '.github/workflows/lane-asset-checks.yml']
+permissions:
+  contents: read
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 4
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check 'Pillow==11.3.0'
+      - run: python scripts/check_lane_refresh.py

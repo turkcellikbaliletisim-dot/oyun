@@ -78,8 +78,23 @@ func run() -> void:
 	check(restored.get("profile", {}).get("freePacks") == 0, "Recovery duplicated pack reward")
 	app.muted = false
 	app.play_sound()
-	check(app.audio.stream != null and app.audio.stream.data.size() == 4410, "Native procedural sound missing")
+	check(app.audio.stream != null and (app.audio.stream is AudioStreamOggVorbis or app.audio.stream.data.size() > 1000), "Native sound missing")
 	await create_timer(0.2).timeout
+	# Stop the mixer before clearing the upstream texture/font/audio caches.
+	# Preserve strict ERROR checks in run-native.js instead of masking leaks.
+	app.audio.stop()
+	check(not app.audio.playing, "Test sound failed to stop")
+	app.audio.stream = null
+	if is_instance_valid(app.music_player):
+		app.music_player.stop()
+		app.music_player.stream = null
+	app.poll.stop()
+	app.art_cache.clear()
+	app.font_cache.clear()
+	app.sfx_cache.clear()
+	app.portrait_font = null
+	app.number_font = null
+	await create_timer(0.15).timeout
 	app.queue_free()
 	await process_frame
 	await process_frame

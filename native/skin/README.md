@@ -1,3 +1,12 @@
-# Destan Diyarları - skin
+# Tasarım klasörü (skin)
 
-İkinci paket: `manifest_v2.json` ve `../../dokumanlar/YENI-GORSEL-2.md`. İlk paketin `manifest.json` dosyası tarihsel kayıttır; yenilenen frame/button/gem dosyaları için v2 manifest kullanın. Fontlar için proje kökünde `bash scripts/skin_v2_fonts.command`.
+Oyunun görünümü buradan değişir; kod değiştirmen gerekmez.
+
+| Dosya | Ne yapar |
+|---|---|
+| `skin.json` | Tüm renk rolleri (hex, `#` olmadan). Silinen satır varsayılana döner. |
+| `background.png` | İsteğe bağlı tam ekran arka plan (ör. 1170×2532). |
+| `font.ttf` / `font.otf` | İsteğe bağlı oyun yazı tipi. |
+| `cards/01.png … 40.png` | İsteğe bağlı kart resmi (3:2 yatay, ör. 768×512). Yoksa `kart-prototipi/gorseller` kullanılır. |
+
+Godot klasörü açınca yeni dosyaları kendisi içe aktarır. Dosya adları küçük harf ve tam olarak yukarıdaki gibi olmalı.

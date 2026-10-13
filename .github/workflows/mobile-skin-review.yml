@@ -1,0 +1,55 @@
+name: Mobile skin visual review
+on:
+  push:
+    branches: ['gorsel-kalite/mobil-skin-baglantilari-20261013']
+  pull_request:
+    paths:
+      - 'native/**'
+      - 'tests/native-*.gd'
+      - 'tests/run-native.js'
+      - '.github/workflows/mobile-skin-review.yml'
+permissions:
+  contents: read
+concurrency:
+  group: mobile-skin-review-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  screenshots:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Install verified engine and virtual display
+        run: |
+          bash scripts/install-godot.sh "$RUNNER_TEMP/destan-godot"
+          echo "$RUNNER_TEMP/destan-godot" >> "$GITHUB_PATH"
+          if ! command -v xvfb-run >/dev/null || ! command -v xauth >/dev/null; then
+            sudo apt-get update -qq
+            sudo apt-get install -y xvfb xauth
+          fi
+      - name: Capture renderer output and run all native checks
+        env:
+          DESTAN_NATIVE_VISUAL: '1'
+          DESTAN_NATIVE_VERBOSE: '1'
+          LIBGL_ALWAYS_SOFTWARE: '1'
+          DESTAN_SNAPSHOT_DIR: '${{ runner.temp }}/skin-review'
+        run: |
+          set -euo pipefail
+          mkdir -p "$DESTAN_SNAPSHOT_DIR"
+          git rev-parse HEAD > "$DESTAN_SNAPSHOT_DIR/commit.txt"
+          xvfb-run -a -s '-screen 0 1920x1200x24' npm run test:native > "$DESTAN_SNAPSHOT_DIR/native-test.log" 2>&1
+      - name: Save screenshots and technical report only
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-skin-review
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            ${{ runner.temp }}/skin-review/*.png
+            ${{ runner.temp }}/skin-review/*.json
+            ${{ runner.temp }}/skin-review/*.txt
+            ${{ runner.temp }}/skin-review/*.log
