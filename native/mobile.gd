@@ -525,6 +525,7 @@ func render_lobby() -> void:
 	tile_press(merge_tile, func(): open_tab("merge"))
 
 var merge_pick: int = -1
+var merge_speed: int = 1
 var merge_info: String = ""
 
 const Merge_ = preload("res://native/merge_engine.gd")
@@ -534,6 +535,24 @@ func merge_animate(b: Dictionary) -> void:
 	clear_content()
 	var title = ("BOSS · " if b.boss else "") + "Dalga %d savaşı" % int(b.wave)
 	heading(title, content, 24)
+	if b.boss:
+		var boss_tex = skin_art("boss_%d.png" % (((int(b.wave) / 5 - 1) % 3) + 1))
+		if boss_tex != null:
+			var boss_view = TextureRect.new()
+			boss_view.texture = boss_tex
+			boss_view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			boss_view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			boss_view.custom_minimum_size = Vector2(0, 180)
+			content.add_child(boss_view)
+	else:
+		var frame_tex = skin_art("merge_frame.png")
+		if frame_tex != null:
+			var frame_view = TextureRect.new()
+			frame_view.texture = frame_tex
+			frame_view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			frame_view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			frame_view.custom_minimum_size = Vector2(0, 110)
+			content.add_child(frame_view)
 	var counts = muted_label("", content, 14)
 	muted_label("Düşman", content, 12)
 	var foe_bar = ProgressBar.new()
@@ -564,12 +583,23 @@ func merge_animate(b: Dictionary) -> void:
 		my_bar.value = msum
 		counts.text = "Tur %d · %d birliğin vs %d düşman" % [round_no, frame.mine.size(), frame.foes.size()]
 		if is_inside_tree() and not DisplayServer.get_name() == "headless":
-			await get_tree().create_timer(0.3).timeout
+			await get_tree().create_timer(0.3 / merge_speed).timeout
 
 func merge_do(path: String, body: Dictionary = {}) -> void:
 	var result = merge_call(path, body)
 	if result.has("battle"):
 		await merge_animate(result.battle)
+		if result.battle.won:
+			var burst = skin_art("merge_burst.png")
+			if burst != null:
+				var burst_view = TextureRect.new()
+				burst_view.texture = burst
+				burst_view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				burst_view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				burst_view.custom_minimum_size = Vector2(0, 160)
+				content.add_child(burst_view)
+			if is_inside_tree() and not DisplayServer.get_name() == "headless":
+				await get_tree().create_timer(0.8).timeout
 	if result.has("error"):
 		merge_info = str(result.error)
 	elif result.has("battle"):
@@ -588,6 +618,14 @@ func render_merge() -> void:
 	if merge_info != "":
 		label(merge_info, content, 15)
 	if bool(v.boss):
+		var boss_icon = skin_art("boss_%d.png" % (((int(g.wave) / 5 - 1) % 3) + 1))
+		if boss_icon != null:
+			var boss_banner = TextureRect.new()
+			boss_banner.texture = boss_icon
+			boss_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			boss_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			boss_banner.custom_minimum_size = Vector2(0, 120)
+			content.add_child(boss_banner)
 		label("⚠ Boss dalgası: %s seni bekliyor (ödül ×2)" % Merge_.BOSS_NAMES[(int(g.wave) / 5 - 1) % Merge_.BOSS_NAMES.size()], content, 14)
 	if int(g.wave) == 1 and g.log.is_empty() and not bool(g.over):
 		muted_label("Totem seç (koşunun başında):", content, 12)
@@ -601,6 +639,14 @@ func render_merge() -> void:
 			tb.add_theme_font_size_override("font_size", 10)
 			tb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			tb.custom_minimum_size = Vector2(0, 52)
+			var totem_tex = skin_art("totem_%d.png" % (ti + 1))
+			if totem_tex != null:
+				tb.icon = totem_tex
+				tb.expand_icon = true
+				tb.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				tb.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+				tb.add_theme_constant_override("icon_max_width", 48)
+				tb.custom_minimum_size = Vector2(0, 92)
 			tb.disabled = int(v.best) < int(tt.unlock)
 			if tb.disabled:
 				tb.text = "🔒 %d. dalga" % int(tt.unlock)
@@ -644,7 +690,23 @@ func render_merge() -> void:
 	bar.add_theme_constant_override("separation", 8)
 	content.add_child(bar)
 	primary_button("Satın al (%d)" % int(v.buyCost), bar, func(): merge_do("merge/buy"), bool(g.over))
-	primary_button("SAVAŞ ›", bar, func(): merge_do("merge/battle"), bool(g.over))
+	var fight = primary_button("SAVAŞ ›", bar, func(): merge_do("merge/battle"), bool(g.over))
+	var fight_icon = skin_art("icon_auto_battle.png")
+	if fight_icon != null:
+		fight.icon = fight_icon
+		fight.expand_icon = true
+		fight.add_theme_constant_override("icon_max_width", 28)
+	var speed_button = Button.new()
+	speed_button.text = "x%d" % merge_speed
+	var speed_icon = skin_art("icon_speed_%d.png" % merge_speed)
+	if speed_icon != null:
+		speed_button.icon = speed_icon
+		speed_button.expand_icon = true
+		speed_button.add_theme_constant_override("icon_max_width", 24)
+	speed_button.pressed.connect(func():
+		merge_speed = 2 if merge_speed == 1 else 1
+		render())
+	bar.add_child(speed_button)
 	var bar2 = HBoxContainer.new()
 	bar2.add_theme_constant_override("separation", 8)
 	content.add_child(bar2)
