@@ -60,3 +60,9 @@ Uzun kart metni sağ sütunda kaydırılır; “Kartı büyüt” tam açıklama
 Geçici sesler yerine gerçek kayıt: `music_menu.ogg`, `music_battle.ogg` (96 sn, döngüsel; ney/saz/zurna), efektler `click, card_flip, play_card, attack, hit, spell, heal, pack_open, turn_start, end_turn, victory, defeat`. Prompt: "Anadolu ezgili, ney ve bağlama ağırlıklı, 96 sn kesintisiz döngülü menü müziği; ikinci parça savaş için davul/zurna ile tempolu."
 
 Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve dosya bazlı kaynak/kalite bilgileri için `native/skin/audio/manifest.json`.
+
+## Verilen kararlar (2026-10-13, kullanıcı: "sen karar ver")
+1. **Sunucu barındırma:** Fly.io (tek küçük Node örneği, kalıcı disk/volume, ücretsiz-ucuz katman). Alternatif: Render. Çevrimdışı mod her durumda çalışır, sunucu yalnızca çevrimiçi oyun/eşleşme içindir.
+2. **Sıradaki mod:** Önce **birleştirme (merge)**. Otomatik savaş, totem ve yeniden doğuş sonra gelir. Gerekçe: UGACHA'nın çekirdek döngüsü, tamamen çevrimdışı çalışır, sunucu gerektirmez.
+3. **Yayın:** Önce Android, Google Play iç test kanalı. Yayın imzası (release keystore) ayrı üretilecek, debug anahtarı yayında kullanılmaz. Geliştirici hesabı (25 USD) kullanıcı tarafından açılmalı.
+4. **Görseller:** 21 yeni görsel ChatGPT'den `gorsel-yeni/` klasörüne istendi; yerleştirme sonraki çalışmada.
