@@ -453,6 +453,18 @@ func render_lobby() -> void:
 			offline_art.custom_minimum_size = Vector2(0, 90)
 			disconnected.move_child(offline_art, 0)
 		primary_button("Yeniden bağlan", disconnected, connect_account)
+		var tips = ["Kartı sürükleyip sahaya bırakarak oynayabilirsin.", "Her tur enerjin bir kristal artar.", "Bir kahramanı hedeflemek için kartına dokun, sonra rakibe sürükle.", "Yolculuk bölümlerini bitirdikçe sandık kazanırsın."]
+		var tip_panel = art_slice(content, "loading_tip_panel.png")
+		if tip_panel != null:
+			tip_panel.custom_minimum_size = Vector2(0, 76)
+			var tip = label("İPUCU · " + tips[int(Time.get_ticks_msec() / 1000) % tips.size()], tip_panel, 12)
+			tip.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			tip.offset_left = 28
+			tip.offset_right = -28
+			tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			tip.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+			tip.add_theme_color_override("font_color", Color("ead9b0"))
 		return
 	resource_row(content)
 	var landscape = get_viewport_rect().size.x > 650
@@ -873,7 +885,7 @@ func render_match() -> void:
 		var lane_art = art_slice(strip, "lane_enemy.png" if lane_index == 0 else "lane.png", Rect2(), "h3", Vector4(246, 0, 246, 0))
 		if lane_art != null:
 			lane_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			lane_art.modulate = Color(1, 1, 1, 0.7)
+			lane_art.modulate = Color(1, 1, 1, 0.92)
 			strip.add_theme_stylebox_override("panel", box(Color(0, 0, 0, 0.0), Color(0, 0, 0, 0), 0, 14, 0))
 	battlefield_lane(foe.board, false, legal, Rect2(play_x, lanes_top, play_w, lane_height), card_width)
 	battlefield_lane(mine.board, true, legal, Rect2(play_x, lanes_top + lane_height + 2, play_w, lane_height), card_width)
