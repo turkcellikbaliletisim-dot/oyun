@@ -34,6 +34,8 @@ try{
   if(!await godot([...display,'--path','.','--script','native/integration.gd','--','--no-connect']))throw new Error('Godot integration failed');
   await new Promise((resolve,reject)=>spawn('node',['tests/offline-parity.js',join(dir,'parity.json')],{stdio:'inherit'}).on('exit',code=>code===0?resolve():reject(new Error('Parity generation failed'))));
   if(!await godot(['--headless','--path','.','--script','tests/offline-parity.gd','--',join(dir,'parity.json')]))throw new Error('Offline engine parity failed');
+  if(!await godot(['--headless','--path','.','--script','tests/uga-sim.gd']))throw new Error('UGA sim failed');
+  if(!await godot(['--headless','--path','.','--script','tests/uga-meta.gd']))throw new Error('UGA meta failed');
   if(!await godot(['--headless','--path','.','--script','tests/merge-engine.gd','--','--no-connect']))throw new Error('Merge engine failed');
   if(!await godot(['--headless','--path','.','--script','tests/native-offline.gd','--','--no-connect']))throw new Error('Offline mode failed');
   if(await realSession()!==beforeSession)throw new Error('Native test changed real player session');
