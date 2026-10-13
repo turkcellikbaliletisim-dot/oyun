@@ -31,6 +31,7 @@ var stats: Dictionary = {"kills": 0, "gold": 0, "merges": 0, "summons": 0, "boss
 var mods: Dictionary = {"dmg": 1.0, "speed": 1.0, "gold": 1.0, "hero": {}}
 var err: String = ""
 var deck: Array = ["kilic", "okcu", "buyucu", "kalkan", "kam"]
+var run_levels: Dictionary = {}
 
 func _init(seed_in: int = 1, world_in: int = 0, mods_in: Dictionary = {}, castle_bonus: int = 0, potion_bonus: int = 0, deck_in: Array = []) -> void:
 	if deck_in.size() == 5:
@@ -121,6 +122,23 @@ func move(from: int, to: int) -> bool:
 	slots[from] = tmp
 	return true
 
+func power_cost(h: String) -> int:
+	return 40 * int(pow(2, int(run_levels.get(h, 0))))
+
+func power_up(h: String) -> bool:
+	err = ""
+	if over or not deck.has(h):
+		return fail("Bu kahraman takımda değil.")
+	if int(run_levels.get(h, 0)) >= 5:
+		return fail("En yüksek güçte.")
+	var cost = power_cost(h)
+	if gold < cost:
+		return fail("Altın yetmiyor.")
+	gold -= cost
+	run_levels[h] = int(run_levels.get(h, 0)) + 1
+	events.append({"t": "power", "hero": h, "level": run_levels[h]})
+	return true
+
 func sell(slot: int) -> bool:
 	if over or slot < 0 or slot >= slots.size() or slots[slot] == null:
 		return fail("Satılacak kart yok.")
@@ -196,7 +214,7 @@ func spawn(spec: Dictionary) -> void:
 func hero_damage(slot: int) -> float:
 	var c = slots[slot]
 	var h = D.HEROES[c.h]
-	var dmg = float(h.dmg) * D.STAR_DMG[int(c.s) - 1] * float(mods.dmg) * float(mods.hero.get(c.h, 1.0))
+	var dmg = float(h.dmg) * D.STAR_DMG[int(c.s) - 1] * float(mods.dmg) * float(mods.hero.get(c.h, 1.0)) * (1.0 + 0.25 * int(run_levels.get(c.h, 0)))
 	# Umay komşu desteği
 	var col = slot % D.COLS
 	for n in [slot - 1, slot + 1, slot - D.COLS, slot + D.COLS]:
@@ -369,6 +387,18 @@ func auto_play_once() -> void:
 				return
 	if gold >= summon_cost and free_slot() >= 0:
 		summon()
+		return
+	# tahta doluysa en çok kartı olan kahramanı güçlendir
+	var counts = {}
+	for c in slots:
+		if c != null and deck.has(c.h):
+			counts[c.h] = int(counts.get(c.h, 0)) + 1
+	var best = ""
+	for h in counts:
+		if best == "" or int(counts[h]) > int(counts[best]):
+			best = h
+	if best != "" and gold >= power_cost(best) and int(run_levels.get(best, 0)) < 5:
+		power_up(best)
 
 func result() -> Dictionary:
 	return {"world": world, "wave": wave, "won": won_world, "kills": stats.kills, "bosses": stats.bosses, "merges": stats.merges, "summons": stats.summons, "best_star": stats.best_star, "time": t}

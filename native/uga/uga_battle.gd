@@ -60,6 +60,9 @@ var r_hud: Rect2
 var r_field: Rect2
 var r_board: Rect2
 var r_bar: Rect2
+var r_power: Rect2
+var power_rects: Dictionary = {}
+var r_sell: Rect2
 var slot_rects: Array = []
 var r_summon: Rect2
 var r_auto: Rect2
@@ -115,7 +118,12 @@ func layout() -> void:
 	var cell = minf((w - 24) / 5.0, 72.0)
 	var cell_h = cell * 1.2
 	var board_h = cell_h * 3 + 16
-	r_board = Rect2((w - cell * 5) / 2.0 - 6, r_bar.position.y - board_h - 4, cell * 5 + 12, board_h)
+	r_power = Rect2(0, r_bar.position.y - 48, w, 46)
+	r_board = Rect2((w - cell * 5) / 2.0 - 6, r_power.position.y - board_h - 2, cell * 5 + 12, board_h)
+	power_rects = {}
+	var pw = (w - 16) / 5.0
+	for i in range(sim.deck.size()):
+		power_rects[sim.deck[i]] = Rect2(8 + i * pw + 2, r_power.position.y + 3, pw - 4, 40)
 	r_field = Rect2(0, r_hud.end.y, w, r_board.position.y - r_hud.end.y - 4)
 	slot_rects = []
 	for i in range(D.SLOTS):
@@ -123,6 +131,7 @@ func layout() -> void:
 		var r = i / D.COLS
 		slot_rects.append(Rect2(r_board.position.x + 6 + c * cell + 2, r_board.position.y + 8 + r * cell_h + 2, cell - 4, cell_h - 4))
 	r_summon = Rect2(w / 2.0 - 78, r_bar.position.y + 10, 156, 58)
+	r_sell = Rect2(w / 2.0 - 100, r_bar.position.y + 6, 200, 66)
 	r_auto = Rect2(w - 70, r_bar.position.y + 10, 60, 27)
 	r_speed = Rect2(w - 70, r_bar.position.y + 41, 60, 27)
 	r_exit = Rect2(w - 44, 8, 38, 38)
@@ -526,7 +535,26 @@ func button_rect(r: Rect2, label: String, on: bool, sz: int = 14) -> void:
 	draw_rect(r, Color("ddbf7e") if on else Color("6e6042"), false, 2.0)
 	text(Vector2(r.position.x, r.position.y + r.size.y / 2 + sz * 0.35), label, sz, Color("ffe9b0") if on else Color("c8b88e"), HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 
+func draw_power() -> void:
+	draw_rect(r_power, Color(0.03, 0.05, 0.08, 0.9))
+	for h in power_rects:
+		var r: Rect2 = power_rects[h]
+		var lv = int(sim.run_levels.get(h, 0))
+		var cost = sim.power_cost(h)
+		var can = sim.gold >= cost and lv < 5 and not sim.over
+		draw_rect(r, Color(0.1, 0.14, 0.18) if not can else Color(0.2, 0.17, 0.08))
+		draw_rect(r, Color("ddbf7e") if can else Color("3a4a55"), false, 1.5)
+		var ht = tex(str(D.HEROES[h].art))
+		if ht == null:
+			ht = tex(str(D.HEROES[h].art) + "_1")
+		if ht != null:
+			draw_cover(ht, Rect2(r.position + Vector2(2, 2), Vector2(32, 36)))
+		text(Vector2(r.position.x + 36, r.position.y + 16), "Sv%d" % lv if lv < 5 else "MAX", 11, Color("ffe9b0"))
+		if lv < 5:
+			text(Vector2(r.position.x + 36, r.position.y + 33), str(cost), 11, Color("ffd25a") if can else Color("8a949b"))
+
 func draw_bar() -> void:
+	draw_power()
 	draw_rect(r_bar, Color(0.03, 0.05, 0.08, 0.95))
 	draw_line(Vector2(0, r_bar.position.y), Vector2(size.x, r_bar.position.y), Color("6e6042"), 1.5)
 	# çağır düğmesi
@@ -544,6 +572,12 @@ func draw_bar() -> void:
 		draw_fit(coin, Rect2(cost_x, r_summon.position.y + 32, 18, 18))
 	text(Vector2(cost_x + 20, r_summon.position.y + 47), str(sim.summon_cost), 14, Color("2a1500") if can else Color("bbbbbb"))
 	text(Vector2(0, r_bar.position.y + 92), "Sürükle: aynı kart + aynı yıldız = birleş", 11, Color("9fb0bb"), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	if drag_from >= 0 and sim.slots[drag_from] != null:
+		var over_sell = r_sell.has_point(drag_pos)
+		draw_rect(r_sell, Color(0.45, 0.1, 0.08, 0.95 if over_sell else 0.85))
+		draw_rect(r_sell, Color("ff9a8a"), false, 3.0 if over_sell else 1.5)
+		text(Vector2(r_sell.position.x, r_sell.position.y + 30), "SAT", 20, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, r_sell.size.x, title_font)
+		text(Vector2(r_sell.position.x, r_sell.position.y + 52), "+%d altın" % int(5 * pow(2, int(sim.slots[drag_from].s) - 1)), 13, Color("ffd25a"), HORIZONTAL_ALIGNMENT_CENTER, r_sell.size.x)
 	# iksirler
 	for k in potion_rects:
 		var r: Rect2 = potion_rects[k]
@@ -679,6 +713,14 @@ func _gui_input(event: InputEvent) -> void:
 		if r_speed.has_point(pos):
 			speed = 2 if speed == 1 else (3 if speed == 2 else 1)
 			return
+		for h in power_rects:
+			if power_rects[h].has_point(pos):
+				if sim.power_up(h):
+					say("%s güçlendi! (Sv %d)" % [D.HEROES[h].name, int(sim.run_levels[h])])
+				else:
+					say(sim.err)
+				consume_events()
+				return
 		for k in potion_rects:
 			if potion_rects[k].has_point(pos):
 				if not sim.use_potion(k):
@@ -696,6 +738,13 @@ func _gui_input(event: InputEvent) -> void:
 		var to = slot_at(pos)
 		var from = drag_from
 		drag_from = -1
+		if r_sell.has_point(pos):
+			info_slot = -1
+			if sim.sell(from):
+				sound("pack_open", -6.0)
+				say("Satıldı")
+			consume_events()
+			return
 		if to == from or to < 0 or pos.distance_to(press_pos) < 8:
 			info_slot = -1 if info_slot == from else from
 			return

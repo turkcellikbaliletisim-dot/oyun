@@ -46,9 +46,9 @@ const ENEMIES = {
 	"tepegoz": {"name": "Tepegöz", "hp": 3.0, "speed": 0.04, "art": "enemy_tepegoz"},
 }
 const BOSSES = [
-	{"name": "Kara Kurt", "art": "boss_1"},
-	{"name": "Demir Dev", "art": "boss_2"},
-	{"name": "Gölge Büyücü", "art": "boss_3"},
+	{"name": "Taş Dev", "art": "boss_1"},
+	{"name": "Gök Ejderi", "art": "boss_2"},
+	{"name": "Kara Büyücü", "art": "boss_3"},
 	{"name": "Erlik Han", "art": "boss_4"},
 	{"name": "Şahmeran", "art": "boss_5"},
 ]

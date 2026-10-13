@@ -23,6 +23,18 @@ func _initialize() -> void:
 	s.slots[7] = {"h": "okcu", "s": 6, "cd": 0}
 	check(not s.can_merge(6, 7), "6 yıldız birleşmez")
 	check(s.move(5, 8) and s.slots[8].h == "kilic" and s.slots[5] == null, "boş yuvaya taşıma")
+	# koşu içi güçlendirme
+	var pw = Sim.new(4, 0)
+	pw.gold = 1000
+	pw.slots[0] = {"h": pw.deck[0], "s": 1, "cd": 0}
+	var before = pw.hero_damage(0)
+	check(pw.power_up(pw.deck[0]) and pw.gold == 960 and pw.power_cost(pw.deck[0]) == 80, "güçlendirme altın düşer, maliyet ikiye katlanır")
+	check(pw.hero_damage(0) > before * 1.2, "güçlendirme hasarı artırır")
+	check(not pw.power_up("ejder_yavrusu"), "takımda olmayan güçlendirilemez")
+	var sl = Sim.new(4, 0)
+	sl.slots[0] = {"h": "okcu", "s": 3, "cd": 0}
+	var g1 = sl.gold
+	check(sl.sell(0) and sl.gold == g1 + 20 and sl.slots[0] == null, "kart satışı")
 	# dolu tahta
 	var f = Sim.new(9, 0)
 	f.gold = 10000
