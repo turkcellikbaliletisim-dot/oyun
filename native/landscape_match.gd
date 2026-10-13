@@ -84,7 +84,7 @@ func render_match() -> void:
 		var surface = art_slice(strip, entry[3], Rect2(), "h3", Vector4(246, 0, 246, 0))
 		if surface != null:
 			surface.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-			surface.modulate.a = 0.72
+			surface.modulate.a = 0.92
 		if entry[1].is_empty():
 			var hint = label("RAKİP SAHASI" if not entry[2] else "SENİN SAHAN", strip, 11)
 			hint.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
