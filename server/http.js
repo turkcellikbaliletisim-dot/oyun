@@ -56,7 +56,14 @@ export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,
         else if(req.method==='POST'&&path==='/api/queue'){keys(body,['deck']);result=await service.queue(token,csrf,body.deck);}
         else if(req.method==='POST'&&path==='/api/queue/cancel'){keys(body,[]);result=await service.cancelQueue(token,csrf);}
         else if(req.method==='DELETE'&&path==='/api/account'){keys(body,[]);result=await service.remove(token,csrf);res.setHeader('Set-Cookie',sessionCookie('',production,true));}
+        else if(req.method==='POST'&&path==='/api/uga/score'){keys(body,['world','wave']);result=await service.ugaScore(token,csrf,body.world,body.wave);}
+        else if(req.method==='POST'&&path==='/api/uga/race'){keys(body,['world']);result=await service.ugaRaceCreate(token,csrf,body.world);}
         else {
+          const board=/^\/api\/uga\/board\/([0-4])$/.exec(path);
+          const race=/^\/api\/uga\/race\/([A-Z0-9]{6})(?:\/(result))?$/.exec(path);
+          if(board&&req.method==='GET'){result=await service.ugaBoard(token,Number(board[1]));send(res,200,result);return;}
+          if(race&&req.method==='GET'&&!race[2]){result=await service.ugaRace(token,race[1]);send(res,200,result);return;}
+          if(race&&req.method==='POST'&&race[2]==='result'){keys(body,['wave']);result=await service.ugaRaceResult(token,csrf,race[1],body.wave);send(res,200,result);return;}
           const match=/^\/api\/matches\/([a-f0-9-]{36})(?:\/(actions|leave|replay))?$/.exec(path);
           const wallet=/^\/api\/collection\/(pack|craft|dismantle|archive)$/.exec(path);
           if(match&&req.method==='GET'&&!match[2])result=await service.getMatch(token,match[1]);

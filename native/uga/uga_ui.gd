@@ -22,6 +22,11 @@ var last_reward: Dictionary = {}
 var chest_reward: Dictionary = {}
 var battle = null
 var offline_gold: int = 0
+var board_data: Dictionary = {}
+var board_loading: bool = false
+var race: Dictionary = {}
+var race_active: String = ""
+var race_input: String = ""
 
 func _init(app_in) -> void:
 	app = app_in
@@ -214,6 +219,8 @@ func render(v: String) -> void:
 			render_rebirth()
 		"uga_result":
 			render_result()
+		"uga_online":
+			render_online()
 		_:
 			render_hub()
 
@@ -328,6 +335,7 @@ func render_hub() -> void:
 	tile(grid, "Sandıklar" + (" (%d)" % chests if chests > 0 else ""), "Kahraman ve parça", "chest_rare.png" if art("chest_rare.png") != null else "scene_chest.png", func(): open("uga_chests"))
 	tile(grid, "Görevler" + (" (%d)" % ready if ready > 0 else ""), "Günlük elmas", "icon_mission.png" if art("icon_mission.png") != null else "icon_wave.png", func(): open("uga_missions"))
 	tile(grid, "Yeniden Doğuş", "Ruh taşı: %d" % int(meta.p.soul), "icon_star_rebirth.png", func(): open("uga_rebirth"))
+	tile(grid, "Sıralama & Yarış", "Arkadaşınla aynı dalgalar", "icon_leaderboard.png" if art("icon_leaderboard.png") != null else "icon_league.png", func(): open("uga_online"))
 	tile(grid, "Kart Düellosu", "Klasik kart oyunu", "scene_friends.png", func(): open("duel"))
 
 func tile(parent: Node, name: String, sub: String, file: String, cb: Callable) -> void:
@@ -357,10 +365,12 @@ func tile(parent: Node, name: String, sub: String, file: String, cb: Callable) -
 
 # ---------- savaş ----------
 
-func start_run(world: int) -> void:
+func start_run(world: int, seed_override: int = -1) -> void:
 	if battle != null and is_instance_valid(battle):
 		return
-	var sim = Sim.new(meta.run_seed(), world, meta.mods(), meta.castle_bonus(), 0, meta.p.deck)
+	if seed_override < 0:
+		race_active = ""
+	var sim = Sim.new(meta.run_seed() if seed_override < 0 else seed_override, world, meta.mods(), meta.castle_bonus(), 0, meta.p.deck)
 	battle = Battle.new()
 	battle.setup(sim, app.skin_art, app.get_theme_default_font(), app.portrait_font)
 	battle.sfx = func(name: String) -> AudioStream: return null if app.muted else app.sfx_stream(name)
@@ -381,6 +391,8 @@ func on_finished(result: Dictionary) -> void:
 	battle = null
 	app.shell_margin.visible = true
 	app.set_music("music_menu")
+	if online():
+		submit_online(result)
 	open("uga_result")
 
 func render_result() -> void:
@@ -415,9 +427,20 @@ func render_result() -> void:
 		txt("Yeni dünya açıldı!", p, 15, Color("7dff9a"))
 	var s = card_panel(c)
 	txt("Yenilen düşman: %d · Boss: %d · Birleştirme: %d · En yüksek yıldız: %d" % [int(r.get("kills", 0)), int(r.get("bosses", 0)), int(r.get("merges", 0)), int(r.get("best_star", 1))], s, 13, MUTED, true)
+	if race_active != "":
+		var rp = card_panel(c, Color("54e0ff"))
+		txt("Yarış %s" % race_active, rp, 16, Color("9fe8ff"))
+		if race.get("results", []).is_empty():
+			txt("Sonuçlar gönderiliyor…", rp, 13, MUTED)
+		for i in range(race.get("results", []).size()):
+			var e = race.results[i]
+			txt("%d. %s · dalga %d" % [i + 1, e.name, int(e.wave)], rp, 14, INK)
 	var rr = row(c, 8)
 	btn("Ana sayfa", rr, func(): open("lobby"))
-	btn("TEKRAR", rr, func(): start_run(int(r.get("world", 0))), false, true, 48)
+	if race_active != "":
+		btn("Yarışa dön", rr, func(): open("uga_online"))
+	else:
+		btn("TEKRAR", rr, func(): start_run(int(r.get("world", 0))), false, true, 48)
 
 # ---------- kahramanlar ----------
 
@@ -597,3 +620,108 @@ func render_rebirth() -> void:
 			open("lobby")
 		else:
 			toast(meta.err, false), not meta.can_rebirth() or meta.rebirth_gain() <= 0, true, 52)
+
+# ---------- çevrimiçi: sıralama ve arkadaş yarışı ----------
+
+func online() -> bool:
+	return not app.offline_mode and not app.account.is_empty()
+
+func submit_online(result: Dictionary) -> void:
+	await app.api("uga/score", HTTPClient.METHOD_POST, {"world": int(result.world), "wave": int(result.wave)})
+	if race_active != "":
+		var r = await app.api("uga/race/%s/result" % race_active, HTTPClient.METHOD_POST, {"wave": int(result.wave)})
+		if not r.has("error"):
+			race = r
+			if app.view == "uga_result":
+				app.render()
+
+func load_board(world: int) -> void:
+	if board_loading:
+		return
+	board_loading = true
+	var r = await app.api("uga/board/%d" % world)
+	board_loading = false
+	board_data = r if not r.has("error") else {"error": str(r.error), "world": world}
+	board_data["world"] = world
+	if app.view == "uga_online":
+		app.render()
+
+func create_race() -> void:
+	var r = await app.api("uga/race", HTTPClient.METHOD_POST, {"world": world_sel})
+	if r.has("error"):
+		toast(str(r.error), false)
+		return
+	race = r
+	app.render()
+
+func join_race(code: String) -> void:
+	code = code.strip_edges().to_upper()
+	if code.length() != 6:
+		toast("Kod 6 karakter olmalı.", false)
+		return
+	var r = await app.api("uga/race/%s" % code)
+	if r.has("error"):
+		toast(str(r.error), false)
+		return
+	race = r
+	app.render()
+
+func render_online() -> void:
+	var c = app.content
+	back(c, "Sıralama & Yarış")
+	var rec = card_panel(c)
+	txt("Rekorların", rec, 16, GOLD_C)
+	for w in range(D.WORLDS.size()):
+		if w > int(meta.p.world) and meta.best_wave(w) == 0:
+			continue
+		txt("%d. %s · en iyi dalga %d/%d" % [w + 1, D.WORLDS[w].name, meta.best_wave(w), D.WAVES_PER_WORLD], rec, 13, INK)
+	if not online():
+		var p = card_panel(c, Color("e7a36d"))
+		txt("Çevrimdışısın. Dünya sıralaması ve arkadaş yarışı için internete bağlanıp ayarlardan sunucuya bağlan. Oyunun geri kalanı internetsiz çalışır.", p, 13, INK, true)
+		return
+	# sıralama
+	var bp = card_panel(c)
+	var hr = row(bp, 6)
+	title("%d. Dünya sıralaması" % (world_sel + 1), hr, 17)
+	if board_data.is_empty() or int(board_data.get("world", -1)) != world_sel:
+		txt("Yükleniyor…", bp, 13, MUTED)
+		load_board(world_sel)
+	elif board_data.has("error"):
+		txt(str(board_data.error), bp, 13, Color("ff9a8a"), true)
+	else:
+		var top = board_data.get("top", [])
+		if top.is_empty():
+			txt("Henüz kimse yok. İlk sen ol!", bp, 13, MUTED)
+		for i in range(top.size()):
+			txt("%d. %s · %d dalga" % [i + 1, top[i].name, int(top[i].wave)], bp, 14, Color("ffd25a") if i < 3 else INK)
+		if board_data.get("me") != null:
+			txt("Sen (%s): %d. sıra · %d dalga" % [board_data.me.name, int(board_data.me.rank), int(board_data.me.wave)], bp, 14, Color("9fe8ff"))
+	# yarış
+	var rp = card_panel(c, Color("54e0ff"))
+	title("Arkadaşınla yarış", rp, 17)
+	txt("Bir yarış kur, kodu arkadaşına gönder. İkiniz aynı dalgaları oynarsınız; kim daha uzağa giderse kazanır.", rp, 12, MUTED, true)
+	if not race.is_empty():
+		txt("Kod: %s · %d. Dünya" % [race.code, int(race.world) + 1], rp, 18, Color("ffe9b0"))
+		for i in range(race.get("results", []).size()):
+			var e = race.results[i]
+			txt("%d. %s · dalga %d" % [i + 1, e.name, int(e.wave)], rp, 14, INK)
+		var rr = row(rp, 8)
+		btn("Kodu kopyala", rr, func(): DisplayServer.clipboard_set(str(race.code)); toast("Kod kopyalandı"))
+		btn("YARIŞI OYNA", rr, func():
+			race_active = str(race.code)
+			start_run(int(race.world), int(race.seed)), false, true, 46)
+		btn("Sonuçları yenile", rp, func(): join_race(str(race.code)))
+	else:
+		btn("Yarış kur (%d. Dünya)" % (world_sel + 1), rp, func(): create_race(), false, true, 46)
+	var jr = row(rp, 8)
+	var edit = LineEdit.new()
+	edit.placeholder_text = "Yarış kodu"
+	edit.max_length = 6
+	edit.text = race_input
+	edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	edit.custom_minimum_size = Vector2(10, 42)
+	edit.text_changed.connect(func(t): race_input = t)
+	jr.add_child(edit)
+	var jb = btn("Katıl", jr, func(): join_race(race_input), false, false, 42)
+	jb.size_flags_horizontal = Control.SIZE_SHRINK_END
+	jb.custom_minimum_size.x = 90
