@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-13 03:50 UTC (8. saatlik çalışma; önceki: 02:50, 01:50, 00:50, 23:55, 22:45, 21:45, 20:40 UTC) (dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
+Son güncelleme: 2026-10-13 04:50 UTC (9. saatlik çalışma; önceki: 03:50, 02:50, 01:50, 00:50, 23:55, 22:45, 21:45, 20:40 UTC) (dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi (bağlı klasör yok).
 
 ## Yapılanlar
+- 2026-10-13 04:50 UTC: main ve ChatGPT dallarında yeni commit/dosya yok (main e336526). **Yeni bağlamalar (`native/main.gd`):** maçta rakip/oyuncu birim sıraları `lane_enemy.png` / `lane.png` zemininde (`lane_row()`), koleksiyonda altın/toz/paket bilgisi `chip_gold/chip_dust/chip_filter.png` çipleri (`chip()`); `integration.gd` skin testine 5 dosya eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Ekran görüntüsüyle görsel doğrulama Mac'te hâlâ gerekli.
 - 2026-10-13 03:50 UTC: main ve ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlama (`native/main.gd`):** lobide bölüm seçiciye `chapter_NN.png` önizleme görseli (seçim değişince güncellenir); `integration.gd` skin testine chapter_01/10 eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'teki ~/Desktop/oyun bu çalışmada da erişilemedi.
 - 2026-10-13 02:50 UTC: main ve ChatGPT dallarında yeni commit yok. **Yeni bağlamalar (`native/main.gd`):** maç ekranında `portrait()` yardımcısı; rakip portresi (bölüm maçında `enemy_NN.png`, yoksa `hero_foe.png`), oyuncu `hero_player.png`, maç sonunda `result_victory/defeat.png`. `integration.gd` skin testine 6 dosya eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Ekran görüntüsüyle doğrulama Mac'te hâlâ gerekli.
 - 2026-10-13 01:50 UTC: main ve tüm ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlamalar (`native/main.gd`):** paket açılış animasyonu `show_pack_reveal()` (chest_closed sallanır → chest_open + `pack_reveal_burst.png`, tıkla/otomatik kapanır); lobide `scene_play.png`, koleksiyonda `scene_chest.png` banner. `integration.gd` testi genişletildi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'te ekran görüntüsüyle görsel doğrulama hâlâ gerekli.
@@ -23,8 +24,8 @@ Son güncelleme: 2026-10-13 03:50 UTC (8. saatlik çalışma; önceki: 02:50, 01
 4. Sesler geçici prosedürel; kulakla/oyun içi miks onayı yok.
 
 ## Yapılması gereken kod işleri (öncelik sırasıyla)
-- [ ] `main.gd`: (button_gold/dark, input_field, button_red, scrollbar, divider bağlandı) kalan: `panel.png` (kenar değeri manifestte yok, 800x800), `chip_*` (9-slice kenar değerleri `manifest_v2.json` içinde).
-- [ ] Arka plan/sahne: `background.png`/`background_land.png`, `table_center.png`, `lane.png`/`lane_enemy.png`, `scene_story/friends.png` (scene_play lobide, scene_chest koleksiyonda bağlandı).
+- [ ] `main.gd`: (button_gold/dark, input_field, button_red, scrollbar, divider bağlandı) kalan: `panel.png` (800x800 ama 303x287 kırpımdan büyütülmüş; kenar değeri manifestte yok — kalitesi düşük olabilir), `chip_filter_active.png` (koleksiyon filtresi henüz yok). chip_gold/dust/filter ve lane/lane_enemy bağlandı (kenarlar 60/40 tahmini).
+- [ ] Arka plan/sahne: `background_land.png`, `table_center.png` (lane/lane_enemy maçta bağlandı), `scene_story/friends.png` (scene_play lobide, scene_chest koleksiyonda bağlandı).
 - [ ] Giriş ekranı: `splash.png`, (`logo.png` lobide bağlandı) `logo_wordmark.png`, `loading_bar_frame/fill.png`, `progress_frame/fill.png`.
 - [ ] Yatay maç ekranı düzeni (landscape): `background_land.png` + hat düzeni; şu an dikey akış.
 - [x] Paket açılış/sandık animasyonu bağlandı (kart açılış gösterimi/kart çevirme hâlâ yok).

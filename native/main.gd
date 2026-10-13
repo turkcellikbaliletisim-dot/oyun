@@ -558,6 +558,29 @@ func action_name(action: Dictionary) -> String:
 			return "Oyna"
 	return action.type
 
+func lane_row(file: String) -> HFlowContainer:
+	var row = HFlowContainer.new()
+	var box = skin_box(file, 60, 40, 12, 12)
+	if box == null:
+		content.add_child(row)
+		return row
+	var holder = PanelContainer.new()
+	holder.add_theme_stylebox_override("panel", box)
+	holder.custom_minimum_size = Vector2(0, 150)
+	content.add_child(holder)
+	holder.add_child(row)
+	return row
+
+func chip(text: String, file: String, parent: Control) -> void:
+	var box = skin_box(file, 60, 40, 28, 8)
+	if box == null:
+		label(text, parent)
+		return
+	var holder = PanelContainer.new()
+	holder.add_theme_stylebox_override("panel", box)
+	parent.add_child(holder)
+	label(text, holder, 18)
+
 func portrait(file: String, parent: Control, size: int = 96) -> void:
 	var tex = skin(file)
 	if tex == null:
@@ -584,14 +607,12 @@ func render_match() -> void:
 	var foe_portrait = "enemy_%02d.png" % int(room.chapterId) if int(room.chapterId) > 0 else "hero_foe.png"
 	portrait(foe_portrait if skin(foe_portrait) != null else "hero_foe.png", content)
 	label("RAKİP · CAN %d · ENERJİ %d/%d · EL %d · GİZLİ TUZAK %d" % [foe.hp, foe.energy, foe.maxEnergy, foe.hand.size(), foe.traps.size()], content, 22)
-	var foe_board = HFlowContainer.new()
-	content.add_child(foe_board)
+	var foe_board = lane_row("lane_enemy.png")
 	for unit in foe.board:
 		card_widget(int(unit.id), foe_board, func(): inspect_card(int(unit.id), unit), true, unit)
 	portrait("hero_player.png", content)
 	label("SEN · CAN %d · ENERJİ %d/%d · DESTE %d · TUR %d/20 · %s" % [mine.hp, mine.energy, mine.maxEnergy, mine.deck.size(), ceili(float(state.turn) / 2), "Kart fazı" if state.phase == "main" else "Saldırı fazı"], content, 22)
-	var own_board = HFlowContainer.new()
-	content.add_child(own_board)
+	var own_board = lane_row("lane.png")
 	var legal: Array = room.get("actions", [])
 	turn_clock = label("", content, 16)
 	for unit in mine.board:
@@ -756,7 +777,11 @@ func render_collection() -> void:
 		content.add_child(chest_banner)
 	label("40 KARTLIK KOLEKSİYON", content, 28)
 	if not account.is_empty():
-		label("%d altın · %d toz · %d ücretsiz paket" % [account.profile.gold, account.profile.dust, account.profile.freePacks], content)
+		var chips = HFlowContainer.new()
+		content.add_child(chips)
+		chip("%d altın" % account.profile.gold, "chip_gold.png", chips)
+		chip("%d toz" % account.profile.dust, "chip_dust.png", chips)
+		chip("%d ücretsiz paket" % account.profile.freePacks, "chip_filter.png", chips)
 		button("Paket aç · ücretsiz veya 300 altın", content, func(): mutate("collection/pack", {}, true), account.profile.freePacks == 0 and account.profile.gold < 300)
 	var grid = HFlowContainer.new()
 	grid.add_theme_constant_override("h_separation", 16)

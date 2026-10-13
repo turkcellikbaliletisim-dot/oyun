@@ -81,7 +81,7 @@ func run() -> void:
 	app.muted = false
 	app.play_sound()
 	check(app.audio.stream != null, "Native sound stream missing")
-	for skin_file in ["logo.png", "divider.png", "scrollbar.png", "end_turn_ready.png", "button_red.png", "icon_net_ok.png", "icon_net_bad.png", "toast_banner.png", "tooltip_panel.png", "target_ring.png", "drag_arrow.png", "chest_closed.png", "chest_open.png", "pack_reveal_burst.png", "scene_play.png", "scene_chest.png", "hero_player.png", "hero_foe.png", "enemy_01.png", "enemy_10.png", "result_victory.png", "result_defeat.png", "chapter_01.png", "chapter_10.png"]:
+	for skin_file in ["logo.png", "divider.png", "scrollbar.png", "end_turn_ready.png", "button_red.png", "icon_net_ok.png", "icon_net_bad.png", "toast_banner.png", "tooltip_panel.png", "target_ring.png", "drag_arrow.png", "chest_closed.png", "chest_open.png", "pack_reveal_burst.png", "scene_play.png", "scene_chest.png", "hero_player.png", "hero_foe.png", "enemy_01.png", "enemy_10.png", "result_victory.png", "result_defeat.png", "chapter_01.png", "chapter_10.png", "lane.png", "lane_enemy.png", "chip_gold.png", "chip_dust.png", "chip_filter.png"]:
 		check(app.skin(skin_file) != null, "Skin file not loadable: " + skin_file)
 	await create_timer(0.2).timeout
 	app.queue_free()
