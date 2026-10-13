@@ -42,6 +42,16 @@ func run() -> void:
 		check_bounds(app.shell_margin, app.get_viewport_rect().size.x)
 		stage = "lobby"
 		await snapshot("lobby", dimensions)
+		for uga_view in ["uga_heroes", "uga_totems", "uga_chests", "uga_missions", "uga_rebirth", "duel"]:
+			app.view = uga_view
+			app.render()
+			for frame in range(4):
+				await process_frame
+			stage = uga_view
+			check(app.get_combined_minimum_size().x <= dimensions.x, "Shell overflows in " + uga_view + " at " + str(dimensions) + " " + str(app.get_combined_minimum_size()))
+			check_bounds(app.shell_margin, app.get_viewport_rect().size.x)
+		app.view = "lobby"
+		app.render()
 		app.open_tab("story")
 		for frame in range(5):
 			await process_frame

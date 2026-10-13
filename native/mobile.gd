@@ -408,10 +408,20 @@ func render() -> void:
 		render_deck_builder()
 	elif view == "merge" and not account.is_empty():
 		render_merge()
-	elif room.is_empty():
+	elif room.is_empty() and view == "duel":
 		render_lobby()
+	elif room.is_empty():
+		uga_ui().render(view)
 	else:
 		render_match()
+
+const UgaUI = preload("res://native/uga/uga_ui.gd")
+var uga = null
+
+func uga_ui():
+	if uga == null:
+		uga = UgaUI.new(self)
+	return uga
 
 func resource_row(parent: Node) -> void:
 	if account.is_empty():

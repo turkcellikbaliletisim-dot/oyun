@@ -153,7 +153,7 @@ func is_boss_wave(n: int) -> bool:
 	return n % 10 == 0
 
 func wave_hp(n: int) -> float:
-	return 26.0 * pow(1.15, n - 1) * float(D.WORLDS[world].hp)
+	return 44.0 * pow(1.135, n - 1) * float(D.WORLDS[world].hp)
 
 func start_wave() -> void:
 	wave += 1
@@ -176,7 +176,7 @@ func start_wave() -> void:
 
 func enemy_spec(kind: String, n: int) -> Dictionary:
 	var e = D.ENEMIES[kind]
-	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp), "speed": float(e.speed) * (1.0 + 0.004 * n), "boss": false, "gold": 1 + n / 8, "leak": 1}
+	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp), "speed": float(e.speed) * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1}
 
 func spawn(spec: Dictionary) -> void:
 	var e = spec.duplicate()
@@ -210,7 +210,7 @@ func hero_damage(slot: int) -> float:
 
 func targets_front() -> Array:
 	# En öndeki (kapıya en yakın) düşmanlar önce.
-	var arr = enemies.filter(func(e): return float(e.hp) > 0.0)
+	var arr = enemies.filter(func(e): return float(e.hp) > 0.0 and float(e.d) > 0.05)
 	arr.sort_custom(func(a, b): return float(a.d) > float(b.d) or (float(a.d) == float(b.d) and int(a.id) < int(b.id)))
 	return arr
 
@@ -220,7 +220,7 @@ func hit(e: Dictionary, dmg: float, slot: int, crit: bool = false) -> void:
 	var real = minf(dmg, float(e.hp))
 	e.hp = float(e.hp) - dmg
 	stats.damage = float(stats.damage) + real
-	events.append({"t": "hit", "enemy": e.id, "dmg": int(round(dmg)), "crit": crit, "slot": slot})
+	events.append({"t": "hit", "enemy": e.id, "dmg": int(round(dmg)), "crit": crit, "slot": slot, "d": float(e.d)})
 	if float(e.hp) <= 0.0:
 		var g = int(round(int(e.gold) * float(mods.gold)))
 		if slot >= 0 and slots[slot] != null and slots[slot].h == "umay":
@@ -230,7 +230,7 @@ func hit(e: Dictionary, dmg: float, slot: int, crit: bool = false) -> void:
 		stats.kills += 1
 		if e.boss:
 			stats.bosses += 1
-		events.append({"t": "die", "enemy": e.id, "gold": g, "boss": e.boss})
+		events.append({"t": "die", "enemy": e.id, "gold": g, "boss": e.boss, "d": float(e.d)})
 
 var _front: Array = []
 
@@ -251,7 +251,7 @@ func fire(slot: int) -> void:
 	var d0 = dmg
 	if h.has("boss_bonus") and target.boss:
 		d0 *= 1.0 + float(h.boss_bonus)
-	events.append({"t": "shot", "slot": slot, "enemy": target.id, "proj": h.proj})
+	events.append({"t": "shot", "slot": slot, "enemy": target.id, "proj": h.proj, "d": float(target.d)})
 	hit(target, d0, slot, crit)
 	if h.has("slow"):
 		target.slow_t = 2.0
@@ -286,7 +286,7 @@ func step() -> void:
 		between -= D.TICK
 		if between <= 0.0:
 			if wave > 0:
-				var bonus = int(round((8 + wave) * float(mods.gold)))
+				var bonus = int(round((10 + 2 * wave) * float(mods.gold)))
 				gold += bonus
 				events.append({"t": "clear", "n": wave, "gold": bonus})
 				if wave >= D.WAVES_PER_WORLD:
