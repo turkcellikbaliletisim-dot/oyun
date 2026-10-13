@@ -294,7 +294,7 @@ func banner_toast(text: String, color: Color) -> void:
 	match_turn_banner = holder
 	var banner_width = minf(300, get_viewport_rect().size.x - 32)
 	# Bildirim rakip sahasının üzerinde durur; oyuncunun kartlarını örtmez.
-	var banner_y = get_viewport_rect().size.y * (0.2 if get_viewport_rect().size.x > get_viewport_rect().size.y else 0.26)
+	var banner_y = 0.0 if get_viewport_rect().size.x > get_viewport_rect().size.y else get_viewport_rect().size.y * 0.397
 	holder.set_anchors_and_offsets_preset(Control.PRESET_CENTER_TOP)
 	holder.offset_left = -banner_width / 2.0
 	holder.offset_right = banner_width / 2.0
