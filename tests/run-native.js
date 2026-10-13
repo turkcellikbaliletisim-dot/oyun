@@ -13,7 +13,8 @@ await new Promise(resolve=>app.server.listen(0,'127.0.0.1',resolve));
 const env={...process.env,DESTAN_SESSION_DIR:join(dir,'session'),DESTAN_SERVER_URL:`http://127.0.0.1:${app.server.address().port}`,XDG_DATA_HOME:join(dir,'data'),XDG_CONFIG_HOME:join(dir,'config'),XDG_CACHE_HOME:join(dir,'cache')};
 for(const name of ['data','config','cache','session'])await mkdir(join(dir,name),{recursive:true});
 async function godot(args){
-  const child=spawn(process.env.GODOT_BIN??'godot',args,{env:{...env,DESTAN_SESSION_DIR:join(dir,'session',args.find(arg=>arg.endsWith('.gd'))?.split('/').pop()??'import')},stdio:['ignore','pipe','pipe']});
+  const verbosity=process.env.DESTAN_NATIVE_VERBOSE==='1'?['--verbose']:[];
+  const child=spawn(process.env.GODOT_BIN??'godot',[...verbosity,...args],{env:{...env,DESTAN_SESSION_DIR:join(dir,'session',args.find(arg=>arg.endsWith('.gd'))?.split('/').pop()??'import')},stdio:['ignore','pipe','pipe']});
   let errors=false;
   child.stdout.on('data',chunk=>process.stdout.write(chunk));
   child.stderr.on('data',chunk=>{if(/SCRIPT ERROR|ERROR:/.test(chunk))errors=true;process.stderr.write(chunk);});
@@ -23,6 +24,7 @@ async function godot(args){
 try{
   if(!await godot(['--headless','--path','.','--editor','--import','--quit']))throw new Error('Godot import failed');
   const display=process.env.DESTAN_NATIVE_VISUAL==='1'?['--rendering-driver','opengl3','--audio-driver','Dummy']:['--headless'];
+  if(!await godot([...display,'--path','.','--script','tests/native-skin-chrome.gd','--','--no-connect']))throw new Error('Mobile skin chrome failed');
   if(!await godot([...display,'--path','.','--script','tests/native-layout.gd','--','--no-connect']))throw new Error('Mobile layout failed');
   if(!await godot(['--headless','--path','.','--script','tests/native-mobile-lifecycle.gd','--','--no-connect']))throw new Error('Mobile lifecycle failed');
   if(!await godot(['--headless','--path','.','--script','tests/native-touch.gd','--','--no-connect']))throw new Error('Native touch failed');
