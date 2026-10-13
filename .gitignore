@@ -11,3 +11,6 @@ native-builds/
 .mobile-server.env.tmp
 export_credentials.cfg
 native/client.local.json
+
+# Godot üretimi
+*.import

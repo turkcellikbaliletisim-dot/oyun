@@ -80,6 +80,13 @@ func run() -> void:
 	app.play_sound()
 	check(app.audio.stream != null and (app.audio.stream is AudioStreamOggVorbis or app.audio.stream.data.size() > 1000), "Native sound missing")
 	await create_timer(0.2).timeout
+	# Linux/Godot 4.7 çıkışta önbellekteki kaynakları "kullanımda" sayıyor; temizle.
+	app.art_cache.clear()
+	app.font_cache.clear()
+	app.sfx_cache.clear()
+	app.portrait_font = null
+	app.number_font = null
+	app.audio.stream = null
 	app.queue_free()
 	await process_frame
 	await process_frame
