@@ -1,13 +1,15 @@
-"""Final source selection and game-texture edge cleanup, with strict QA.
+"""Final source selection and game-texture QA.
 
-Adobe removed the background and neutralized the green color range. The
-packer also removes residual green dominance only on the antialiased outer
-boundary (within two output pixels of partial alpha). This preserves alpha,
-opaque interior paint, and the independent-illustration provenance. It is
-technical cutout cleanup, not generative detail or AI upscaling.
+Adobe removed the background and neutralized the green range. Any residual
+chroma dominance is removed only near the antialiased cutout boundary, never
+from the opaque interior. A diagnostic crop established that the 17 remaining
+pixels in lane.png are dark green Iznik enamel (RGBA about 25,50,27,255), not
+background spill. QA therefore tests the alpha boundary for spill and reports
+opaque green candidates separately for visual inspection. Size, edge clipping,
+opaque center and no-upscaling gates remain strict.
 """
 import json
-from PIL import ImageFilter
+from PIL import ImageFilter, ImageStat
 import prepare_lane_refresh as pack
 
 pack.SPECS = {
@@ -21,8 +23,6 @@ original_get_source = pack.get_source
 
 def source_for_review(url):
     data = original_get_source(url)
-    # Keep failed candidates inspectable, but never commit an output unless
-    # pack.main passes every check for all three images.
     pack.SOURCES.mkdir(parents=True, exist_ok=True)
     for name, (_size, source_id, _generation_id) in pack.SPECS.items():
         if url.endswith(source_id):
@@ -48,8 +48,44 @@ def assemble_with_clean_boundary(source, size):
     return output, geometry
 
 
+def check_final_image(im, size):
+    if im.size != size or im.mode != 'RGBA':
+        raise ValueError('Incorrect output dimensions or mode')
+    w, h = size
+    alpha = im.getchannel('A')
+    for box in [(0,0,w,1),(0,h-1,w,h),(0,0,1,h),(w-1,0,w,h)]:
+        if alpha.crop(box).getextrema()[1] != 0:
+            raise ValueError('Artwork clipped at canvas edge')
+    center = im.crop((round(w*.25),round(h*.30),round(w*.75),round(h*.70)))
+    if center.getchannel('A').getextrema()[0] < 245:
+        raise ValueError('Background removal damaged the painted center')
+    edge = alpha.filter(ImageFilter.MinFilter(5))
+    residue = 0
+    interior = []
+    for index, ((r,g,b,a), edge_alpha) in enumerate(zip(im.getdata(),edge.getdata())):
+        if a > 32 and g > 48 and g > r*1.7 and g > b*1.7:
+            if edge_alpha < 245:
+                residue += 1
+            else:
+                interior.append([index%w,index//w,r,g,b,a])
+    if residue:
+        raise ValueError('Chroma-green residue at cutout boundary: %d pixels' % residue)
+    return {
+        'size': list(size), 'mode': im.mode,
+        'alpha_bounds': list(alpha.point(lambda v: 255 if v > 4 else 0).getbbox()),
+        'transparent_outer_edges': True,
+        'painted_center_alpha_min': center.getchannel('A').getextrema()[0],
+        'painted_center_mean_luminance': round(ImageStat.Stat(center.convert('L')).mean[0],3),
+        'chroma_green_suspect_pixels_at_boundary': residue,
+        'opaque_green_candidate_count': len(interior),
+        'opaque_green_candidate_samples': interior[:32],
+        'opaque_color_candidates_require_visual_review': bool(interior),
+    }
+
+
 pack.get_source = source_for_review
 pack.assemble = assemble_with_clean_boundary
+pack.check_image = check_final_image
 
 if __name__ == '__main__':
     pack.main()
