@@ -1,0 +1,86 @@
+name: Prepare lane refresh
+on:
+  push:
+    branches: ['gorsel-kalite/serit-yenileme-20261013']
+    paths: ['.github/workflows/lane-refresh-prepare.yml']
+permissions:
+  contents: write
+concurrency:
+  group: lane-refresh-prepare
+  cancel-in-progress: false
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Install image validation dependency
+        run: python -m pip install --disable-pip-version-check 'Pillow==11.3.0'
+      - name: Pack the three generated UI sources and validate alpha and geometry
+        run: python scripts/prepare_lane_refresh.py
+      - name: Preserve original package coverage and record the new scope
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          from PIL import Image
+          expected=json.loads(Path('dokumanlar/skin_v2_expected.json').read_text())
+          for name,size in expected.items():
+              with Image.open(Path('native/skin')/name) as im:
+                  assert list(im.size)==size, name
+                  im.verify()
+          notes='''# Saha şeritleri ve yükleme ipucu paneli — 13 Ekim 2026
+
+          Kaynak dal: claude/mobil-arayuz-skin-v2, acf6f30562ebb24268ae703429ca5a1cfc5f3b15.
+          Bu değişiklik yalnız lane.png, lane_enemy.png, loading_tip_panel.png ve ilişkili geometri/metadata içindir.
+
+          ## Üretim
+          - Üç parça ayrı Adobe Firefly üretiminden geldi; eski atlas büyütülmedi.
+          - Adobe ile dış arka plan kaldırıldı. Kesilmiş konular, uçları orantılı kalan yatay üç-parça yerleşimiyle hedef boyuta uyarlandı; sade orta alanın oranı ayrı değişir. Bütün örneklenen parçalar kaynaklarından küçültülür.
+          - lane ve lane_enemy: 1024x400; loading_tip_panel: 900x160. Dış kenarlar gerçek alfa, merkez boyalı ve metinsizdir.
+          - Tam kaynak kesitleri serit-yenileme-kaynak/ içinde, hash ve kesit geometrileri serit-yenileme-kontrol.json ve native/skin/manifest_lane_refresh.json içindedir.
+          - Eski iki manifestte yalnız ilgili şerit kaydı yenilendi; önceki kayıt previous_revision içinde korunur. 114 dosyalık eski paket sayımı değiştirilmedi; ipucu paneli ek dosyadır.
+
+          ## Oyun bağlantısı
+          Mevcut iki şerit dosyasının adları korunur. mobile.gd ve landscape_match.gd içinde yalnız şerit kesit parametresi güncellenir; 246 px uç payı yuvarlak köşeyi korur. Oyun kuralları, ağ/hesap işleyişi, diğer PNG'ler, fontlar ve sesler değişmez.
+          İpucu paneli dosya olarak eklendi; giriş/yükleme akışı bu değişiklikte kurulmadı.
+
+          ## Doğrulama sınırı
+          PNG boyutu, alfa, opak merkez, taşmayan dış kenar, renk kalıntısı, yeniden açılabilirlik ve eski 114 PNG kapsamı kontrol edildi. Oyun testi ve gerçek renderer ekranları PR üzerinden ayrıca doğrulanacak; fiziksel cihaz testi değildir.
+          Üç kahraman, üç rütbe rozeti, gerçek ses ve mevcut zamanlama/kart metni işleri bu değişiklikte yapılmış sayılmaz.
+          '''
+          Path('dokumanlar/SERIT-YENILEME-20261013.md').write_text('\n'.join(line[10:] if line.startswith('          ') else line for line in notes.splitlines())+'\n')
+          PY
+      - name: Commit only the allowlisted outputs to this art branch
+        run: |
+          set -euo pipefail
+          test "$GITHUB_REF_NAME" = 'gorsel-kalite/serit-yenileme-20261013'
+          git add -- native/skin/lane.png native/skin/lane_enemy.png native/skin/loading_tip_panel.png native/skin/manifest.json native/skin/manifest_v2.json native/skin/manifest_lane_refresh.json native/mobile.gd native/landscape_match.gd dokumanlar/serit-yenileme-kaynak dokumanlar/serit-yenileme-kontrol.json dokumanlar/SERIT-YENILEME-20261013.md
+          python - <<'PY'
+          import subprocess
+          allowed={'native/skin/lane.png','native/skin/lane_enemy.png','native/skin/loading_tip_panel.png','native/skin/manifest.json','native/skin/manifest_v2.json','native/skin/manifest_lane_refresh.json','native/mobile.gd','native/landscape_match.gd','dokumanlar/serit-yenileme-kaynak/lane.png','dokumanlar/serit-yenileme-kaynak/lane_enemy.png','dokumanlar/serit-yenileme-kaynak/loading_tip_panel.png','dokumanlar/serit-yenileme-kontrol.json','dokumanlar/SERIT-YENILEME-20261013.md'}
+          actual=set(subprocess.check_output(['git','diff','--cached','--name-only'],text=True).splitlines())
+          assert actual==allowed, actual^allowed
+          PY
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Refresh transparent battlefield lanes and add loading tip panel'
+          git push origin HEAD:gorsel-kalite/serit-yenileme-20261013
+      - name: Save only generated PNG sources, outputs, and metadata for review
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lane-refresh-assets
+          retention-days: 7
+          if-no-files-found: error
+          path: |
+            native/skin/lane.png
+            native/skin/lane_enemy.png
+            native/skin/loading_tip_panel.png
+            native/skin/manifest_lane_refresh.json
+            dokumanlar/serit-yenileme-kaynak/*.png
+            dokumanlar/serit-yenileme-kontrol.json
+            dokumanlar/SERIT-YENILEME-20261013.md
