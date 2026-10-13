@@ -4,6 +4,7 @@ extends "res://native/skin_chrome.gd"
 var match_regions: Dictionary = {}
 var landscape_commands: ScrollContainer
 var landscape_hand: ScrollContainer
+var match_turn_banner: Control
 
 func landscape_match_enabled() -> bool:
 	var viewport = get_viewport_rect().size
@@ -165,27 +166,32 @@ func landscape_button(caption: String, parent: Node, callback: Callable, promine
 	node.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	parent.add_child(node)
 	node.pressed.connect(callback)
-	var texture = skin_art("end_turn_ready.png" if prominent else "button_dark.png")
+	# Fit the painted portion, not the PNG's transparent padding. Uniform-height
+	# end caps retain their detail while the text plate spans the command rail.
+	var file = "end_turn_ready.png" if prominent else "button_dark.png"
+	var texture = skin_art(file)
+	var region = END_TURN_REGION if prominent else BUTTON_REGION
+	var padding = StyleBoxEmpty.new()
+	padding.content_margin_left = 12
+	padding.content_margin_right = 12
+	padding.content_margin_top = 8
+	padding.content_margin_bottom = 8
 	for key in ["normal", "hover", "pressed", "disabled"]:
-		if texture != null:
-			var plate = StyleBoxTexture.new()
-			plate.texture = texture
-			plate.texture_margin_left = 30
-			plate.texture_margin_right = 30
-			plate.texture_margin_top = 8
-			plate.texture_margin_bottom = 8
-			plate.content_margin_left = 8
-			plate.content_margin_right = 8
-			plate.content_margin_top = 5
-			plate.content_margin_bottom = 5
-			node.add_theme_stylebox_override(key, plate)
-		else:
-			node.add_theme_stylebox_override(key, box(Color("342819"), GOLD, 1, 8, 8))
+		node.add_theme_stylebox_override(key, padding if texture != null else box(Color("342819"), GOLD, 1, 8, 8))
+	if texture != null:
+		var artwork = ArtSlice.new().setup(texture, region, "h3", Vector4(88, 0, 88, 0))
+		artwork.show_behind_parent = true
+		artwork.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		node.add_child(artwork)
+		artwork.set_meta("decor", true)
+		node.mouse_entered.connect(func(): artwork.modulate = Color(1.12, 1.1, 1.0))
+		node.mouse_exited.connect(func(): artwork.modulate = Color.WHITE)
+		node.button_down.connect(func(): artwork.modulate = Color(0.8, 0.8, 0.8))
+		node.button_up.connect(func(): artwork.modulate = Color.WHITE)
 	var focus_style = box(Color.TRANSPARENT, GOLD, 2, 6, 0)
 	node.add_theme_stylebox_override("focus", focus_style)
-	node.add_theme_color_override("font_color", Color("231503") if prominent else INK)
-	node.add_theme_color_override("font_hover_color", Color("231503") if prominent else Color.WHITE)
-	node.add_theme_color_override("font_pressed_color", Color("231503") if prominent else Color.WHITE)
+	for key in ["font_color", "font_hover_color", "font_pressed_color", "font_focus_color"]:
+		node.add_theme_color_override(key, Color("231503") if prominent else INK)
 	return node
 
 func landscape_render_commands(state: Dictionary, mine: Dictionary, legal: Array) -> void:
@@ -268,7 +274,47 @@ func landscape_render_commands(state: Dictionary, mine: Dictionary, legal: Array
 	energy.autowrap_mode = TextServer.AUTOWRAP_OFF
 	energy.add_theme_color_override("font_color", Color("8aceff"))
 
+func banner_toast(text: String, color: Color) -> void:
+	if not room.is_empty() and room.get("status") == "finished":
+		return
+	if is_instance_valid(match_turn_banner):
+		match_turn_banner.queue_free()
+	var holder = Control.new()
+	holder.name = "ResponsiveTurnBanner"
+	holder.z_index = 120
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	add_child(holder)
+	match_turn_banner = holder
+	var banner_width = minf(300, get_viewport_rect().size.x - 32)
+	holder.set_anchors_and_offsets_preset(Control.PRESET_CENTER)
+	holder.offset_left = -banner_width / 2.0
+	holder.offset_right = banner_width / 2.0
+	holder.offset_top = -33
+	holder.offset_bottom = 33
+	var banner = art_slice(holder, "toast_banner.png", Rect2(48, 10, 1104, 240))
+	if banner != null:
+		banner.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	var title = Label.new()
+	title.text = text
+	title.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	title.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	title.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if portrait_font != null:
+		title.add_theme_font_override("font", portrait_font)
+	title.add_theme_font_size_override("font_size", 20)
+	title.add_theme_color_override("font_color", color)
+	outlined(title, Color(0.15, 0.07, 0.02, 0.95), 3)
+	holder.add_child(title)
+	var tween = holder.create_tween()
+	tween.tween_interval(0.8)
+	tween.tween_property(holder, "modulate:a", 0.0, 0.35)
+	tween.tween_callback(holder.queue_free)
+
 func render_result(state: Dictionary, width: float, height: float) -> void:
+	if is_instance_valid(match_turn_banner):
+		match_turn_banner.queue_free()
+		match_turn_banner = null
 	if not landscape_match_enabled():
 		super.render_result(state, width, height)
 		return
