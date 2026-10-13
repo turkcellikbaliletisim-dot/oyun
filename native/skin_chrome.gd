@@ -44,6 +44,7 @@ class NavigationArtwork extends Control:
 func build_shell() -> void:
 	super.build_shell()
 	install_background_art()
+	install_header_art()
 	install_connection_art()
 	install_navigation_art()
 
@@ -51,6 +52,22 @@ func render() -> void:
 	super.render()
 	refresh_connection_art()
 	sync_navigation_visibility()
+
+func install_header_art() -> void:
+	if skin_art("header_bar.png") == null:
+		return
+	var layout = game_header.get_parent()
+	var index = game_header.get_index()
+	layout.remove_child(game_header)
+	var wrapper = PanelContainer.new()
+	wrapper.name = "SkinHeader"
+	wrapper.custom_minimum_size.y = 50
+	wrapper.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	layout.add_child(wrapper)
+	layout.move_child(wrapper, index)
+	var art = art_slice(wrapper, "header_bar.png", Rect2(), "h3", Vector4(120, 0, 120, 0))
+	art.set_meta("skin_asset", "header_bar.png")
+	wrapper.add_child(game_header)
 
 func install_background_art() -> void:
 	var texture = skin_art("backdrop.png")

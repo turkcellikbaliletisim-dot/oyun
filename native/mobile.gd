@@ -19,6 +19,7 @@ var application_paused = false
 var connected = false
 var reconnect_delay = 1.0
 var reconnect_timer: Timer
+var last_visual_play: Dictionary = {}
 var connection_indicator: Label
 const MobileGeometry = preload("res://native/mobile_geometry.gd")
 
@@ -34,7 +35,7 @@ func _ready() -> void:
 	var cfg = ConfigFile.new()
 	if cfg.load(SESSION_FILE) == OK:
 		muted = bool(cfg.get_value("preferences", "muted", true))
-		hero_choice = clampi(int(cfg.get_value("preferences", "hero_choice", 0)), 0, 2)
+		hero_choice = clampi(int(cfg.get_value("preferences", "hero_choice", 0)), 0, HERO_FILES.size() - 1)
 		deck_account = str(cfg.get_value("preferences", "deck_account", ""))
 		var saved = cfg.get_value("preferences", "deck", [])
 		if saved is Array and saved.size() == 20 and saved.all(func(id): return cards.has(int(id))):
@@ -190,7 +191,13 @@ func mutate(path: String, body: Dictionary, retryable: bool = false) -> void:
 
 func move(action: Dictionary) -> void:
 	if connected:
+		if not busy and action.get("type") == "play" and room.get("state") != null:
+			var hand: Array = room.state.players[0].hand
+			var index = int(action.get("index", -1))
+			if index >= 0 and index < hand.size():
+				last_visual_play = {"cardId": int(hand[index]), "target": str(action.get("target", "")), "version": room.version}
 		await super.move(action)
+		last_visual_play = {}
 	else:
 		toast("Bağlantının dönmesini bekle", Color("ffc491"))
 
@@ -410,6 +417,15 @@ func resource_row(parent: Node) -> void:
 	var spacer = Control.new()
 	spacer.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	row.add_child(spacer)
+	var league_icon = TextureRect.new()
+	league_icon.texture = skin_art("badge_rank_bronze.png" if int(account.mmr) < 1200 else "badge_rank_silver.png" if int(account.mmr) < 1600 else "badge_rank_gold.png")
+	if league_icon.texture == null:
+		league_icon.texture = skin_art("icon_league.png")
+	league_icon.tooltip_text = str(account.league)
+	league_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	league_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	league_icon.custom_minimum_size = Vector2(24, 24)
+	row.add_child(league_icon)
 	var rank = muted_label(str(account.league), row, 14)
 	rank.autowrap_mode = TextServer.AUTOWRAP_OFF
 
@@ -631,6 +647,17 @@ func mini_card_flat(id: int, parent: Node, width: float, unit: Dictionary = {}, 
 	var face = Control.new()
 	face.custom_minimum_size = Vector2(width, height)
 	wrap.add_child(face)
+	if state == "picked" and not unit.is_empty():
+		var ring = art_slice(face, "target_ring.png")
+		if ring != null:
+			ring.size = Vector2(width * 1.25, width * 1.25)
+			ring.position = Vector2(-width * 0.125, (width * 1.34 - ring.size.y) * 0.5)
+			ring.set_meta("skin_asset", "target_ring.png")
+			ring.z_index = 3
+			ring.pivot_offset = ring.size / 2
+			var target_pulse = ring.create_tween().set_loops()
+			target_pulse.tween_property(ring, "modulate:a", 0.55, 0.5)
+			target_pulse.tween_property(ring, "modulate:a", 1.0, 0.5)
 	var on_board = not unit.is_empty()
 	var art_height = (height * 0.5 if full else height * 0.6) if not on_board else height - 8
 	var art = TextureRect.new()
@@ -826,6 +853,21 @@ func battlefield_lane(units: Array, own: bool, legal: Array, area: Rect2, card_w
 		if own and not options.is_empty():
 			install_drag(card, options)
 
+func compact_portrait_button(node: Button) -> void:
+	# Dikey maçta düğme kahraman portresinin yanında kalır; kenar boşlukları daraltılır.
+	var tight = StyleBoxEmpty.new()
+	tight.content_margin_left = 20
+	tight.content_margin_right = 12
+	tight.content_margin_top = 8
+	tight.content_margin_bottom = 8
+	for key in ["normal", "hover", "pressed", "disabled", "focus"]:
+		node.add_theme_stylebox_override(key, tight)
+	node.add_theme_font_size_override("font_size", 11)
+	node.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	node.clip_text = false
+	node.custom_minimum_size.x = 0
+	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 func render_match() -> void:
 	if room.get("state") == null:
 		render_waiting_room()
@@ -944,18 +986,23 @@ func render_match() -> void:
 		if not options.is_empty():
 			install_drag(card, options)
 	var controls = VBoxContainer.new()
-	controls.position = Vector2(width - 186, height - 142) if landscape else Vector2(width - 186, own_hero_y + portrait_size * 0.12)
-	controls.size = Vector2(180, 0)
+	var controls_x = width * 0.5 + portrait_size * 0.5 + 6.0
+	controls.position = Vector2(width - 186, height - 142) if landscape else Vector2(controls_x, own_hero_y + portrait_size * 0.12)
+	controls.size = Vector2(180, 0) if landscape else Vector2(width - controls_x - 8.0, 0)
 	arena.add_child(controls)
 	if state.status == "finished":
 		pass
 	elif state.active == 0:
 		if mulligan:
-			primary_button("Başla", controls, func(): move({"type": "mulligan", "indices": mulligan_indices.duplicate()}))
+			var start_button = primary_button("Başla", controls, func(): move({"type": "mulligan", "indices": mulligan_indices.duplicate()}))
+			if not landscape:
+				compact_portrait_button(start_button)
 		else:
 			for action in legal:
 				if action.type == "end":
-					primary_button("Turu bitir", controls, func(): move(action))
+					var end_button = primary_button("Turu bitir", controls, func(): move(action))
+					if not landscape:
+						compact_portrait_button(end_button)
 				elif action.type in ["scry", "discard"]:
 					small_button(action_name(action), controls, func(): move(action))
 	else:
@@ -1194,6 +1241,13 @@ func atmosphere(width: float, height: float) -> void:
 	vignette.gradient.set_color(1, Color(0.02, 0.01, 0.0, 0.68))
 	vignette.gradient.add_point(0.55, Color(0, 0, 0, 0.05))
 	picture(vignette, arena)
+	var center_art = art_slice(arena, "table_center.png")
+	if center_art != null:
+		var diameter = minf(width * 0.35, height * 0.5)
+		center_art.size = Vector2(diameter, diameter)
+		center_art.position = Vector2((width - diameter) * 0.5, (height - diameter) * 0.5)
+		center_art.modulate.a = 0.22
+		center_art.set_meta("skin_asset", "table_center.png")
 	var dust = CPUParticles2D.new()
 	dust.position = Vector2(width / 2, height / 2)
 	dust.amount = 22
@@ -1262,6 +1316,51 @@ func fx_sprite(file: String, center: Vector2, size: float, life: float = 0.5, ad
 	tween.tween_property(node, "modulate:a", 0.0, life * 0.7).set_delay(life * 0.3)
 	tween.chain().tween_callback(node.queue_free)
 
+const SPELL_ART = {28: "fx_slash.png", 29: "fx_heal.png", 30: "fx_spark.png", 31: "fx_shield.png", 32: "fx_spark.png", 33: "fx_frost.png", 34: "fx_flood.png", 35: "fx_fire.png"}
+
+func spell_effect(card_id: int, target: String) -> void:
+	if not SPELL_ART.has(card_id) or not is_instance_valid(arena):
+		return
+	var targets: Array = []
+	if target.begins_with("hero:"):
+		targets.append(hero_nodes.get(int(target.trim_prefix("hero:"))))
+	elif target.begins_with("unit:"):
+		targets.append(unit_nodes.get(int(target.trim_prefix("unit:"))))
+	elif card_id in [33, 34, 35]:
+		for player_index in 2:
+			for unit in room.state.players[player_index].board:
+				if card_id == 34 or (card_id == 33 and player_index == 1) or (card_id == 35 and player_index == 0):
+					targets.append(unit_nodes.get(int(unit.uid)))
+	if targets.is_empty():
+		targets.append(arena)
+	for target_node in targets:
+		if is_instance_valid(target_node):
+			fx_sprite(SPELL_ART[card_id], target_node.get_global_rect().get_center(), minf(180, target_node.size.x * 1.8), 0.7, true)
+	play_sound("spell")
+
+func float_text(target: Control, text: String, color: Color) -> void:
+	if not is_instance_valid(target):
+		return
+	var holder = Control.new()
+	holder.size = Vector2(60, 44)
+	holder.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.z_index = 130
+	add_child(holder)
+	holder.global_position = target.get_global_rect().get_center() - holder.size / 2
+	var backdrop = art_slice(holder, "fx_number_bg.png")
+	if backdrop != null:
+		backdrop.size = holder.size
+	var number = label(text, holder, 24)
+	number.size = holder.size
+	number.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	number.add_theme_color_override("font_color", color)
+	outlined(number, Color.BLACK, 3)
+	number.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var tween = holder.create_tween().set_parallel(true)
+	tween.tween_property(holder, "position:y", holder.position.y - 48, 0.8)
+	tween.tween_property(holder, "modulate:a", 0.0, 0.5).set_delay(0.3)
+	tween.chain().tween_callback(holder.queue_free)
+
 func run_effects(state: Dictionary) -> void:
 	var current = {"id": str(room.get("id", "")), "hero": [int(state.players[0].hp), int(state.players[1].hp)], "units": {}, "turn": int(state.turn), "status": str(state.status)}
 	for player in state.players:
@@ -1271,6 +1370,8 @@ func run_effects(state: Dictionary) -> void:
 	prev_state = current
 	var attack = last_attack
 	last_attack = {}
+	var visual_play = last_visual_play
+	last_visual_play = {}
 	if old.is_empty() or old.id != current.id:
 		return
 	await get_tree().process_frame
@@ -1280,6 +1381,8 @@ func run_effects(state: Dictionary) -> void:
 	for uid in current.units:
 		if unit_nodes.has(uid) and is_instance_valid(unit_nodes[uid]):
 			current.units[uid].rect = unit_nodes[uid].get_global_rect()
+	if not visual_play.is_empty() and int(room.version) > int(visual_play.version):
+		spell_effect(int(visual_play.cardId), str(visual_play.target))
 	var big_hit = false
 	for index in 2:
 		var delta = current.hero[index] - old.hero[index]
@@ -1565,6 +1668,17 @@ func mini_card(id: int, parent: Node, width: float, unit: Dictionary = {}, tap: 
 	var face = Control.new()
 	face.custom_minimum_size = Vector2(width, height)
 	wrap.add_child(face)
+	if state == "picked" and not unit.is_empty():
+		var ring = art_slice(face, "target_ring.png")
+		if ring != null:
+			ring.size = Vector2(width * 1.25, width * 1.25)
+			ring.position = Vector2(-width * 0.125, (width * 1.34 - ring.size.y) * 0.5)
+			ring.set_meta("skin_asset", "target_ring.png")
+			ring.z_index = 3
+			ring.pivot_offset = ring.size / 2
+			var target_pulse = ring.create_tween().set_loops()
+			target_pulse.tween_property(ring, "modulate:a", 0.55, 0.5)
+			target_pulse.tween_property(ring, "modulate:a", 1.0, 0.5)
 	if state in ["ready", "picked"] or info.rarity == "legendary":
 		var glow_file = "fx_glow_legend.png" if info.rarity == "legendary" and state not in ["ready", "picked"] else "fx_glow_ready.png"
 		var glow_sprite = art_slice(face, glow_file)
@@ -1678,7 +1792,7 @@ func mini_card(id: int, parent: Node, width: float, unit: Dictionary = {}, tap: 
 	return wrap
 
 var hero_choice = 0
-const HERO_FILES = ["hero_player.png", "hero_player_alt1.png", "hero_player_alt2.png"]
+const HERO_FILES = ["hero_player.png", "hero_player_alt1.png", "hero_player_alt2.png", "hero_player_alt3.png", "hero_player_alt4.png", "hero_player_alt5.png"]
 
 func hero_file(index: int) -> String:
 	if index == 0:
@@ -1710,6 +1824,11 @@ func hero(parent: Control, index: int, player: Dictionary, at: Vector2, diameter
 	frame.add_child(glow)
 	var portrait = art_slice(frame, portrait_file)
 	portrait.size = Vector2(diameter, diameter)
+	var hero_border = art_slice(frame, "hero_ring.png")
+	if hero_border != null:
+		hero_border.size = Vector2(diameter, diameter)
+		hero_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		hero_border.set_meta("skin_asset", "hero_ring.png")
 	hero_nodes[index] = frame
 	var hp = int(player.hp)
 	var gem = clampf(diameter * 0.6, 30, 52)
@@ -1767,13 +1886,29 @@ func dress_button(node: Button, file: String, ink: Color, ink_hi: Color, font: F
 	node.custom_minimum_size.x = maxf(node.custom_minimum_size.x, text_width + cap_margin * 2)
 	if node.disabled:
 		slice.modulate = Color(0.5, 0.5, 0.5, 0.95)
-	node.mouse_entered.connect(func(): if not node.disabled: slice.modulate = Color(1.15, 1.1, 1.0))
-	node.mouse_exited.connect(func(): slice.modulate = Color.WHITE if not node.disabled else Color(0.55, 0.55, 0.55, 0.9))
-	node.button_down.connect(func(): slice.modulate = Color(0.78, 0.74, 0.7))
-	node.button_up.connect(func(): slice.modulate = Color.WHITE if not node.disabled else Color(0.55, 0.55, 0.55, 0.9))
+	if not node.has_meta("art_hooks"):
+		node.set_meta("art_hooks", true)
+		var reference = weakref(node)
+		node.mouse_entered.connect(tint_button_art.bind(reference, Color(1.15, 1.1, 1.0)))
+		node.mouse_exited.connect(tint_button_art.bind(reference, Color.WHITE))
+		node.button_down.connect(tint_button_art.bind(reference, Color(0.78, 0.74, 0.7)))
+		node.button_up.connect(tint_button_art.bind(reference, Color.WHITE))
+
+func tint_button_art(reference: WeakRef, tint: Color) -> void:
+	var node = reference.get_ref()
+	if not is_instance_valid(node):
+		return
+	var art = node.get_meta("art_slice", null)
+	if is_instance_valid(art):
+		art.modulate = Color(0.55, 0.55, 0.55, 0.9) if node.disabled else tint
 
 func button(text: String, parent: Node, callback: Callable, disabled: bool = false) -> Button:
 	var node = super.button(text, parent, callback, disabled)
+	var icon_file = "icon_close.png" if text in ["İptal", "Kapat"] or text.ends_with("Kapat") else "icon_lock.png" if text == "Kilitli" else "icon_check.png" if "Tamamlandı" in text or text == "Başla" else "icon_league.png" if "LİG" in text else ""
+	if not icon_file.is_empty():
+		node.icon = skin_art(icon_file)
+		node.expand_icon = true
+		node.add_theme_constant_override("icon_max_width", 20)
 	if text.length() <= 7 or not node.get_theme_font("font"):
 		return node
 	if text.begins_with("Teslim"):
@@ -1920,7 +2055,10 @@ func render_result(state: Dictionary, width: float, height: float) -> void:
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	message.add_theme_color_override("font_color", Color("e8dcc0"))
 	primary_button("DEVAM ET", column, leave_match)
-	small_button("Maç kaydı", column, export_replay)
+	var replay_button = small_button("Maç kaydı", column, export_replay)
+	replay_button.icon = skin_art("icon_replay.png")
+	replay_button.expand_icon = true
+	replay_button.add_theme_constant_override("icon_max_width", 22)
 
 var pack_anim_shown: Array = []
 
@@ -1932,16 +2070,18 @@ const LOADING_TIPS = [
 ]
 
 func show_loading_screen(force: bool = true) -> Control:
-	# Uygulama içi yükleme ekranı: splash + ilerleme çubuğu + ipucu paneli, ~1.4 sn sonra solar.
+	# Progress follows completed local preparation and the connection attempt.
 	var overlay = ColorRect.new()
 	overlay.name = "LoadingScreen"
 	overlay.color = Color(0.05, 0.03, 0.02, 1)
 	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	overlay.z_index = 200
-	overlay.mouse_filter = Control.MOUSE_FILTER_STOP if force else Control.MOUSE_FILTER_IGNORE
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	add_child(overlay)
 	var view_size = get_viewport_rect().size
-	var splash = skin_art("splash.png")
+	var splash = skin_art("splash_clean.png")
+	if splash == null:
+		splash = skin_art("splash.png")
 	if splash != null:
 		var bg = TextureRect.new()
 		bg.texture = splash
@@ -1961,8 +2101,8 @@ func show_loading_screen(force: bool = true) -> Control:
 		fill.position = bar.position + Vector2(bar.size.x * 0.045, bar.size.y * 0.16)
 		fill.size = Vector2(0, bar.size.y * 0.68)
 		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
-		var grow = create_tween()
-		grow.tween_property(fill, "size:x", bar.size.x * 0.86, 1.2)
+		overlay.set_meta("loading_fill", fill)
+		overlay.set_meta("loading_width", bar.size.x * 0.86)
 	if tip_panel != null:
 		tip_panel.size = Vector2(bar_width, bar_width * 160.0 / 900.0)
 		tip_panel.position = Vector2((view_size.x - bar_width) / 2, view_size.y * 0.78 + bar_width * 0.14)
@@ -1977,12 +2117,44 @@ func show_loading_screen(force: bool = true) -> Control:
 		tip.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 18)
 		tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		tip_panel.add_child(tip)
+	var status = label("Görseller hazırlanıyor…", overlay, 12)
+	status.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	status.position = Vector2((view_size.x - bar_width) / 2, view_size.y * 0.78 - 26)
+	status.size = Vector2(bar_width, 24)
+	status.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.set_meta("loading_status", status)
 	if not force:
-		var fade = create_tween()
-		fade.tween_interval(1.3)
-		fade.tween_property(overlay, "modulate:a", 0.0, 0.3)
-		fade.tween_callback(overlay.queue_free)
+		prepare_startup.call_deferred(overlay)
 	return overlay
+
+func loading_progress(overlay: Control, progress: float, caption: String) -> void:
+	if not is_instance_valid(overlay):
+		return
+	var fill = overlay.get_meta("loading_fill", null)
+	if is_instance_valid(fill):
+		fill.size.x = float(overlay.get_meta("loading_width")) * clampf(progress, 0, 1)
+	var status = overlay.get_meta("loading_status", null)
+	if is_instance_valid(status):
+		status.text = caption
+
+func prepare_startup(overlay: Control) -> void:
+	var files = ["frame_warrior.png", "frame_spell.png", "frame_trap.png", "hero_player.png", "hero_foe.png", "lane.png", "lane_enemy.png", "background_land.png", "chest_open.png", "result_victory.png"]
+	for index in files.size():
+		if not is_instance_valid(overlay):
+			return
+		skin_art(files[index])
+		loading_progress(overlay, 0.8 * float(index + 1) / files.size(), "Görseller hazırlanıyor · %d/%d" % [index + 1, files.size()])
+		await get_tree().process_frame
+	loading_progress(overlay, 0.85, "Sunucu bağlantısı kontrol ediliyor…")
+	var started = Time.get_ticks_msec()
+	while busy and Time.get_ticks_msec() - started < 8000:
+		await get_tree().process_frame
+	if not is_instance_valid(overlay):
+		return
+	loading_progress(overlay, 1.0, "Oynamaya hazırsın" if connected else "Yerel hazırlık tamam · Sunucu adresini kontrol et")
+	var fade = overlay.create_tween()
+	fade.tween_property(overlay, "modulate:a", 0.0, 0.25)
+	fade.tween_callback(overlay.queue_free)
 
 func show_pack_reveal() -> void:
 	# Sandık sallanır, açılır, parlama patlar; dokununca ya da kendiliğinden kapanır.
@@ -2185,10 +2357,12 @@ func hero_picker(parent: Node) -> void:
 	if skin_art("hero_player_alt1.png") == null:
 		return
 	muted_label("Kahramanını seç", parent, 14)
-	var row = HBoxContainer.new()
-	row.add_theme_constant_override("separation", 14)
+	var row = HFlowContainer.new()
+	row.add_theme_constant_override("h_separation", 14)
 	parent.add_child(row)
 	for index in HERO_FILES.size():
+		if skin_art(HERO_FILES[index]) == null:
+			continue
 		var tile = Button.new()
 		tile.custom_minimum_size = Vector2(88, 88)
 		tile.tooltip_text = "Kahraman %d" % (index + 1)

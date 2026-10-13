@@ -21,6 +21,13 @@ func run() -> void:
 	app.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	await app.connect_account()
 	app.render()
+	if OS.get_environment("DESTAN_SHOT_FOCUS") == "profile":
+		app.render_profile()
+		await shot("7-hesap")
+		app.queue_free()
+		await process_frame
+		quit(0)
+		return
 	var loading = app.show_loading_screen(true)
 	await shot("0-yukleme")
 	loading.queue_free()

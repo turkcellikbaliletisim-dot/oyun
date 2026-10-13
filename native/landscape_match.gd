@@ -93,8 +93,8 @@ func render_match() -> void:
 			hint.modulate.a = 0.5
 			hint.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		var count = maxi(5, entry[1].size())
-		var card_width = minf(78.0, minf((region.size.y - 20.0) / 1.34, (region.size.x - 24.0 - 6.0 * (count - 1)) / count))
-		battlefield_lane(entry[1], entry[2], legal, region.grow(-10.0), card_width)
+		var card_width = minf(78.0, minf((region.size.y - 10.0) / 1.34, (region.size.x - 24.0 - 6.0 * (count - 1)) / count))
+		battlefield_lane(entry[1], entry[2], legal, region.grow(-5.0), card_width)
 		var hero_size = minf(54.0, region.size.y - 12.0)
 		hero(arena, 0 if entry[2] else 1, mine if entry[2] else foe, Vector2(5.0, region.get_center().y - hero_size / 2.0), hero_size)
 	landscape_left_summary(mine, foe)
@@ -128,14 +128,14 @@ func landscape_render_hand(mine: Dictionary, state: Dictionary, legal: Array) ->
 	arena.add_child(landscape_hand)
 	var margin = MarginContainer.new()
 	for side in ["left", "right", "top", "bottom"]:
-		margin.add_theme_constant_override("margin_" + side, 9)
+		margin.add_theme_constant_override("margin_" + side, 4)
 	margin.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	landscape_hand.add_child(margin)
 	var hand = HBoxContainer.new()
 	hand.alignment = BoxContainer.ALIGNMENT_CENTER
 	hand.add_theme_constant_override("separation", 9)
 	margin.add_child(hand)
-	var card_width = minf(80.0, (rect.size.y - 30.0) / 1.34)
+	var card_width = minf(80.0, (rect.size.y - 12.0) / 1.34)
 	var mulligan = state.status == "mulligan" and state.active == 0
 	for index in mine.hand.size():
 		var id = int(mine.hand[index])
@@ -250,13 +250,20 @@ func landscape_render_commands(state: Dictionary, mine: Dictionary, legal: Array
 	if not focus.is_empty():
 		var info: Dictionary = cards[int(focus.id)]
 		label(info.name, details, 13)
-		muted_label(info.text, details, 11)
+		var description = muted_label(info.text, details, 12)
+		description.custom_minimum_size.x = rect.size.x - 20
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var inspect = landscape_button("Kartı büyüt", details, func(): inspect_card(int(info.id)))
+		inspect.tooltip_text = "Kartın tam metnini aç"
 		for action in selected:
 			var target = str(action.get("target", ""))
 			if not target.begins_with("unit:") and not target.begins_with("hero:"):
 				landscape_button(action_name(action), details, func(): move(action))
 		if not selected.is_empty():
-			landscape_button("İptal", details, func(): selected = []; focus = {}; render())
+			var cancel = landscape_button("İptal", details, func(): selected = []; focus = {}; render())
+			cancel.icon = skin_art("icon_close.png")
+			cancel.expand_icon = true
+			cancel.add_theme_constant_override("icon_max_width", 18)
 	elif state.status != "finished":
 		muted_label("Kart seç veya sahaya sürükle.", details, 11)
 	var energy_row = HBoxContainer.new()
