@@ -71,3 +71,7 @@ Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve do
 - Eklendi: `native/merge_engine.gd` (5x4 tahta, 4 tür, 8 seviye, dalga/can/altın, yeniden doğuş yıldızı), çevrimdışı rotalar `merge/*`, ana sayfada "Birleştir" kutusu ve `render_merge` ekranı. Testler: `tests/merge-engine.gd` + `native-offline.gd`.
 - Eksik görseller: `merge_frame`, `merge_burst`, `glow_*`, `totem_*` (şimdilik düz renkli düğmeler). Sıradaki: otomatik savaş animasyonu, totemler, bosslar.
 - Eklendi (aynı gün): 4 totem (savaş/kalkan/altın/can; en iyi dalga 0/5/10/15'te açılır), her 5. dalgada boss (Kara Kurt, Demir Dev, Gölge Ejder; ödül ×2), tur tur savaş animasyonu (can çubukları). Görsel olarak totem_1..4, boss_1..3 ve merge_burst gelince arayüze takılacak.
+
+## 2. parti görseller (istendi: 2026-10-13, klasör `gorsel-yeni2/`)
+35 dosya: `unit_kilic|okcu|buyucu|kalkan_1..4` (256), `enemy_kurt|haydut|iskelet|cin|golem_kucuk|kara_okcu` (256), `merge_board_bg` 1024x1792, `merge_cell` / `merge_cell_selected` 192, ikonlar 96 (`icon_buy, icon_sell, icon_wave, icon_heart, icon_star_rebirth, icon_lock, icon_gold_coin`), afişler (`banner_victory`, `banner_defeat`, `banner_rebirth` 1024x384; `banner_boss_warning` 1024x256).
+Bağlanmamış 1. parti görseller: `glow_*`, `matchmaking_search`, `icon_invite_code`, `badge_rank_platinum|diamond|legend`, `store_feature_graphic`.
