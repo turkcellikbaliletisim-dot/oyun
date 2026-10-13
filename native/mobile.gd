@@ -599,7 +599,9 @@ func merge_animate(b: Dictionary) -> void:
 	foe_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	content.add_child(foe_row)
 	for fi in range(mini(int(b.foes0), 6)):
-		merge_pic(foe_files[(int(b.wave) + fi) % foe_files.size()], 56, foe_row)
+		var foe_pic = merge_pic(foe_files[(int(b.wave) + fi) % foe_files.size()], 56, foe_row)
+		if foe_pic != null:
+			foe_pic.custom_minimum_size = Vector2(56, 56)
 	muted_label("Düşman", content, 12)
 	var foe_bar = ProgressBar.new()
 	foe_bar.custom_minimum_size = Vector2(0, 26)
