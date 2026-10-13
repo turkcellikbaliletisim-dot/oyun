@@ -68,6 +68,14 @@ func run() -> void:
 	# Çevrimiçi özellik hata vermeli, çökmemeli
 	var room_try = await app.api("rooms", HTTPClient.METHOD_POST, {"deck": app.data.decks.starter.cards})
 	check(room_try.has("error"), "Çevrimdışı arkadaş odası reddedilmedi")
+	# Birleştirme modu ekranı
+	app.open_tab("merge")
+	check(app.view == "merge", "Birleştir ekranı açılmadı")
+	app.merge_do("merge/buy")
+	var mv = app.merge_call("merge")
+	check(int(mv.state.gold) == 20, "Birleştir alımı altın düşürmedi")
+	app.merge_do("merge/restart")
+	app.open_tab("play")
 	# Kalıcılık: yeni servis aynı dosyadan aynı hesabı okumalı
 	var again = Offline.new(app.data, app.offline_save_path())
 	check(again.store.user != null and again.store.user.id == app.account.id, "Çevrimdışı kayıt kalıcı değil")

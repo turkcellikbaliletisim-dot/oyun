@@ -4,6 +4,7 @@ extends RefCounted
 # sandık/koleksiyon çalışır; arkadaş odası ve lig çevrimiçi gerektirir.
 
 const Engine_ = preload("res://native/offline_engine.gd")
+const Merge_ = preload("res://native/merge_engine.gd")
 
 const CRAFT = {"common": 40, "rare": 100, "legendary": 400}
 const DUST = {"common": 10, "rare": 25, "legendary": 100}
@@ -431,6 +432,8 @@ func handle(path: String, method: int, body: Dictionary) -> Dictionary:
 		return account_view(user)
 	if path == "solo":
 		return solo(user, body)
+	if path == "merge" or path.begins_with("merge/"):
+		return merge_route(user, path.trim_prefix("merge").trim_prefix("/"), body)
 	if path.begins_with("collection/"):
 		return wallet(user, path.trim_prefix("collection/"), body)
 	if path.begins_with("matches/"):
@@ -590,4 +593,47 @@ func wallet(user: Dictionary, operation: String, body: Dictionary) -> Dictionary
 	save_store()
 	var out = result.duplicate(true)
 	out["account"] = account_view(user)
+	return out
+
+# ---------- birleştirme modu ----------
+
+func merge_view(user: Dictionary) -> Dictionary:
+	var g: Dictionary = user.merge
+	return {"state": g, "buyCost": Merge_.buy_cost(g), "best": int(user.get("mergeBest", 0)), "cols": Merge_.COLS, "rows": Merge_.ROWS, "kinds": Merge_.KINDS,
+		"enemies": Merge_.enemy_wave(int(g.wave)).size()}
+
+func merge_route(user: Dictionary, sub: String, body: Dictionary) -> Dictionary:
+	if not user.has("merge") or not user.merge is Dictionary:
+		user["merge"] = Merge_.new_run(now_ms())
+		user["mergeBest"] = 0
+	var g: Dictionary = user.merge
+	var eng = Merge_.new()
+	var result = null
+	var extra = {}
+	match sub:
+		"":
+			return merge_view(user)
+		"buy":
+			result = eng.buy(g)
+		"move":
+			result = eng.move(g, int(body.get("from", -1)), int(body.get("to", -1)))
+		"sell":
+			result = eng.sell(g, int(body.get("cell", -1)))
+		"battle":
+			result = eng.battle(g)
+			if not result.is_empty():
+				extra = {"battle": result}
+				if int(g.wave) - 1 > int(user.get("mergeBest", 0)) and result.won:
+					user["mergeBest"] = int(g.wave) - 1
+		"restart":
+			user["merge"] = Merge_.new_run(now_ms(), Merge_.stars_for_best(int(user.get("mergeBest", 0))))
+			save_store()
+			return merge_view(user)
+		_:
+			return fail("İşlem bulunamadı.", 404)
+	if result.is_empty():
+		return fail(eng.err, 409)
+	save_store()
+	var out = merge_view(user)
+	out.merge(extra)
 	return out

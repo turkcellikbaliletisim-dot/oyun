@@ -66,3 +66,7 @@ Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve do
 2. **Sıradaki mod:** Önce **birleştirme (merge)**. Otomatik savaş, totem ve yeniden doğuş sonra gelir. Gerekçe: UGACHA'nın çekirdek döngüsü, tamamen çevrimdışı çalışır, sunucu gerektirmez.
 3. **Yayın:** Önce Android, Google Play iç test kanalı. Yayın imzası (release keystore) ayrı üretilecek, debug anahtarı yayında kullanılmaz. Geliştirici hesabı (25 USD) kullanıcı tarafından açılmalı.
 4. **Görseller:** 21 yeni görsel ChatGPT'den `gorsel-yeni/` klasörüne istendi; yerleştirme sonraki çalışmada.
+
+## Birleştirme modu (2026-10-13)
+- Eklendi: `native/merge_engine.gd` (5x4 tahta, 4 tür, 8 seviye, dalga/can/altın, yeniden doğuş yıldızı), çevrimdışı rotalar `merge/*`, ana sayfada "Birleştir" kutusu ve `render_merge` ekranı. Testler: `tests/merge-engine.gd` + `native-offline.gd`.
+- Eksik görseller: `merge_frame`, `merge_burst`, `glow_*`, `totem_*` (şimdilik düz renkli düğmeler). Sıradaki: otomatik savaş animasyonu, totemler, bosslar.

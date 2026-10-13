@@ -352,7 +352,7 @@ func open_tab(tab: String) -> void:
 	if busy:
 		return
 	gallery_open = tab == "collection"
-	view = "deck" if tab == "deck" else "story" if tab == "story" else "lobby"
+	view = "deck" if tab == "deck" else "story" if tab == "story" else "merge" if tab == "merge" else "lobby"
 	selected = []
 	focus = {}
 	scroll.scroll_vertical = 0
@@ -406,6 +406,8 @@ func render() -> void:
 		render_story()
 	elif view == "deck" and not account.is_empty():
 		render_deck_builder()
+	elif view == "merge" and not account.is_empty():
+		render_merge()
 	elif room.is_empty():
 		render_lobby()
 	else:
@@ -519,6 +521,78 @@ func render_lobby() -> void:
 	more.add_child(friends_holder)
 	var friends_tile = feature(friends_holder, 2, "Düello", "Oda kur, kodu paylaş.", 140, "scene_friends.png")
 	tile_press(friends_tile, render_social)
+	var merge_tile = feature(content, 4, "Birleştir", "Birlikleri birleştir, dalgaları geç. İnternetsiz oynanır.", 120)
+	tile_press(merge_tile, func(): open_tab("merge"))
+
+var merge_pick: int = -1
+var merge_info: String = ""
+
+const MERGE_COLORS = [Color("5a2b2b"), Color("2b4a2b"), Color("3c2b5a"), Color("2b3f5a")]
+
+func merge_do(path: String, body: Dictionary = {}) -> void:
+	var result = merge_call(path, body)
+	if result.has("error"):
+		merge_info = str(result.error)
+	elif result.has("battle"):
+		var b = result.battle
+		merge_info = ("Dalga %d kazanıldı! +%d altın" % [int(b.wave), int(b.get("reward", 0))]) if b.won else ("Dalga %d kaybedildi. Kalan can: %d%s" % [int(b.wave), int(b.lives), " · Koşu bitti" if b.over else ""])
+	else:
+		merge_info = ""
+	merge_pick = -1
+	render()
+
+func render_merge() -> void:
+	var v = merge_call("merge")
+	var g = v.state
+	heading("Birleştir · Dalga %d" % int(g.wave), content, 24)
+	muted_label("Altın %d · Can %d · Rakip %d birlik · En iyi dalga %d · Yıldız %d" % [int(g.gold), int(g.lives), int(v.enemies), int(v.best), int(g.stars)], content, 13)
+	if merge_info != "":
+		label(merge_info, content, 15)
+	var grid = GridContainer.new()
+	grid.columns = int(v.cols)
+	grid.add_theme_constant_override("h_separation", 6)
+	grid.add_theme_constant_override("v_separation", 6)
+	content.add_child(grid)
+	for i in range(g.board.size()):
+		var cell = g.board[i]
+		var b = Button.new()
+		b.custom_minimum_size = Vector2(0, 74)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		b.clip_text = true
+		var fill = Color("172530")
+		var text = ""
+		if cell != null:
+			var kind = v.kinds[int(cell.k)]
+			var m = pow(1.9, int(cell.t) - 1) * (1.0 + 0.1 * int(g.stars))
+			text = "%s\nSv %d\n⚔%d ♥%d" % [kind.name, int(cell.t), int(round(kind.atk * m)), int(round(kind.hp * m))]
+			fill = MERGE_COLORS[int(cell.k)]
+		b.text = text
+		b.add_theme_font_size_override("font_size", 11)
+		b.add_theme_stylebox_override("normal", box(fill, GOLD if i == merge_pick else Color("3a4a55"), 3 if i == merge_pick else 1, 8, 4))
+		b.add_theme_stylebox_override("pressed", box(fill.lightened(0.2), GOLD, 3, 8, 4))
+		b.pressed.connect(func():
+			if merge_pick < 0:
+				if cell != null:
+					merge_pick = i
+					render()
+			elif merge_pick == i:
+				merge_pick = -1
+				render()
+			else:
+				merge_do("merge/move", {"from": merge_pick, "to": i}))
+		grid.add_child(b)
+	var bar = HBoxContainer.new()
+	bar.add_theme_constant_override("separation", 8)
+	content.add_child(bar)
+	primary_button("Satın al (%d)" % int(v.buyCost), bar, func(): merge_do("merge/buy"), bool(g.over))
+	primary_button("SAVAŞ ›", bar, func(): merge_do("merge/battle"), bool(g.over))
+	var bar2 = HBoxContainer.new()
+	bar2.add_theme_constant_override("separation", 8)
+	content.add_child(bar2)
+	primary_button("Sat", bar2, func(): merge_do("merge/sell", {"cell": merge_pick}), merge_pick < 0 or bool(g.over))
+	primary_button("Yeniden doğ" if bool(g.over) else "Yeni koşu", bar2, func(): merge_do("merge/restart"))
+	primary_button("‹ Ana sayfa", bar2, func(): open_tab("play"))
+	muted_label("Aynı türden ve aynı seviyeden iki birliği üst üste sürükle/dokun: seviye atlar. Her 5 dalga en iyi sonuç +%10 güç yıldızı kazandırır.", content, 12).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func render_story() -> void:
 	heading("ANADOLU YOLCULUĞU", content, 26)

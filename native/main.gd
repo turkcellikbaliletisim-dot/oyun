@@ -479,6 +479,14 @@ func start_offline() -> Dictionary:
 	cookie = ""
 	return offline_service.handle("session", HTTPClient.METHOD_POST, {})
 
+func merge_call(path: String, body: Dictionary = {}) -> Dictionary:
+	# Birleştirme modu hep cihazdaki yerel servisle çalışır (çevrimiçi olsan da).
+	if offline_service == null:
+		offline_service = OfflineService.new(data, offline_save_path())
+	if not offline_service.has_account():
+		offline_service.handle("session", HTTPClient.METHOD_POST, {})
+	return offline_service.handle(path, HTTPClient.METHOD_POST, body)
+
 func enter_offline() -> void:
 	if busy:
 		return
