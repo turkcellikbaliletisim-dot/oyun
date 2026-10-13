@@ -81,7 +81,7 @@ func render_match() -> void:
 		strip.size = region.size
 		strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		arena.add_child(strip)
-		var surface = art_slice(strip, entry[3], Rect2(), "h3", Vector4(120, 0, 120, 0))
+		var surface = art_slice(strip, entry[3], Rect2(), "h3", Vector4(246, 0, 246, 0))
 		if surface != null:
 			surface.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			surface.modulate.a = 0.72

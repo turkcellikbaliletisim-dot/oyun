@@ -2055,24 +2055,108 @@
       "edge_alpha_max": 0
     },
     "lane_enemy.png": {
-      "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:13d8a20b-909b-4e0f-860b-a52f5ba80178",
-      "source_size": [
-        2688,
-        1536
-      ],
-      "source_sha256": "2917cecf50ed9fac85e80507147587882d35fc3ca5f7e614ca4b9806c3e314fe",
-      "resample_scale": 0.38095238095238093,
-      "matte_method": "scene",
-      "generated_independently": true,
-      "source_at_least_2x_each_dimension": true,
       "file": "native/skin/lane_enemy.png",
+      "method": "Independent Adobe Firefly illustration; Adobe background removal; game-specific three-slice packing with downsampling; precision boundary despill after premultiplied resampling",
+      "source_generation_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:e9306f8e-6d6d-458d-b45e-5f13871140e9",
+      "source_cutout_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:709faffe-92cb-4c18-97c7-77ec46778643",
+      "source_file": "dokumanlar/serit-yenileme-kaynak/lane_enemy.png",
+      "source_size": [
+        2704,
+        1552
+      ],
+      "source_sha256": "1b05f1b88a7be50e94c31a897d740ebf26f19a217078c0bae4fa1b30e4846962",
+      "source_at_least_2x_each_dimension": true,
+      "generated_independently": true,
+      "sha256": "8eae18b61c9704a354ae625de6a614be1031f9e2b8542f0c693fcbd8f6f007f3",
+      "bytes": 331954,
+      "source_subject_bounds": [
+        60,
+        174,
+        2655,
+        1409
+      ],
+      "source_slice_cap": 679,
+      "part_resample_scales_xy": [
+        [
+          0.2974963181148748,
+          0.2979757085020243
+        ],
+        [
+          0.4349232012934519,
+          0.2979757085020243
+        ],
+        [
+          0.2974963181148748,
+          0.2979757085020243
+        ]
+      ],
+      "content_rectangle": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "runtime_h3_caps": [
+        243,
+        0,
+        243,
+        0
+      ],
+      "center_adapted_separately": true,
+      "corner_aspect_preserved": true,
+      "upscaled": false,
+      "boundary_despill": {
+        "pixels": 12,
+        "radius_output_pixels": 2,
+        "alpha_unchanged": true,
+        "opaque_interior_untouched": true
+      },
       "size": [
         1024,
         400
       ],
-      "mode": "RGB",
-      "bytes": 370164,
-      "sha256": "1aff7154e6ab50677fa4de81b64bd2c1b9c8e37d4ec51a3921392e96904c4129"
+      "mode": "RGBA",
+      "alpha_bounds": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "transparent_outer_edges": true,
+      "painted_center_alpha_min": 255,
+      "painted_center_mean_luminance": 32.232,
+      "chroma_green_suspect_pixels_at_boundary": 0,
+      "opaque_green_candidate_count": 0,
+      "opaque_green_candidate_samples": [],
+      "opaque_color_candidates_require_visual_review": false,
+      "previous_revision": {
+        "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:13d8a20b-909b-4e0f-860b-a52f5ba80178",
+        "source_size": [
+          2688,
+          1536
+        ],
+        "source_sha256": "2917cecf50ed9fac85e80507147587882d35fc3ca5f7e614ca4b9806c3e314fe",
+        "resample_scale": 0.38095238095238093,
+        "matte_method": "scene",
+        "generated_independently": true,
+        "source_at_least_2x_each_dimension": true,
+        "file": "native/skin/lane_enemy.png",
+        "size": [
+          1024,
+          400
+        ],
+        "mode": "RGB",
+        "bytes": 370164,
+        "sha256": "1aff7154e6ab50677fa4de81b64bd2c1b9c8e37d4ec51a3921392e96904c4129"
+      },
+      "revision": "2026-10-13-lane-refresh",
+      "adobe_edge_color_refinement": {
+        "target": "green",
+        "hue": -80,
+        "saturation": -70,
+        "lightness": -35,
+        "alpha_unchanged": true
+      }
     },
     "table_center.png": {
       "source_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:d729a73b-df6f-471c-be0a-0cfb4db20121",

@@ -870,7 +870,7 @@ func render_match() -> void:
 		arena.add_child(strip)
 		strip.position = Vector2(play_x - 4, lanes_top + lane_index * (lane_height + 2))
 		strip.size = Vector2(play_w + 8, lane_height)
-		var lane_art = art_slice(strip, "lane_enemy.png" if lane_index == 0 else "lane.png", Rect2(), "p9", Vector4(90, 70, 90, 70), 0.3)
+		var lane_art = art_slice(strip, "lane_enemy.png" if lane_index == 0 else "lane.png", Rect2(), "h3", Vector4(246, 0, 246, 0))
 		if lane_art != null:
 			lane_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 			lane_art.modulate = Color(1, 1, 1, 0.7)
