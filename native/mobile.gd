@@ -1811,6 +1811,14 @@ func button(text: String, parent: Node, callback: Callable, disabled: bool = fal
 		dress_button(node, "button_dark.png", Color("f6e3ae"), Color("fff6d6"))
 	return node
 
+func icon_on(node: Button, file: String) -> Button:
+	var tex = skin_art(file)
+	if node != null and tex != null:
+		node.icon = tex
+		node.expand_icon = true
+		node.add_theme_constant_override("icon_max_width", 22)
+	return node
+
 func primary_button(text: String, parent: Node, callback: Callable, disabled: bool = false) -> Button:
 	var node = super.primary_button(text, parent, callback, disabled)
 	if text == "Turu bitir" and skin_art("end_turn_ready.png") != null:
@@ -1874,7 +1882,7 @@ func choose_mode() -> void:
 	heading("MÜCADELENİ SEÇ", column, 22)
 	primary_button("BOT İLE SAVAŞ", column, func(): dialog.queue_free(); view = "lobby"; mutate("solo", {"chapterId": 0, "deck": deck_payload()}))
 	button("ARKADAŞLA DÜELLO", column, func(): dialog.queue_free(); render_social())
-	button("LİG MAÇI", column, func(): dialog.queue_free(); view = "lobby"; mutate("queue", {"deck": deck_payload()}), not account.profile.chapterRewards.has(10))
+	icon_on(button("LİG MAÇI", column, func(): dialog.queue_free(); view = "lobby"; mutate("queue", {"deck": deck_payload()}), not account.profile.chapterRewards.has(10)), "icon_league.png")
 	if not account.profile.chapterRewards.has(10):
 		muted_label("Lig, Anadolu yolculuğu tamamlanınca açılır.", column, 13)
 	dialog.confirmed.connect(dialog.queue_free)
@@ -1945,7 +1953,7 @@ func render_result(state: Dictionary, width: float, height: float) -> void:
 	message.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	message.add_theme_color_override("font_color", Color("e8dcc0"))
 	primary_button("DEVAM ET", column, leave_match)
-	small_button("Maç kaydı", column, export_replay)
+	icon_on(small_button("Maç kaydı", column, export_replay), "icon_replay.png")
 
 var pack_anim_shown: Array = []
 
@@ -2077,7 +2085,7 @@ func render_pack_reveal() -> void:
 			mini_card(int(reward.id), row, 112, {}, inspect_card.bind(int(reward.id)), "picked", "YENİ", true)
 		else:
 			chip("+%d toz" % int(reward.get("dust", 0)), row, Color("334367"), 15)
-	button("Koleksiyona ekledin · Kapat", content, func(): last_pack = []; render())
+	icon_on(button("Koleksiyona ekledin · Kapat", content, func(): last_pack = []; render()), "icon_close.png")
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
