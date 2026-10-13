@@ -1,52 +1,41 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-13 04:50 UTC (9. saatlik çalışma; önceki: 03:50, 02:50, 01:50, 00:50, 23:55, 22:45, 21:45, 20:40 UTC) (dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi (bağlı klasör yok).
+Son güncelleme: 2026-10-13 (UTC) — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
 
 ## Yapılanlar
-- 2026-10-13 04:50 UTC: main ve ChatGPT dallarında yeni commit/dosya yok (main e336526). **Yeni bağlamalar (`native/main.gd`):** maçta rakip/oyuncu birim sıraları `lane_enemy.png` / `lane.png` zemininde (`lane_row()`), koleksiyonda altın/toz/paket bilgisi `chip_gold/chip_dust/chip_filter.png` çipleri (`chip()`); `integration.gd` skin testine 5 dosya eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Ekran görüntüsüyle görsel doğrulama Mac'te hâlâ gerekli.
-- 2026-10-13 03:50 UTC: main ve ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlama (`native/main.gd`):** lobide bölüm seçiciye `chapter_NN.png` önizleme görseli (seçim değişince güncellenir); `integration.gd` skin testine chapter_01/10 eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'teki ~/Desktop/oyun bu çalışmada da erişilemedi.
-- 2026-10-13 02:50 UTC: main ve ChatGPT dallarında yeni commit yok. **Yeni bağlamalar (`native/main.gd`):** maç ekranında `portrait()` yardımcısı; rakip portresi (bölüm maçında `enemy_NN.png`, yoksa `hero_foe.png`), oyuncu `hero_player.png`, maç sonunda `result_victory/defeat.png`. `integration.gd` skin testine 6 dosya eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Ekran görüntüsüyle doğrulama Mac'te hâlâ gerekli.
-- 2026-10-13 01:50 UTC: main ve tüm ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlamalar (`native/main.gd`):** paket açılış animasyonu `show_pack_reveal()` (chest_closed sallanır → chest_open + `pack_reveal_burst.png`, tıkla/otomatik kapanır); lobide `scene_play.png`, koleksiyonda `scene_chest.png` banner. `integration.gd` testi genişletildi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'te ekran görüntüsüyle görsel doğrulama hâlâ gerekli.
-- 2026-10-13 00:50 UTC: main ve ChatGPT dallarında (gorsel-kalite/*) yeni commit yok; hepsi zaten dalda. **Yeni bağlamalar (`native/main.gd`):** `toast_banner.png` (bildirim şeridi, 9-slice 65/43), `tooltip_panel.png` (TooltipPanel teması, 60/40 tahmini kenar), `target_ring.png` ("HEDEF SEÇ" başlığında simge). `integration.gd` skin yükleme testine toast/tooltip/target_ring/drag_arrow eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2).
-- 2026-10-12 23:55 UTC: main'de yeni commit yok (e336526). ChatGPT'nin `gorsel-kalite/denetim-20261013` notu (GORSEL-KALITE-DENETIMI.md) bu dala merge edildi. **Düzeltilen görseller:** `icon_net_ok/bad.png` artık Wi-Fi simgesi (altın halka; kötü olan üstü çizili, kırmızı), `logo.png` `logo_wordmark.png`'den 1024x512 olarak yeniden üretildi (atlas kırpımı değil). **Yeni bağlamalar (`native/main.gd`):** lobide `logo.png`, `divider.png` ayırıcıları, `scrollbar.png` (VScrollBar grabber), `end_turn_ready.png` (tur bitir butonu), `button_red.png` (teslim ol). `integration.gd` içine skin dosyası yüklenebilirlik testi eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2 linux). Görsel doğrulama (ekran görüntüsü) hâlâ Mac'te yapılmalı.
-- 2026-10-12 22:45 UTC: main'de yeni commit yok (e336526). ChatGPT'nin `gorsel-kalite/denetim-20261013` notundaki hata düzeltildi: `native/integration.gd` OGG akışında olmayan `.data` okuyordu → `audio.stream != null` kontrolüne çevrildi. Godot 4.7.2 (linux) bu ortamda indirilip **`npm run test:native` GEÇTİ** (40 atlas, tam eğitim, ödül/paket, replay, reconnect, kurtarma). `npm test`: 74/74. Yeni bağlamalar: `input_field.png` (LineEdit 9-slice 33/22/33/22), buton `focus` durumu altın doku, `play_sound(ad)` ile olay sesleri (`pack_open`, `victory`, `defeat`, varsayılan `click`).
-- 2026-10-12 21:45 UTC: main'de yeni commit yok (e336526); `otomatik/saatlik` zaten güncel. İlk görsel bağlama yapıldı (`native/main.gd`): `skin()`/`skin_box()` yardımcıları, tüm butonlarda `button_dark/gold.png` 9-slice (100,32,100,32), `background.png` tam ekran arka plan, `audio/click.ogg` tıklama sesi. Dosya yoksa eski düz stile geri düşer. **Godot ile test edilemedi** (bu ortamda Godot yok); Mac'te `npm run test:native` çalıştırılmalı. `npm test`: 74/74.
-- 2026-10-12 20:40 UTC: `main` incelendi. "Yeni görsel" ve "Yeni görsel 2" paketleri main'de; `yeni-gorsel-2-20261012` dalı main'den yalnızca 4 CI workflow dosyası kadar fazla, `yeni-gorsel-import-20261012` eski bir alt kümedir (yeni içerik yok).
-- `dokumanlar/skin_v2_expected.json` içindeki 114 PNG'nin hepsi `native/skin/` içinde var, boyutları birebir doğru (Pillow ile doğrulandı). Eksik dosya yok.
-- 14 geçici OGG `native/skin/audio/` içinde.
-- `npm test`: 74/74 geçti.
+- 2026-10-13: ChatGPT dalları birleştirildi: `gorsel-kalite/mobil-skin-baglantilari` (skin_chrome.gd: arka plan, ağ rozeti, 4 soketli alt gezinme), `gorsel-ihtiyac-denetimi`, `gorsel-kalite/denetim`. Wi-Fi simgeleri ve `logo.png` yeniden üretilmiş sürümle değiştirildi (ekranda doğrulandı).
+- Yatay maç düzeni yeniden yazıldı: solda kahramanlar + deste + tur sayacı, ortada iki şerit (`lane_enemy/lane.png`) ve el, sağda "Turu bitir" + enerji. Kartlar ~40 → ~60 px, düğme artık şeride binmiyor. Dikeyde "Turu bitir" kahramanın sağına alındı. Rakip turunda `end_turn_wait.png`.
+- Ana ekran: başlıkta `logo_wordmark.png`; alt yarı için "Sandık" ve "Düello" kutuları (`scene_chest/friends.png`, tüm kutu dokunulabilir); yolculuk ilerlemesi `progress_frame/fill.png`.
+- `divider.png` (yolculuk/koleksiyon/arkadaş başlıkları), `input_field.png` (LineEdit, yarı ölçekli 9 parça), `scrollbar.png`, `tooltip_panel.png` tema olarak bağlandı.
+- Hedef halkası (`target_ring.png`, hedeflenebilir kahramanda nabız animasyonu) ve sürükleme oku (`drag_arrow.png`) bağlandı.
+- Paket açılışı: `show_pack_reveal()` — `chest_closed` sallanır → `chest_open` + `pack_reveal_burst`, dokununca kapanır.
+- Hesap ekranında kahraman seçici (`hero_player`, `alt1`, `alt2`, seçili olana `hero_ring.png`); seçim oturum dosyasında saklanır, maçta oyuncu portresi buna göre.
+- `.import` dosyaları `.gitignore`'a eklendi. `tests/shots.gd` hesap/sandık ekranlarıyla genişletildi.
+- Testler: `npm test` 78/78; `npm run test:native` (Godot 4.7.2 linux, xvfb) GEÇTİ. Çıkıştaki "resources still in use" uyarısı zararsız sayıldı (run-native.js bunu hata saymıyor; integration.gd önbellekleri temizliyor).
 
-## Bu çalışmada bulunan sorunlar
-1. **Görsellerin çoğu hâlâ koda bağlı değil (yalnız button_dark/gold, background, click.ogg bağlandı).** `native/main.gd` içinde yalnızca kart atlasları (`kart-prototipi/gorseller/*.png`) yükleniyor; `native/skin/` hiçbir yerde referans edilmiyor (YENI-GORSEL-2.md de "kod tarafına bağlanmadı" diyor). Görev metnindeki `native/mobile.gd` ve `native/art_slice.gd` depoda yok; tüm arayüz `native/main.gd` (662 satır) ve `native/integration.gd` içinde.
-2. ~~Native test çalışmıyor~~ — Godot 4.7.2 indirilerek çözüldü (github.com/godotengine/godot-builds, `GODOT_BIN` ile); test geçiyor. Görsel (ekran görüntüsü) doğrulama hâlâ Mac'te yapılmalı.
-2b. ChatGPT denetimi: `icon_net_ok/bad.png` Wi-Fi yerine mücevher gösteriyor, `logo.png` atlas kırpımından büyütülmüş; `background*.png`, `card_back.png` inceleme bekliyor (aşağıdaki tabloya eklendi).
-3. Fontlar depoda yok; `bash scripts/skin_v2_fonts.command` çalıştırılmadan font rolleri bağlanamaz.
-4. Sesler geçici prosedürel; kulakla/oyun içi miks onayı yok.
+## Hâlâ eksik / yapılacak (kod)
+- [ ] `loading_bar_frame/fill.png`, `splash` giriş/yükleme ekranı akışı (proje splash'ı hariç uygulama içi yükleme ekranı yok).
+- [ ] `header_bar.png`, `table_center.png`, `empty_collection.png` (boş koleksiyon durumu) bağlı değil.
+- [ ] Kalan küçük simgeler bağlı değil: `icon_check/close/lock/replay/surrender/turn/league/deck_count/energy_full/energy_empty/sound_on/sound_off`, `icon_rarity_*`, `icon_type_*` (denetle), `fx_dust/fire/flood/frost/shield/spark/number_bg` (büyü efektleri kart bazlı eşlenmedi).
+- [ ] Hedef halkası birim kartlarında yok (yalnızca kahraman); kartta dikdörtgen vurgu kullanılıyor.
+- [ ] `hero_player_alt3..5` ve hero_ring maç içi çerçeve olarak kullanılmıyor.
+- [ ] Gerçek ses/müzik (aşağıda).
+- [ ] `tests/native-interaction.gd` bazen (nadiren) "freed instance" ile düşüyor; yeniden çalışınca geçiyor — zamanlama kaynaklı, incelenmeli.
+- [ ] Gerçek cihaz/Mac'te görsel kabul; Linux llvmpipe ekran görüntüleri gözle kontrol edildi.
 
-## Yapılması gereken kod işleri (öncelik sırasıyla)
-- [ ] `main.gd`: (button_gold/dark, input_field, button_red, scrollbar, divider bağlandı) kalan: `panel.png` (800x800 ama 303x287 kırpımdan büyütülmüş; kenar değeri manifestte yok — kalitesi düşük olabilir), `chip_filter_active.png` (koleksiyon filtresi henüz yok). chip_gold/dust/filter ve lane/lane_enemy bağlandı (kenarlar 60/40 tahmini).
-- [ ] Arka plan/sahne: `background_land.png`, `table_center.png` (lane/lane_enemy maçta bağlandı), `scene_story/friends.png` (scene_play lobide, scene_chest koleksiyonda bağlandı).
-- [ ] Giriş ekranı: `splash.png`, (`logo.png` lobide bağlandı) `logo_wordmark.png`, `loading_bar_frame/fill.png`, `progress_frame/fill.png`.
-- [ ] Yatay maç ekranı düzeni (landscape): `background_land.png` + hat düzeni; şu an dikey akış.
-- [x] Paket açılış/sandık animasyonu bağlandı (kart açılış gösterimi/kart çevirme hâlâ yok).
-- [ ] Hedef halkası kısmen bağlandı (başlıkta simge); asıl hedef birimlerin üstüne halka ve `drag_arrow.png` sürükleme oku (sürükle-bırak yok, yapılmalı).
-- [ ] Alt gezinme: `nav_bar.png`, `nav_active.png`; tur butonu `end_turn_ready/wait.png`; ipucu için ``tooltip_panel.png` ve `toast_banner.png` bağlandı (kalan: nav_bar/nav_active; alt gezinme çubuğu henüz yok).
-- [ ] Kart çerçeveleri `frame_unit/spell/trap/legend.png`, `gem_*`, `icon_type_*`, `fx_*` efektleri.
-- [ ] Oyuncu portreleri: (maçta hero_player/hero_foe/enemy_NN bağlandı) kalan: `hero_player_alt1/alt2.png` seçici, `hero_ring.png` çerçeve, bölüm `chapter_01..10` (lobide bölüm seçiciye bağlandı; hikâye giriş ekranı/`scene_story` hâlâ yok).
-- [ ] Ses: `audio/*.ogg` için `AudioStreamPlayer` bağlantısı (`muted` bayrağı mevcut), müzik döngüsü.
-- [ ] `integration.gd` içine skin dosyalarının yüklenebildiğini doğrulayan test ekle.
+## Sorunlar
+- Yatay maç düzeninde seçili kart bilgi paneli (sağ sütun) uzun efekt metninde dar kalabilir.
+- `lane*.png` 9 parçalı çizimde kenarlar hafif dikdörtgen görünüyor (alfa 0.7 ile yumuşatıldı); şeffaf kenarlı yeni sürüm iyi olur.
 
-## Hâlâ eksik görseller
-Şu an dosya olarak eksik görsel yok (114/114 mevcut). Aşağıdakiler kalite/kapsam açısından yeni üretim gerektirebilir; ChatGPT bu listeyi okuyup tamamlasın:
+## Hâlâ eksik görseller (ChatGPT için)
+Dosya olarak eksik yok (114/114 mevcut). İsteğe bağlı yeni üretimler:
 
 | Dosya | Boyut | Kısa prompt |
 |---|---|---|
-| `icon_net_ok.png` / `icon_net_bad.png` (isteğe bağlı, daha süslü) | 256x256 | Geçici vektör Wi-Fi simgeleri yapıldı; istenirse aynı fikirle boyalı/dokulu sürüm. |
-| `hero_player_alt3.png` .. `alt5.png` | `hero_player.png` ile aynı | Aynı çizim stili ve çerçevede, farklı yaş/cinsiyet/kıyafetle Anadolu destan kahramanı portresi, şeffaf arka plan. |
-| `loading_tip_panel.png` (isteğe bağlı) | 900x160 | Yüklenme ipucu için ahşap-altın kenarlı koyu parşömen şerit, orta düz, şeffaf dış. |
-| `badge_rank_*.png` (isteğe bağlı) | 128x128 | Bronz/gümüş/altın rütbe rozeti, Türk motifli, şeffaf arka plan. |
-
-Not: `manifest_v2.json` içinde "bileşik/vektör" ile tamamlanan dosyalar (bkz. YENI-GORSEL-2.md) bağımsız yapay zekâ çizimi değildir; kalite beğenilmezse yeniden üretilebilir.
+| `hero_player_alt3.png` .. `alt5.png` | 512x512 | `hero_player.png` ile aynı stil ve altın çerçeve; farklı yaş/cinsiyet/kıyafetle Anadolu destan kahramanı portresi, şeffaf arka plan. |
+| `lane.png` / `lane_enemy.png` (yenileme) | 1024x400 | Aynı ahşap-altın şerit, ama dış kenarı şeffaf ve köşeleri yuvarlak; ortası sade, kart okunabilirliği için koyu-mat. |
+| `loading_tip_panel.png` | 900x160 | Koyu parşömen şerit, ahşap-altın kenar, ortası düz, şeffaf dış. |
+| `badge_rank_bronze/silver/gold.png` | 128x128 | Türk motifli rütbe rozeti, şeffaf arka plan. |
 
 ## Gerçek ses/müzik (eksik)
-Geçici sesler yerine gerçek kayıt gerekir: `music_menu.ogg`, `music_battle.ogg` (96 sn, döngüsel; ney/saz/zurna), efektler `click, card_flip, play_card, attack, hit, spell, heal, pack_open, turn_start, end_turn, victory, defeat`. Prompt: "Anadolu ezgili, ney ve bağlama ağırlıklı, 96 sn kesintisiz döngülü menü müziği; ikinci parça savaş için davul/zurna ile tempolu."
+Geçici sesler yerine gerçek kayıt: `music_menu.ogg`, `music_battle.ogg` (96 sn, döngüsel; ney/saz/zurna), efektler `click, card_flip, play_card, attack, hit, spell, heal, pack_open, turn_start, end_turn, victory, defeat`. Prompt: "Anadolu ezgili, ney ve bağlama ağırlıklı, 96 sn kesintisiz döngülü menü müziği; ikinci parça savaş için davul/zurna ile tempolu."

@@ -32,6 +32,7 @@ func _ready() -> void:
 	var cfg = ConfigFile.new()
 	if cfg.load(SESSION_FILE) == OK:
 		muted = bool(cfg.get_value("preferences", "muted", true))
+		hero_choice = clampi(int(cfg.get_value("preferences", "hero_choice", 0)), 0, 2)
 		deck_account = str(cfg.get_value("preferences", "deck_account", ""))
 		var saved = cfg.get_value("preferences", "deck", [])
 		if saved is Array and saved.size() == 20 and saved.all(func(id): return cards.has(int(id))):
@@ -101,6 +102,7 @@ func persist_session() -> void:
 	var cfg = ConfigFile.new()
 	cfg.load(SESSION_FILE)
 	cfg.set_value("preferences", "muted", muted)
+	cfg.set_value("preferences", "hero_choice", hero_choice)
 	cfg.set_value("preferences", "deck", custom_deck)
 	cfg.set_value("preferences", "use_custom", use_custom)
 	cfg.set_value("preferences", "deck_account", account.get("id", deck_account))
@@ -189,6 +191,7 @@ func build_shell() -> void:
 	INK = Color("f7ecd4")
 	MUTED = Color("a7b4bd")
 	theme = make_theme()
+	skin_theme_extras()
 	portrait_font = skin_font("font_title.ttf", 700) if skin_font("font_title.ttf", 700) != null else load("res://native/mobile-assets/fonts/CormorantGaramond.ttf")
 	picture(load("res://native/mobile-assets/backdrop.svg"), self)
 	shell_margin = MarginContainer.new()
@@ -200,7 +203,7 @@ func build_shell() -> void:
 	layout.add_theme_constant_override("separation", 6)
 	shell_margin.add_child(layout)
 	game_header = HBoxContainer.new()
-	game_header.custom_minimum_size.y = 36
+	game_header.custom_minimum_size.y = 50
 	layout.add_child(game_header)
 	var brand = label("DESTAN DİYARLARI", game_header, 18)
 	brand.add_theme_font_override("font", portrait_font)
@@ -208,6 +211,21 @@ func build_shell() -> void:
 	brand.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	brand.clip_text = true
 	brand.autowrap_mode = TextServer.AUTOWRAP_OFF
+	var wordmark = skin_art("logo_wordmark.png")
+	if wordmark != null:
+		# Yazı yerine logo; metin erişilebilirlik için ipucu olarak kalır.
+		brand.text = ""
+		brand.tooltip_text = "Destan Diyarları"
+		var logo = TextureRect.new()
+		logo.name = "SkinWordmark"
+		logo.texture = wordmark
+		logo.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		logo.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT
+		logo.custom_minimum_size = Vector2(200, 50)
+		logo.tooltip_text = "Destan Diyarları"
+		logo.set_meta("skin_asset", "logo_wordmark.png")
+		game_header.add_child(logo)
+		game_header.move_child(logo, brand.get_index())
 	account_line = label("", game_header, 11)
 	account_line.visible = false
 	connection_indicator = label("ON", game_header, 10)
@@ -229,7 +247,7 @@ func build_shell() -> void:
 	address = LineEdit.new()
 	address.text = endpoint
 	address.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	address.custom_minimum_size.y = 48
+	address.custom_minimum_size.y = 56
 	line.add_child(address)
 	button("Bağlan", line, connect_account)
 	var tools = HFlowContainer.new()
@@ -442,17 +460,24 @@ func render_lobby() -> void:
 	var next = data.chapters[next_chapter_id() - 1]
 	var journey = feature(journey_holder, 6, "Anadolu yolculuğu", "%d. %s" % [next.id, next.title], clampf(get_viewport_rect().size.y * 0.44, 180, 330) if landscape else 160, "scene_story.png")
 	primary_button("DEVAM ET  ›", journey, func(): view = "lobby"; mutate("solo", {"chapterId": next.id}))
-	var progress = ProgressBar.new()
-	progress.max_value = 10
-	progress.value = chapters_done()
-	progress.show_percentage = false
-	progress.custom_minimum_size.y = 5
-	progress.add_theme_stylebox_override("background", box(Color("11202a"), Color.TRANSPARENT, 0, 3, 0))
-	progress.add_theme_stylebox_override("fill", box(GOLD, Color.TRANSPARENT, 0, 3, 0))
-	journey.add_child(progress)
+	progress_art(journey, chapters_done(), 10)
+	var more: Container = HBoxContainer.new()
+	more.add_theme_constant_override("separation", 14)
+	content.add_child(more)
+	var cards_holder = VBoxContainer.new()
+	cards_holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	more.add_child(cards_holder)
+	var cards_tile = feature(cards_holder, -1, "Sandık", "Kartlarını topla.", 140, "scene_chest.png")
+	tile_press(cards_tile, func(): open_tab("collection"))
+	var friends_holder = VBoxContainer.new()
+	friends_holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	more.add_child(friends_holder)
+	var friends_tile = feature(friends_holder, 2, "Düello", "Oda kur, kodu paylaş.", 140, "scene_friends.png")
+	tile_press(friends_tile, render_social)
 
 func render_story() -> void:
 	heading("ANADOLU YOLCULUĞU", content, 26)
+	divider_art(content)
 	muted_label("Her zafer bir efsanenin kapısını açar. %d / 10 tamamlandı." % chapters_done(), content, 14)
 	var grid = GridContainer.new()
 	grid.columns = 3 if get_viewport_rect().size.x > 850 else 2 if get_viewport_rect().size.x > 600 else 1
@@ -472,12 +497,13 @@ func render_story() -> void:
 func render_social() -> void:
 	clear_content()
 	heading("ARKADAŞLA DÜELLO", content, 25)
+	divider_art(content)
 	var card = feature(content, 2, "Aynı masada buluşun", "Oda oluştur ve kodu arkadaşınla paylaş.", 200, "scene_friends.png")
 	primary_button("Oda oluştur", card, func(): view = "lobby"; mutate("rooms", {"deck": deck_payload()}))
 	room_code = LineEdit.new()
 	room_code.placeholder_text = "8 karakter oda kodu"
 	room_code.max_length = 8
-	room_code.custom_minimum_size.y = 48
+	room_code.custom_minimum_size.y = 56
 	content.add_child(room_code)
 	primary_button("Odaya katıl", content, func(): view = "lobby"; mutate("join", {"code": room_code.text.strip_edges().to_upper(), "deck": deck_payload()}))
 
@@ -485,13 +511,14 @@ func render_profile() -> void:
 	clear_content()
 	heading("HESABIM", content, 25)
 	resource_row(content)
+	hero_picker(content)
 	if not recovery_key.is_empty():
 		button("Anahtarı kopyala", content, func(): DisplayServer.clipboard_set(recovery_key); toast("Kurtarma anahtarı kopyalandı", GOLD))
 		button("Kurtarma anahtarını kaydet", content, func(): save_file(recovery_key + "\n", "destan-kurtarma.txt"))
 	recover_input = LineEdit.new()
 	recover_input.secret = true
 	recover_input.placeholder_text = "Hesap kurtarma anahtarı"
-	recover_input.custom_minimum_size.y = 48
+	recover_input.custom_minimum_size.y = 56
 	content.add_child(recover_input)
 	button("Hesabı kurtar", content, recover_account)
 	for entry in account.history:
@@ -500,11 +527,14 @@ func render_profile() -> void:
 func render_collection() -> void:
 	resource_row(content)
 	heading("KART KOLEKSİYONUN", content, 25)
+	divider_art(content)
 	var pack = feature(content, -1, "Kadim sandık", "Yeni kartlarla desteni güçlendir.", 140, "scene_chest.png")
 	if not account.is_empty():
 		var free = int(account.profile.freePacks) > 0
 		primary_button("SANDIĞI AÇ · ÜCRETSİZ" if free else "SANDIĞI AÇ · 300 ALTIN", pack, func(): mutate("collection/pack", {}, true), not free and int(account.profile.gold) < 300)
-	if not last_pack.is_empty():
+	if last_pack.is_empty():
+		pack_anim_shown.clear()
+	else:
 		render_pack_reveal()
 	filter_chip_row(content, [["all", "Tümü"], ["warrior", "Savaşçı"], ["spell", "Büyü"], ["trap", "Tuzak"]], collection_filter, func(key): collection_filter = key; render())
 	var grid = GridContainer.new()
@@ -798,17 +828,23 @@ func render_match() -> void:
 	else:
 		picture(load("res://native/mobile-assets/table.svg"), arena)
 	atmosphere(width, height)
-	var portrait_size = clampf(height * 0.14, 40, 92)
-	var hand_width = clampf(height * 0.22, 56, 96)
+	# Yatay düzen: solda kahramanlar/deste, ortada iki şerit + el, sağda kontroller.
+	var side = 112.0 if landscape else 0.0
+	var right_col = 190.0 if landscape else 0.0
+	var play_x = side if landscape else width * 0.05
+	var play_w = (width - side - right_col) if landscape else width * 0.9
+	var portrait_size = 58.0 if landscape else clampf(height * 0.14, 40, 92)
+	var hand_width = clampf(height * 0.2, 56, 68) if landscape else clampf(height * 0.22, 56, 96)
 	var hand_height = hand_width * 1.34 + 6
 	var hand_top = height - hand_height
-	hero(arena, 1, foe, Vector2((width - portrait_size) / 2, 2), portrait_size)
-	var own_hero_y = hand_top - portrait_size - 4
-	hero(arena, 0, mine, Vector2((width - portrait_size) / 2, own_hero_y), portrait_size)
+	var foe_hero_at = Vector2((side - portrait_size) / 2, 8) if landscape else Vector2((width - portrait_size) / 2, 2)
+	hero(arena, 1, foe, foe_hero_at, portrait_size)
+	var own_hero_y = (height - portrait_size - 12) if landscape else (hand_top - portrait_size - 4)
+	hero(arena, 0, mine, Vector2((side - portrait_size) / 2, own_hero_y) if landscape else Vector2((width - portrait_size) / 2, own_hero_y), portrait_size)
 	var lane_count = maxi(4, maxi(foe.board.size(), mine.board.size()))
-	var card_width = minf(76, height * 0.125) if landscape else minf(88, (width * 0.9 - 6.0 * (lane_count - 1)) / lane_count)
-	var lane_height = (own_hero_y - portrait_size - 8) / 2
-	var lanes_top = portrait_size + 4
+	var lanes_top = 36.0 if landscape else portrait_size + 4
+	var lane_height = ((hand_top - 4 - lanes_top - 2) / 2) if landscape else (own_hero_y - portrait_size - 8) / 2
+	var card_width = minf(clampf((lane_height - 14) / 1.34, 40, 84), (play_w - 12 - 6.0 * (lane_count - 1)) / lane_count) if landscape else minf(88, (width * 0.9 - 6.0 * (lane_count - 1)) / lane_count)
 	for lane_index in 2:
 		var strip = Panel.new()
 		strip.mouse_filter = Control.MOUSE_FILTER_IGNORE
@@ -817,18 +853,23 @@ func render_match() -> void:
 		lane_style.shadow_size = 8
 		strip.add_theme_stylebox_override("panel", lane_style)
 		arena.add_child(strip)
-		strip.position = Vector2(width * (0.04 if not landscape else 0.1), lanes_top + lane_index * (lane_height + 2))
-		strip.size = Vector2(width * (0.92 if not landscape else 0.8), lane_height)
-	battlefield_lane(foe.board, false, legal, Rect2(width * (0.05 if not landscape else 0.12), lanes_top, width * (0.9 if not landscape else 0.76), lane_height), card_width)
-	battlefield_lane(mine.board, true, legal, Rect2(width * (0.05 if not landscape else 0.12), lanes_top + lane_height + 2, width * (0.9 if not landscape else 0.76), lane_height), card_width)
+		strip.position = Vector2(play_x - 4, lanes_top + lane_index * (lane_height + 2))
+		strip.size = Vector2(play_w + 8, lane_height)
+		var lane_art = art_slice(strip, "lane_enemy.png" if lane_index == 0 else "lane.png", Rect2(), "p9", Vector4(90, 70, 90, 70), 0.3)
+		if lane_art != null:
+			lane_art.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			lane_art.modulate = Color(1, 1, 1, 0.7)
+			strip.add_theme_stylebox_override("panel", box(Color(0, 0, 0, 0.0), Color(0, 0, 0, 0), 0, 14, 0))
+	battlefield_lane(foe.board, false, legal, Rect2(play_x, lanes_top, play_w, lane_height), card_width)
+	battlefield_lane(mine.board, true, legal, Rect2(play_x, lanes_top + lane_height + 2, play_w, lane_height), card_width)
 	var foe_back = HBoxContainer.new()
 	foe_back.add_theme_constant_override("separation", -9)
-	foe_back.position = Vector2(width * 0.1, 5)
+	foe_back.position = Vector2(play_x if landscape else width * 0.1, 3 if landscape else 5)
 	arena.add_child(foe_back)
 	for index in mini(foe.hand.size(), 7):
 		var back = art_slice(foe_back, "card_back.png", Rect2(26, 6, 460, 668))
 		if back != null:
-			back.custom_minimum_size = Vector2(26, 38)
+			back.custom_minimum_size = Vector2(22, 32) if landscape else Vector2(26, 38)
 		else:
 			back = PanelContainer.new()
 			back.custom_minimum_size = Vector2(23, 32)
@@ -836,14 +877,14 @@ func render_match() -> void:
 			foe_back.add_child(back)
 	var turn = label("TUR %d" % ceili(float(state.turn) / 2), arena, 12)
 	turn.autowrap_mode = TextServer.AUTOWRAP_OFF
-	turn.position = Vector2(12, height * 0.34)
+	turn.position = Vector2(14, 76) if landscape else Vector2(12, height * 0.34)
 	turn.add_theme_color_override("font_color", Color("f1dfb7"))
 	turn_clock = label("", arena, 11)
 	turn_clock.autowrap_mode = TextServer.AUTOWRAP_OFF
-	turn_clock.position = Vector2(12, height * 0.4)
+	turn_clock.position = Vector2(14, 94) if landscape else Vector2(12, height * 0.4)
 	var hand_scroll = ScrollContainer.new()
-	hand_scroll.position = Vector2(width * 0.1 if landscape else 0, height - hand_height)
-	hand_scroll.size = Vector2(width * 0.73 if landscape else width, hand_height)
+	hand_scroll.position = Vector2(play_x if landscape else 0, height - hand_height)
+	hand_scroll.size = Vector2(play_w if landscape else width, hand_height)
 	hand_scroll.vertical_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	hand_scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_AUTO
 	arena.add_child(hand_scroll)
@@ -873,7 +914,7 @@ func render_match() -> void:
 		if not options.is_empty():
 			install_drag(card, options)
 	var controls = VBoxContainer.new()
-	controls.position = Vector2(width - 186, height * 0.33 if landscape else height * 0.32)
+	controls.position = Vector2(width - 186, height - 142) if landscape else Vector2(width - 186, own_hero_y + portrait_size * 0.12)
 	controls.size = Vector2(180, 0)
 	arena.add_child(controls)
 	if state.status == "finished":
@@ -888,16 +929,28 @@ func render_match() -> void:
 				elif action.type in ["scry", "discard"]:
 					small_button(action_name(action), controls, func(): move(action))
 	else:
-		muted_label("Rakibin turu", controls, 14)
+		var waiting = art_slice(controls, "end_turn_wait.png", END_TURN_REGION, "h3", Vector4(150, 0, 150, 0))
+		if waiting != null:
+			waiting.custom_minimum_size = Vector2(170, 62)
+			waiting.set_meta("skin_asset", "end_turn_wait.png")
+			var wait_text = label("Rakibin turu", waiting, 14)
+			wait_text.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+			wait_text.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			wait_text.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+			wait_text.add_theme_color_override("font_color", Color("d9c9a0"))
+			if portrait_font != null:
+				wait_text.add_theme_font_override("font", portrait_font)
+		else:
+			muted_label("Rakibin turu", controls, 14)
 	if landscape and state.status != "finished":
 		for depth in range(3):
 			var deck = art_slice(arena, "card_back.png", Rect2(26, 6, 460, 668))
 			if deck != null:
-				deck.position = Vector2(width - 65 + depth * 3, height * 0.6 + depth * 3)
+				deck.position = Vector2(34 + depth * 3, own_hero_y - 66 + depth * 3)
 				deck.size = Vector2(34, 49)
 			else:
 				deck = PanelContainer.new()
-				deck.position = Vector2(width - 65 + depth * 3, height * 0.6 + depth * 3)
+				deck.position = Vector2(34 + depth * 3, own_hero_y - 66 + depth * 3)
 				deck.custom_minimum_size = Vector2(34, 47)
 				deck.add_theme_stylebox_override("panel", box(Color("1e3d43"), Color("bda775"), 2, 4, 2))
 				arena.add_child(deck)
@@ -906,7 +959,7 @@ func render_match() -> void:
 				mark.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 		var deck_count = label(str(mine.deck.size()), arena, 12)
 		deck_count.autowrap_mode = TextServer.AUTOWRAP_OFF
-		deck_count.position = Vector2(width - 48, height * 0.6 + 53)
+		deck_count.position = Vector2(46, own_hero_y - 66 + 54)
 	for child in controls.get_children():
 		if child is Button:
 			child.custom_minimum_size.x = minf(child.custom_minimum_size.x, 180)
@@ -936,8 +989,8 @@ func render_match() -> void:
 	if not focus.is_empty():
 		var info: Dictionary = cards[int(focus.id)]
 		var details = VBoxContainer.new()
-		details.position = Vector2(12, 45)
-		details.size = Vector2(minf(155, width * 0.25), 0)
+		details.position = Vector2(width - 186, 56) if landscape else Vector2(12, 45)
+		details.size = Vector2(180, 0) if landscape else Vector2(minf(155, width * 0.25), 0)
 		arena.add_child(details)
 		label(info.name, details, 13)
 		if landscape:
@@ -1070,8 +1123,16 @@ func _input(event: InputEvent) -> void:
 
 func _draw() -> void:
 	if drag_active:
-		draw_line(drag_origin, pointer, Color("ffe299"), 4, true)
-		draw_circle(pointer, 9, Color("ffe299"), false, 3, true)
+		var arrow = skin_art("drag_arrow.png")
+		if arrow != null and pointer.distance_to(drag_origin) > 40:
+			var direction = (pointer - drag_origin)
+			draw_line(drag_origin, pointer - direction.normalized() * 30, Color(1.0, 0.89, 0.6, 0.55), 5, true)
+			draw_set_transform(pointer, direction.angle() + PI / 2, Vector2.ONE)
+			draw_texture_rect_region(arrow, Rect2(-34, -50, 68, 68), Rect2(0, 0, 256, 256))
+			draw_set_transform(Vector2.ZERO, 0.0, Vector2.ONE)
+		else:
+			draw_line(drag_origin, pointer, Color("ffe299"), 4, true)
+			draw_circle(pointer, 9, Color("ffe299"), false, 3, true)
 
 func toast(text: String, color: Color) -> void:
 	if is_instance_valid(feedback):
@@ -1565,9 +1626,12 @@ func mini_card(id: int, parent: Node, width: float, unit: Dictionary = {}, tap: 
 		wrap.add_child(overlay)
 	return wrap
 
+var hero_choice = 0
+const HERO_FILES = ["hero_player.png", "hero_player_alt1.png", "hero_player_alt2.png"]
+
 func hero_file(index: int) -> String:
 	if index == 0:
-		return "hero_player.png"
+		return HERO_FILES[hero_choice] if skin_art(HERO_FILES[hero_choice]) != null else "hero_player.png"
 	var chapter = int(room.get("chapterId", 0))
 	if chapter >= 1 and chapter <= 10 and skin_art("enemy_%02d.png" % chapter) != null:
 		return "enemy_%02d.png" % chapter
@@ -1600,6 +1664,16 @@ func hero(parent: Control, index: int, player: Dictionary, at: Vector2, diameter
 	var gem = clampf(diameter * 0.6, 30, 52)
 	stat_gem(parent, "health", str(hp), at + Vector2(diameter - gem * 0.72, diameter - gem * 0.8), gem, Color.WHITE if hp > 8 else Color(1.0, 0.45, 0.35))
 	var target = selected.filter(func(action): return str(action.get("target", "")) == "hero:" + str(index))
+	if not target.is_empty():
+		var ring = art_slice(parent, "target_ring.png", Rect2(11, 11, 234, 234))
+		if ring != null:
+			ring.size = Vector2(diameter * 1.45, diameter * 1.45)
+			ring.position = at - Vector2(diameter * 0.225, diameter * 0.225)
+			ring.set_meta("skin_asset", "target_ring.png")
+			ring.pivot_offset = ring.size / 2
+			var pulse = ring.create_tween().set_loops()
+			pulse.tween_property(ring, "scale", Vector2(1.08, 1.08), 0.5)
+			pulse.tween_property(ring, "scale", Vector2.ONE, 0.5)
 	var hit = Button.new()
 	hit.position = at
 	hit.size = Vector2(diameter, diameter)
@@ -1793,7 +1867,66 @@ func render_result(state: Dictionary, width: float, height: float) -> void:
 	primary_button("DEVAM ET", column, leave_match)
 	small_button("Maç kaydı", column, export_replay)
 
+var pack_anim_shown: Array = []
+
+func show_pack_reveal() -> void:
+	# Sandık sallanır, açılır, parlama patlar; dokununca ya da kendiliğinden kapanır.
+	var closed = skin_art("chest_closed.png")
+	var opened = skin_art("chest_open.png")
+	if closed == null or opened == null:
+		return
+	var overlay = ColorRect.new()
+	overlay.name = "PackReveal"
+	overlay.color = Color(0, 0, 0, 0.72)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.z_index = 150
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	var view_size = get_viewport_rect().size
+	var side = minf(minf(view_size.x, view_size.y) * 0.7, 360.0)
+	var burst = skin_art("pack_reveal_burst.png")
+	var burst_node = TextureRect.new()
+	burst_node.texture = burst
+	burst_node.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	burst_node.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	burst_node.size = Vector2(side * 1.6, side * 1.6)
+	burst_node.position = (view_size - burst_node.size) / 2
+	burst_node.pivot_offset = burst_node.size / 2
+	burst_node.modulate.a = 0.0
+	burst_node.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(burst_node)
+	var chest = TextureRect.new()
+	chest.texture = closed
+	chest.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	chest.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	chest.size = Vector2(side, side)
+	chest.position = (view_size - chest.size) / 2
+	chest.pivot_offset = chest.size / 2
+	chest.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(chest)
+	play_sound("pack")
+	var tween = create_tween()
+	for angle in [0.12, -0.12, 0.09, -0.09, 0.0]:
+		tween.tween_property(chest, "rotation", angle, 0.09)
+	tween.tween_callback(func():
+		chest.texture = opened)
+	tween.tween_property(chest, "scale", Vector2(1.12, 1.12), 0.12)
+	tween.parallel().tween_property(burst_node, "modulate:a", 1.0, 0.18)
+	tween.tween_property(burst_node, "scale", Vector2(1.25, 1.25), 0.5)
+	tween.parallel().tween_property(burst_node, "rotation", 0.3, 0.5)
+	tween.tween_interval(0.35)
+	tween.tween_property(overlay, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(overlay.queue_free)
+	overlay.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.pressed or event is InputEventScreenTouch and event.pressed:
+			tween.kill()
+			overlay.queue_free())
+
 func render_pack_reveal() -> void:
+	var signature = str(last_pack)
+	if not pack_anim_shown.has(signature):
+		pack_anim_shown.append(signature)
+		show_pack_reveal()
 	heading("SANDIK AÇILDI", content, 24)
 	var row = HFlowContainer.new()
 	row.add_theme_constant_override("h_separation", 12)
@@ -1832,3 +1965,138 @@ func _notification(what: int) -> void:
 			confirm_leave()
 		else:
 			open_tab("play")
+
+
+func skin_theme_extras() -> void:
+	# Giriş alanı, kaydırma çubuğu ve ipucu paneli için skin dokuları.
+	var field = skin_art("input_field.png")
+	if field != null:
+		# Görsel 800x120: yarı boyuta indirilip 9 parça olarak kullanılır (kenarlar esnemesin).
+		var image = field.get_image().get_region(Rect2i(30, 3, 740, 114))
+		image.resize(370, 57, Image.INTERPOLATE_LANCZOS)
+		image.generate_mipmaps()
+		var small_field = ImageTexture.create_from_image(image)
+		for state in ["normal", "focus", "read_only"]:
+			var style = StyleBoxTexture.new()
+			style.texture = small_field
+			style.texture_margin_left = 30
+			style.texture_margin_right = 30
+			style.texture_margin_top = 22
+			style.texture_margin_bottom = 22
+			style.content_margin_left = 22
+			style.content_margin_right = 22
+			style.content_margin_top = 4
+			style.content_margin_bottom = 4
+			if state == "focus":
+				style.modulate_color = Color(1.3, 1.2, 1.0)
+			theme.set_stylebox(state, "LineEdit", style)
+	var bar = skin_art("scrollbar.png")
+	if bar != null:
+		var grabber = StyleBoxTexture.new()
+		grabber.texture = bar
+		grabber.region_rect = Rect2(10, 16, 43, 368)
+		grabber.texture_margin_top = 16
+		grabber.texture_margin_bottom = 16
+		grabber.texture_margin_left = 6
+		grabber.texture_margin_right = 6
+		for state in ["grabber", "grabber_highlight", "grabber_pressed"]:
+			theme.set_stylebox(state, "VScrollBar", grabber)
+		theme.set_stylebox("scroll", "VScrollBar", StyleBoxEmpty.new())
+	var tip = skin_art("tooltip_panel.png")
+	if tip != null:
+		var style = StyleBoxTexture.new()
+		style.texture = tip
+		style.region_rect = Rect2(24, 37, 552, 225)
+		style.texture_margin_left = 60
+		style.texture_margin_right = 60
+		style.texture_margin_top = 40
+		style.texture_margin_bottom = 40
+		style.content_margin_left = 24
+		style.content_margin_right = 24
+		style.content_margin_top = 14
+		style.content_margin_bottom = 14
+		theme.set_stylebox("panel", "TooltipPanel", style)
+		theme.set_color("font_color", "TooltipLabel", INK)
+
+func divider_art(parent: Node) -> Control:
+	var line = art_slice(parent, "divider.png", Rect2(180, 3, 640, 54))
+	if line == null:
+		return null
+	line.custom_minimum_size = Vector2(0, 14)
+	line.set_meta("skin_asset", "divider.png")
+	return line
+
+func progress_art(parent: Node, value: float, maximum: float) -> Control:
+	var frame = art_slice(parent, "progress_frame.png", Rect2(31, 2, 739, 36))
+	if frame == null:
+		var fallback = ProgressBar.new()
+		fallback.max_value = maximum
+		fallback.value = value
+		fallback.show_percentage = false
+		fallback.custom_minimum_size.y = 5
+		parent.add_child(fallback)
+		return fallback
+	frame.custom_minimum_size = Vector2(0, 22)
+	frame.set_meta("skin_asset", "progress_frame.png")
+	var fill = art_slice(frame, "progress_fill.png", Rect2(0, 0, 800, 40))
+	fill.set_meta("skin_asset", "progress_fill.png")
+	var apply = func():
+		var inner = Rect2(4, 3, frame.size.x - 8, frame.size.y - 6)
+		fill.position = inner.position
+		fill.size = Vector2(inner.size.x * value / maxf(maximum, 1.0), inner.size.y)
+		fill.visible = value > 0
+	frame.resized.connect(apply)
+	apply.call_deferred()
+	return frame
+
+func tile_press(column: Control, callback: Callable) -> void:
+	# Tüm kartı dokunulabilir yapar (iç düğme genişliği satırı taşırmasın diye).
+	var holder = column.get_parent().get_parent()
+	var press = Button.new()
+	press.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	press.focus_mode = Control.FOCUS_ALL
+	for key in ["normal", "hover", "pressed", "disabled"]:
+		press.add_theme_stylebox_override(key, StyleBoxEmpty.new())
+	var focus_style = StyleBoxFlat.new()
+	focus_style.bg_color = Color.TRANSPARENT
+	focus_style.border_color = GOLD
+	focus_style.set_border_width_all(2)
+	focus_style.set_corner_radius_all(12)
+	press.add_theme_stylebox_override("focus", focus_style)
+	press.pressed.connect(callback)
+	holder.add_child(press)
+
+func hero_picker(parent: Node) -> void:
+	if skin_art("hero_player_alt1.png") == null:
+		return
+	muted_label("Kahramanını seç", parent, 14)
+	var row = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 14)
+	parent.add_child(row)
+	for index in HERO_FILES.size():
+		var tile = Button.new()
+		tile.custom_minimum_size = Vector2(88, 88)
+		tile.tooltip_text = "Kahraman %d" % (index + 1)
+		tile.toggle_mode = true
+		tile.button_pressed = index == hero_choice
+		for key in ["normal", "hover", "pressed", "disabled", "focus"]:
+			tile.add_theme_stylebox_override(key, StyleBoxEmpty.new())
+		var hero_tex = skin_art(HERO_FILES[index])
+		var used = Rect2(hero_tex.get_image().get_used_rect())
+		var portrait = art_slice(tile, HERO_FILES[index], used)
+		portrait.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		portrait.offset_left = 8
+		portrait.offset_right = -8
+		portrait.offset_top = 8
+		portrait.offset_bottom = -8
+		portrait.set_meta("skin_asset", HERO_FILES[index])
+		if index == hero_choice:
+			var ring = art_slice(tile, "hero_ring.png", Rect2(8, 6, 495, 500))
+			if ring != null:
+				ring.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+				ring.set_meta("skin_asset", "hero_ring.png")
+		tile.pressed.connect(func():
+			hero_choice = index
+			persist_session()
+			render_profile())
+		row.add_child(tile)

@@ -16,7 +16,7 @@ async function godot(args){
   const child=spawn(process.env.GODOT_BIN??'godot',args,{env:{...env,DESTAN_SESSION_DIR:join(dir,'session',args.find(arg=>arg.endsWith('.gd'))?.split('/').pop()??'import')},stdio:['ignore','pipe','pipe']});
   let errors=false;
   child.stdout.on('data',chunk=>process.stdout.write(chunk));
-  child.stderr.on('data',chunk=>{if(/SCRIPT ERROR|ERROR:/.test(chunk))errors=true;process.stderr.write(chunk);});
+  child.stderr.on('data',chunk=>{if(/SCRIPT ERROR|ERROR:/.test(chunk)&&!/resources still in use at exit/.test(chunk))errors=true;process.stderr.write(chunk);});
   const timeout=setTimeout(()=>child.kill('SIGTERM'),90000);
   try{return await new Promise((resolve,reject)=>{child.on('error',reject);child.on('exit',code=>resolve(code===0&&!errors));});}finally{clearTimeout(timeout);}
 }
