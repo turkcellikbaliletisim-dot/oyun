@@ -546,6 +546,18 @@ func action_name(action: Dictionary) -> String:
 			return "Oyna"
 	return action.type
 
+func portrait(file: String, parent: Control, size: int = 96) -> void:
+	var tex = skin(file)
+	if tex == null:
+		return
+	var rect = TextureRect.new()
+	rect.texture = tex
+	rect.custom_minimum_size = Vector2(size, size)
+	rect.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	rect.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(rect)
+
 func render_match() -> void:
 	if room.state == null:
 		label("ODA KODU: " + str(room.code), content, 30)
@@ -557,11 +569,14 @@ func render_match() -> void:
 	var foe: Dictionary = state.players[1]
 	if int(room.chapterId) > 0:
 		label(data.chapters[int(room.chapterId) - 1].task, content, 19)
+	var foe_portrait = "enemy_%02d.png" % int(room.chapterId) if int(room.chapterId) > 0 else "hero_foe.png"
+	portrait(foe_portrait if skin(foe_portrait) != null else "hero_foe.png", content)
 	label("RAKİP · CAN %d · ENERJİ %d/%d · EL %d · GİZLİ TUZAK %d" % [foe.hp, foe.energy, foe.maxEnergy, foe.hand.size(), foe.traps.size()], content, 22)
 	var foe_board = HFlowContainer.new()
 	content.add_child(foe_board)
 	for unit in foe.board:
 		card_widget(int(unit.id), foe_board, func(): inspect_card(int(unit.id), unit), true, unit)
+	portrait("hero_player.png", content)
 	label("SEN · CAN %d · ENERJİ %d/%d · DESTE %d · TUR %d/20 · %s" % [mine.hp, mine.energy, mine.maxEnergy, mine.deck.size(), ceili(float(state.turn) / 2), "Kart fazı" if state.phase == "main" else "Saldırı fazı"], content, 22)
 	var own_board = HFlowContainer.new()
 	content.add_child(own_board)
@@ -571,6 +586,10 @@ func render_match() -> void:
 		var options = legal.filter(func(action): return action.type == "attack" and int(action.uid) == int(unit.uid))
 		card_widget(int(unit.id), own_board, func(): select_actions(options), not options.is_empty(), unit)
 	if state.status == "finished":
+		if state.winner == 0:
+			portrait("result_victory.png", content, 200)
+		elif state.winner == 1:
+			portrait("result_defeat.png", content, 200)
 		label("BERABERE" if state.winner == null else "KAZANDIN" if state.winner == 0 else "MAÇ TAMAMLANDI", content, 28)
 		button("Maç kaydını indir (⌘S)", content, export_replay)
 	elif state.active != 0:
