@@ -20,13 +20,13 @@ config/icon="res://native/skin/app_icon.png"
 
 [display]
 
-window/size/viewport_width=844
-window/size/viewport_height=390
-window/size/window_width_override=1280
-window/size/window_height_override=720
+window/size/viewport_width=390
+window/size/viewport_height=844
+window/size/window_width_override=450
+window/size/window_height_override=900
 window/stretch/mode="canvas_items"
 window/stretch/aspect="expand"
-window/handheld/orientation=4
+window/handheld/orientation=1
 
 [input_devices]
 
