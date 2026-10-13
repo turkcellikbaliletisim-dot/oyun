@@ -516,7 +516,12 @@ func render_story() -> void:
 		cell.custom_minimum_size.x = maxf(0, (content_width() - 12 - (grid.columns - 1) * 12) / grid.columns)
 		grid.add_child(cell)
 		var card = feature(cell, [1, 6, 19, 35, 5, 16, 18, 8, 25, 28][int(chapter.id) - 1], str(chapter.title), str(chapter.place), 180, "chapter_%02d.png" % int(chapter.id))
-		primary_button("✓ Tamamlandı" if done else "SAVAŞA GİR" if unlocked else "Kilitli", card, func(): view = "lobby"; mutate("solo", {"chapterId": int(chapter.id)}), not unlocked)
+		var chapter_button = primary_button("Tamamlandı" if done else "SAVAŞA GİR" if unlocked else "Kilitli", card, func(): view = "lobby"; mutate("solo", {"chapterId": int(chapter.id)}), not unlocked)
+		var state_icon = skin_art("icon_check.png" if done else "icon_lock.png" if not unlocked else "")
+		if chapter_button != null and state_icon != null:
+			chapter_button.icon = state_icon
+			chapter_button.expand_icon = true
+			chapter_button.add_theme_constant_override("icon_max_width", 22)
 
 func render_social() -> void:
 	clear_content()

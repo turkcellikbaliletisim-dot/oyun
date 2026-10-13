@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son kod listesi güncellemesi: 2026-10-13 08:45 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
+Son kod listesi güncellemesi: 2026-10-13 09:50 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
 
 ## Yapılanlar
+- 2026-10-13 09:50 UTC: Son saatte yeni ChatGPT yüklemesi/dal yoktu (tüm uzak dallar bu dalda birleşik; `otomatik/saatlik`, `yeni-gorsel-*`, `ogg-ci-dogrulama` yalnızca eski çalışma). Bölüm kartı düğmesine `icon_check.png` (tamamlandı) ve `icon_lock.png` (kilitli) bağlandı. `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb).
 - 2026-10-13 08:45 UTC: `gorsel-kalite/serit-yenileme-20261013` dalı (şeffaf şeritler, `loading_tip_panel.png`) bu dala birleştirildi; `gorsel-kalite/ogg-ci-dogrulama` ve `otomatik/saatlik` dallarında yeni olan şey yalnızca eski `main.gd` çalışmasıydı, kopyalanmadı. `mobile.gd`'ye uygulama içi yükleme ekranı eklendi (`show_loading_screen`): `splash.png` + `loading_bar_frame/fill.png` (1,2 sn dolum) + `loading_tip_panel.png` içinde rastgele ipucu, 1,6 sn sonra solar; test ortamında (`DESTAN_SESSION_DIR` tanımlı) açılmaz. `tests/shots.gd` `0-yukleme` görüntüsü alır. `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb), yükleme ve ana ekran gözle kontrol edildi.
 - 2026-10-13 08:20 UTC: PR #4 (2897925) alındı: şeffaf kenarlı `lane.png`/`lane_enemy.png` yatay ve dikey maçta opaklık 0.7→0.92 ile ekranda doğrulandı; `loading_tip_panel.png` bağlantı bekleyen lobide "İPUCU" paneli olarak bağlandı (şu an yalnızca çevrimdışı lobide; gerçek yükleme ekranı hâlâ yok). Testler geçti.
 - 2026-10-13, PR #4: `lane.png` ve `lane_enemy.png` bağımsız çizimlerle yenilendi: 1024×400, gerçek alfa dış kenar, yuvarlak köşe, koyu ve boş merkez. İki şerit çizim çağrısı köşeleri koruyan yatay üç-parça düzenine uyarlandı. `loading_tip_panel.png` (900×160) eklendi; yükleme akışı hâlâ yapılacak. Üç PNG, kaynaklar, hash/geometri ve inceleme notları [SERIT-YENILEME-20261013.md](SERIT-YENILEME-20261013.md) içinde. Oyun/renderer kontrolleri geçti; 844×390 yatay saha ve 390×844 dikey maç gözle incelendi. Fiziksel cihaz testi yapılmadı.
@@ -21,7 +22,7 @@ Son kod listesi güncellemesi: 2026-10-13 08:45 UTC. Görsel eki: 2026-10-13, PR
 ## Hâlâ eksik / yapılacak (kod)
 - [x] Uygulama içi yükleme ekranı bağlandı (süre sabit 1,6 sn; gerçek yükleme ilerlemesine bağlı değil — yapılacak).
 - [ ] `header_bar.png`, `table_center.png` bağlı değil.
-- [ ] Kalan küçük simgeler bağlı değil: `icon_check/close/lock/replay/league`, `fx_fire/flood/frost/shield/number_bg` (büyü efektleri kart bazlı eşlenmedi), `gem_*` (eski), `icon_cards/deck/play/story` (alt gezinme soketlerinde kullanılmıyor olabilir, denetle).
+- [ ] Kalan küçük simgeler bağlı değil: `icon_close/replay/league` (`icon_check/lock` bağlandı), `fx_fire/flood/frost/shield/number_bg` (büyü efektleri kart bazlı eşlenmedi), `gem_*` (eski), `icon_cards/deck/play/story` (alt gezinme soketlerinde kullanılmıyor olabilir, denetle).
 - [ ] Hedef halkası birim kartlarında yok (yalnızca kahraman); kartta dikdörtgen vurgu kullanılıyor.
 - [ ] `hero_player_alt3..5` ve hero_ring maç içi çerçeve olarak kullanılmıyor.
 - [ ] Gerçek ses/müzik (aşağıda).
