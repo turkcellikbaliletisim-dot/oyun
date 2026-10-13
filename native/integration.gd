@@ -69,6 +69,8 @@ func run() -> void:
 	check(replay.has("initial") and replay.initial.has("entropy"), "Completed native match replay missing")
 	await app.mutate("collection/pack", {}, true)
 	check(app.account.profile.freePacks == 0, "Native pack did not consume exactly once")
+	app.show_pack_reveal()
+	check(app.get_child_count() > 0, "Pack reveal overlay missing")
 	app.room = {}
 	await app.connect_account()
 	check(app.account.id == id and app.room.status == "finished", "Native cookie reconnect lost match")
@@ -79,7 +81,7 @@ func run() -> void:
 	app.muted = false
 	app.play_sound()
 	check(app.audio.stream != null, "Native sound stream missing")
-	for skin_file in ["logo.png", "divider.png", "scrollbar.png", "end_turn_ready.png", "button_red.png", "icon_net_ok.png", "icon_net_bad.png", "toast_banner.png", "tooltip_panel.png", "target_ring.png", "drag_arrow.png"]:
+	for skin_file in ["logo.png", "divider.png", "scrollbar.png", "end_turn_ready.png", "button_red.png", "icon_net_ok.png", "icon_net_bad.png", "toast_banner.png", "tooltip_panel.png", "target_ring.png", "drag_arrow.png", "chest_closed.png", "chest_open.png", "pack_reveal_burst.png", "scene_play.png", "scene_chest.png"]:
 		check(app.skin(skin_file) != null, "Skin file not loadable: " + skin_file)
 	await create_timer(0.2).timeout
 	app.queue_free()

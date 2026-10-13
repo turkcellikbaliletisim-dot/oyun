@@ -370,6 +370,8 @@ func mutate(path: String, body: Dictionary, retryable: bool = false) -> void:
 		cue = "victory" if result.state.get("winner") == 0 else "defeat"
 	play_sound(cue)
 	render()
+	if result.has("rewards"):
+		show_pack_reveal()
 	updated.emit()
 
 func move(action: Dictionary) -> void:
@@ -396,6 +398,15 @@ func render_lobby() -> void:
 		mark.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
 		mark.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		content.add_child(mark)
+	var scene = skin("scene_play.png")
+	if scene != null:
+		var banner = TextureRect.new()
+		banner.texture = scene
+		banner.custom_minimum_size = Vector2(0, 160)
+		banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(banner)
 	label("ANADOLU'DA YOLCULUK", content, 26)
 	if account.is_empty():
 		label("Node sunucusunu başlat ve Bağlan'a bas.", content)
@@ -628,6 +639,59 @@ func render_match() -> void:
 	skin_button(leave_button, "button_red.png")
 	label("\n".join(state.log.slice(maxi(0, state.log.size() - 8))), content, 14)
 
+func show_pack_reveal() -> void:
+	# Sandık/paket açılış animasyonu: kapalı sandık sallanır, açılır, patlama efekti belirir.
+	var closed = skin("chest_closed.png")
+	var opened = skin("chest_open.png")
+	if closed == null or opened == null or not is_inside_tree():
+		return
+	var overlay = ColorRect.new()
+	overlay.color = Color(0, 0, 0, 0.72)
+	overlay.set_anchors_preset(Control.PRESET_FULL_RECT)
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	var center = CenterContainer.new()
+	center.set_anchors_preset(Control.PRESET_FULL_RECT)
+	center.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	overlay.add_child(center)
+	var stage = Control.new()
+	stage.custom_minimum_size = Vector2(360, 360)
+	stage.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	center.add_child(stage)
+	var burst_tex = skin("pack_reveal_burst.png")
+	var burst = TextureRect.new()
+	if burst_tex != null:
+		burst.texture = burst_tex
+		burst.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		burst.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		burst.size = Vector2(360, 360)
+		burst.pivot_offset = Vector2(180, 180)
+		burst.modulate.a = 0.0
+		burst.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stage.add_child(burst)
+	var chest = TextureRect.new()
+	chest.texture = closed
+	chest.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	chest.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	chest.size = Vector2(300, 300)
+	chest.position = Vector2(30, 30)
+	chest.pivot_offset = Vector2(150, 150)
+	chest.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(chest)
+	var tween = overlay.create_tween()
+	for angle in [8.0, -8.0, 6.0, -6.0, 0.0]:
+		tween.tween_property(chest, "rotation_degrees", angle, 0.08)
+	tween.tween_callback(func(): chest.texture = opened)
+	if burst_tex != null:
+		tween.tween_property(burst, "modulate:a", 1.0, 0.2)
+		tween.parallel().tween_property(burst, "scale", Vector2(1.15, 1.15), 0.5)
+	tween.tween_interval(1.2)
+	tween.tween_property(overlay, "modulate:a", 0.0, 0.3)
+	tween.tween_callback(overlay.queue_free)
+	overlay.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.pressed and is_instance_valid(overlay):
+			overlay.queue_free())
+
 func leave_match() -> void:
 	if busy:
 		return
@@ -650,6 +714,15 @@ func show_collection() -> void:
 
 func render_collection() -> void:
 	button("Oyuna dön", content, func(): gallery_open = false; render())
+	var chest_scene = skin("scene_chest.png")
+	if chest_scene != null:
+		var chest_banner = TextureRect.new()
+		chest_banner.texture = chest_scene
+		chest_banner.custom_minimum_size = Vector2(0, 140)
+		chest_banner.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		chest_banner.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		chest_banner.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		content.add_child(chest_banner)
 	label("40 KARTLIK KOLEKSİYON", content, 28)
 	if not account.is_empty():
 		label("%d altın · %d toz · %d ücretsiz paket" % [account.profile.gold, account.profile.dust, account.profile.freePacks], content)
