@@ -25,6 +25,10 @@ var compact = false
 var local_server_pid = -1
 var view = "lobby"
 var endpoint = "http://127.0.0.1:8080"
+const OfflineService = preload("res://native/offline.gd")
+var offline_mode = false
+var offline_service = null
+var request_timeout = 12.0
 var cookie = ""
 var account: Dictionary = {}
 var room: Dictionary = {}
@@ -463,9 +467,36 @@ func persist_session() -> void:
 	cfg.set_value("account", "cookie", cookie)
 	cfg.save(SESSION_FILE)
 
+func offline_save_path() -> String:
+	var dir = OS.get_environment("DESTAN_SESSION_DIR")
+	return dir.path_join("destan-offline.json") if not dir.is_empty() else "user://destan-offline.json"
+
+func start_offline() -> Dictionary:
+	# Sunucuya ulaşılamadığında oyun cihazın içindeki kural motoruyla sürer.
+	if offline_service == null:
+		offline_service = OfflineService.new(data, offline_save_path())
+	offline_mode = true
+	cookie = ""
+	return offline_service.handle("session", HTTPClient.METHOD_POST, {})
+
+func enter_offline() -> void:
+	if busy:
+		return
+	var result = start_offline()
+	accept_account(result)
+	notice.text = "Çevrimdışı mod · Bot ve yolculukla oyna. Çevrimiçi için ayarlardan Bağlan."
+	network_panel.get_parent().visible = false
+	if is_instance_valid(poll):
+		poll.start()
+	await refresh()
+	render()
+	updated.emit()
+
 func api(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary = {}) -> Dictionary:
+	if offline_mode:
+		return offline_service.handle(path, method, body)
 	var request_node = HTTPRequest.new()
-	request_node.timeout = 12
+	request_node.timeout = request_timeout
 	add_child(request_node)
 	var headers = PackedStringArray(["Content-Type: application/json"])
 	if not OS.has_feature("web"):
@@ -503,13 +534,16 @@ func connect_account() -> void:
 	var next = address.text.strip_edges().trim_suffix("/")
 	if not valid_endpoint(next):
 		notice.text = "HTTPS veya yerel http://127.0.0.1:PORT adresi kullan."
+		if account.is_empty():
+			await enter_offline()
 		return
-	if next != endpoint:
-		cookie = ""
+	if next != endpoint or offline_mode:
+		cookie = "" if next != endpoint else cookie
 		account = {}
 		room = {}
 		pending = {}
 		recovery_key = ""
+	offline_mode = false
 	endpoint = next
 	busy = true
 	notice.text = "Bağlanılıyor…"
@@ -526,7 +560,13 @@ func connect_account() -> void:
 			pending = {}
 			recovery_key = ""
 	await ensure_local_server()
+	request_timeout = 5.0
 	var result = await api("session", HTTPClient.METHOD_POST)
+	request_timeout = 12.0
+	if result.get("network", false) and OS.get_environment("DESTAN_NO_OFFLINE").is_empty():
+		busy = false
+		await enter_offline()
+		return
 	busy = false
 	if result.has("error"):
 		notice.text = result.error
@@ -535,7 +575,7 @@ func connect_account() -> void:
 		updated.emit()
 		return
 	accept_account(result)
-	notice.text = "Bağlandı · Oynamaya hazırsın"
+	notice.text = "Çevrimdışı mod · Bot ve yolculukla oyna" if offline_mode else "Bağlandı · Oynamaya hazırsın"
 	network_panel.get_parent().visible = false
 	if FileAccess.file_exists(PENDING_FILE):
 		var saved = JSON.parse_string(FileAccess.get_file_as_string(PENDING_FILE))

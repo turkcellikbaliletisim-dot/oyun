@@ -31,5 +31,8 @@ try{
   if(!await godot(['--headless','--path','.','--script','tests/native-touch.gd','--','--no-connect']))throw new Error('Native touch failed');
   if(!await godot(['--headless','--path','.','--script','tests/native-interaction.gd','--','--no-connect']))throw new Error('Mobile interaction failed');
   if(!await godot([...display,'--path','.','--script','native/integration.gd','--','--no-connect']))throw new Error('Godot integration failed');
+  await new Promise((resolve,reject)=>spawn('node',['tests/offline-parity.js',join(dir,'parity.json')],{stdio:'inherit'}).on('exit',code=>code===0?resolve():reject(new Error('Parity generation failed'))));
+  if(!await godot(['--headless','--path','.','--script','tests/offline-parity.gd','--',join(dir,'parity.json')]))throw new Error('Offline engine parity failed');
+  if(!await godot(['--headless','--path','.','--script','tests/native-offline.gd','--','--no-connect']))throw new Error('Offline mode failed');
   if(await realSession()!==beforeSession)throw new Error('Native test changed real player session');
 }finally{await app.close();await rm(dir,{recursive:true,force:true});}

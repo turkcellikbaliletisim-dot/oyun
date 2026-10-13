@@ -138,7 +138,12 @@ func connect_account() -> void:
 	var next = address.text.strip_edges()
 	if OS.has_feature("mobile") and not OS.has_feature("editor") and not OS.has_feature("web") and not next.begins_with("https://"):
 		notice.text = "Oyun sunucusunun HTTPS adresini gir."
-		network_panel.get_parent().visible = true
+		if account.is_empty():
+			await enter_offline()
+			notice.text = "Çevrimdışı mod · Çevrimiçi için sunucunun HTTPS adresini gir."
+			notice.visible = true
+		else:
+			network_panel.get_parent().visible = true
 		render()
 		return
 	await super.connect_account()
@@ -160,9 +165,9 @@ func api(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary = {
 				reconnect_timer.stop()
 
 		if is_instance_valid(connection_indicator):
-			connection_indicator.text = "ON" if connected else "OFF"
+			connection_indicator.text = "OFFLINE" if offline_mode else ("ON" if connected else "OFF")
 			connection_indicator.add_theme_color_override("font_color", Color("90dcaa") if connected else Color("e7a36d"))
-			connection_indicator.tooltip_text = "Bağlı" if connected else "Bağlantı bekleniyor"
+			connection_indicator.tooltip_text = "Çevrimdışı mod" if offline_mode else ("Bağlı" if connected else "Bağlantı bekleniyor")
 	if response.has("error") and path != "health" and is_instance_valid(notice):
 		toast("Bağlantı kesildi · Yeniden bağlanılıyor" if response.get("network", false) else str(response.error), Color("ffc491"))
 	return response

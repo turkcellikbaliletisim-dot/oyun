@@ -105,7 +105,7 @@ func refresh_connection_art() -> void:
 	if not is_instance_valid(chrome_connection):
 		return
 	var file = "icon_net_ok.png" if connected else "icon_net_bad.png"
-	var description = "Sunucuya bağlı" if connected else "Bağlantı bekleniyor"
+	var description = "Çevrimdışı mod · Cihazda oynanıyor" if (connected and offline_mode) else ("Sunucuya bağlı" if connected else "Bağlantı bekleniyor")
 	var texture = skin_art(file)
 	chrome_connection.texture = texture
 	chrome_connection.tooltip_text = description
@@ -114,7 +114,7 @@ func refresh_connection_art() -> void:
 	chrome_connection.visible = texture != null
 	# Preserve a text fallback for missing art and an explanation for the icon.
 	connection_indicator.visible = texture == null
-	connection_indicator.text = "Bağlı" if connected else "Bekliyor"
+	connection_indicator.text = "Çevrimdışı" if (connected and offline_mode) else ("Bağlı" if connected else "Bekliyor")
 	connection_indicator.tooltip_text = description
 
 func install_navigation_art() -> void:

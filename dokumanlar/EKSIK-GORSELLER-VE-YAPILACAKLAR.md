@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son kod listesi güncellemesi: 2026-10-13 11:50 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
+Son kod listesi güncellemesi: 2026-10-13 14:00 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
 
 ## Yapılanlar
+- 2026-10-13 (kullanıcı isteği): **Çevrimdışı mod eklendi.** Sunucu yokken oyun artık kilitlenmiyor. `native/offline_engine.gd` (oyun/engine.js + bot.js'nin GDScript karşılığı) ve `native/offline.gd` (hesap, yolculuk, bot maçı, sandık/üret/parçala/arşiv, ödüller; kayıt `user://destan-offline.json`) eklendi. `connect_account` sunucuya 5 sn dener, ulaşamazsa ya da adres geçersizse `enter_offline()` ile cihazdaki motora geçer; ayarlardaki 'Bağlan' önce çevrimiçini dener. Arkadaş odası ve lig çevrimiçi kalır (açık hata mesajı). Doğrulama: `tests/offline-parity.js` + `.gd` JS motoru ile 50 oyun / ~3400 adımı (bot kararları dahil) birebir karşılaştırır → 0 fark; `tests/native-offline.gd` sunucusuz açılış, bölüm 1 kazanma/ödül, bot maçı, paket, kalıcılık. `npm test` 78/78, `test:native` GEÇTİ. Not: çevrimdışı hesap, çevrimiçi hesaptan ayrıdır (eşitleme yok).
 - 2026-10-13 11:50 UTC: Yeni ChatGPT yüklemesi yoktu (main hâlâ e336526; diğer dallar zaten birleşik ya da eski). `claude/oynanis-duzeltmeleri-2` (bildirim kartları örtmesin, dikey 'Turu bitir' okunur, can eksiye düşmesin) bu dala birleştirildi. `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb), yatay lobi ekran görüntüsü gözle kontrol edildi. Eksik görsel kalmadı; kalanlar: gerçek ses/müzik ve fiziksel cihaz kabulü.
 - 2026-10-13 (Mac, commit): yeni kahramanlar, rozetler, temiz splash ve yerel kod bağlantıları GitHub'a gönderildi.
 - Yerel tamamlamalar (2026-10-13): `header_bar` ve `table_center`; küçük kontrol/lig/tekrar simgeleri; birim hedef halkaları; maçta kahraman çerçevesi; altı kahraman seçeneği; karta göre büyü efektleri ve hasar sayı zemini bağlandı. Sağ sütunda tam kart inceleme düğmesi var. Yükleme ilerlemesi tamamlanan yerel kaynak hazırlığı ve sunucu bağlantı kontrolüne bağlı; sabit 1,6 saniyelik dolum kaldırıldı. Temiz splash ve alt3–5 kahramanlar, üç lig rozeti üretildi.
@@ -33,7 +34,8 @@ Son kod listesi güncellemesi: 2026-10-13 11:50 UTC. Görsel eki: 2026-10-13, PR
 - [x] Alt3–5 kahramanlar ve oturuma kaydedilen altı seçenekli seçim; dar ekranda satırlara bölünür.
 - [x] Stale kart referansı regresyonu ve düğme yeniden giydirme callback düzeltmesi.
 - [x] Mac gerçek renderer görsel kontrolü ve tam test akışı.
-- [ ] Fiziksel Android cihaz kabulü. Emülatör/masaüstü testi telefon kabulü sayılmaz.
+- [ ] Çevrimdışı hesabı çevrimiçi hesapla birleştirme/eşitleme (şimdilik ayrı kayıt).
+- [ ] Fiziksel Android cihaz kabulü (çevrimdışı mod dahil). Emülatör/masaüstü testi telefon kabulü sayılmaz.
 - [ ] Gerçek enstrüman kayıtları ve müzik; mevcut OGG'ler hâlâ geçici sentezdir.
 
 ## Görsel üretimleri
