@@ -531,6 +531,45 @@ var merge_info: String = ""
 const Merge_ = preload("res://native/merge_engine.gd")
 const MERGE_COLORS = [Color("5a2b2b"), Color("2b4a2b"), Color("3c2b5a"), Color("2b3f5a")]
 
+func merge_pic(file: String, height: float, parent: Node = null) -> TextureRect:
+	var tex = skin_art(file)
+	if tex == null:
+		return null
+	var view = TextureRect.new()
+	view.texture = tex
+	view.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	view.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	view.custom_minimum_size = Vector2(0, height)
+	(parent if parent != null else content).add_child(view)
+	return view
+
+func merge_stat(parent: Node, icon_file: String, text: String) -> void:
+	var row = HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	parent.add_child(row)
+	var tex = skin_art(icon_file)
+	if tex != null:
+		var icon = TextureRect.new()
+		icon.texture = tex
+		icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		icon.custom_minimum_size = Vector2(26, 26)
+		row.add_child(icon)
+	var stat_label = label(text, row, 14)
+	stat_label.autowrap_mode = TextServer.AUTOWRAP_OFF
+
+func merge_cell_style(file: String, fallback: Color) -> StyleBox:
+	var tex = skin_art(file)
+	if tex == null:
+		return box(fallback, Color("3a4a55"), 1, 8, 4)
+	var style = StyleBoxTexture.new()
+	style.texture = tex
+	style.content_margin_top = 16
+	style.content_margin_bottom = 20
+	style.content_margin_left = 6
+	style.content_margin_right = 6
+	return style
+
 func merge_animate(b: Dictionary) -> void:
 	clear_content()
 	var title = ("BOSS · " if b.boss else "") + "Dalga %d savaşı" % int(b.wave)
@@ -554,6 +593,13 @@ func merge_animate(b: Dictionary) -> void:
 			frame_view.custom_minimum_size = Vector2(0, 110)
 			content.add_child(frame_view)
 	var counts = muted_label("", content, 14)
+	var foe_files = ["enemy_kurt.png", "enemy_haydut.png", "enemy_iskelet.png", "enemy_cin.png", "enemy_golem_kucuk.png", "enemy_kara_okcu.png"]
+	var foe_row = HBoxContainer.new()
+	foe_row.add_theme_constant_override("separation", 4)
+	foe_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	content.add_child(foe_row)
+	for fi in range(mini(int(b.foes0), 6)):
+		merge_pic(foe_files[(int(b.wave) + fi) % foe_files.size()], 56, foe_row)
 	muted_label("Düşman", content, 12)
 	var foe_bar = ProgressBar.new()
 	foe_bar.custom_minimum_size = Vector2(0, 26)
@@ -589,6 +635,7 @@ func merge_do(path: String, body: Dictionary = {}) -> void:
 	var result = merge_call(path, body)
 	if result.has("battle"):
 		await merge_animate(result.battle)
+		merge_pic("banner_victory.png" if result.battle.won else "banner_defeat.png", 110)
 		if result.battle.won:
 			var burst = skin_art("merge_burst.png")
 			if burst != null:
@@ -614,10 +661,19 @@ func render_merge() -> void:
 	var v = merge_call("merge")
 	var g = v.state
 	heading("Birleştir · Dalga %d" % int(g.wave), content, 24)
-	muted_label("Altın %d · Can %d · Rakip %d birlik · En iyi dalga %d · Yıldız %d" % [int(g.gold), int(g.lives), int(v.enemies), int(v.best), int(g.stars)], content, 13)
+	var stats = HBoxContainer.new()
+	stats.add_theme_constant_override("separation", 12)
+	content.add_child(stats)
+	merge_stat(stats, "icon_gold_coin.png", str(int(g.gold)))
+	merge_stat(stats, "icon_heart.png", str(int(g.lives)))
+	merge_stat(stats, "icon_wave.png", "%d/%d" % [int(g.wave), int(v.enemies)])
+	merge_stat(stats, "icon_star_rebirth.png", "%d (en iyi %d)" % [int(g.stars), int(v.best)])
+	if bool(g.over):
+		merge_pic("banner_rebirth.png", 110)
 	if merge_info != "":
 		label(merge_info, content, 15)
 	if bool(v.boss):
+		merge_pic("banner_boss_warning.png", 70)
 		var boss_icon = skin_art("boss_%d.png" % (((int(g.wave) / 5 - 1) % 3) + 1))
 		if boss_icon != null:
 			var boss_banner = TextureRect.new()
@@ -636,7 +692,8 @@ func render_merge() -> void:
 			var tt = v.totems[ti]
 			var tb = Button.new()
 			tb.text = "%s\n%s" % [tt.name, tt.text]
-			tb.add_theme_font_size_override("font_size", 10)
+			tb.add_theme_font_size_override("font_size", 9)
+			tb.clip_text = true
 			tb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			tb.custom_minimum_size = Vector2(0, 52)
 			var totem_tex = skin_art("totem_%d.png" % (ti + 1))
@@ -649,19 +706,39 @@ func render_merge() -> void:
 				tb.custom_minimum_size = Vector2(0, 92)
 			tb.disabled = int(v.best) < int(tt.unlock)
 			if tb.disabled:
-				tb.text = "🔒 %d. dalga" % int(tt.unlock)
+				tb.text = "%d. dalga" % int(tt.unlock)
+				var lock_tex = skin_art("icon_lock.png")
+				if lock_tex != null:
+					tb.icon = lock_tex
 			tb.add_theme_stylebox_override("normal", box(Color("172530"), GOLD if int(g.totem) == ti else Color("3a4a55"), 3 if int(g.totem) == ti else 1, 8, 4))
 			tb.pressed.connect(func(): merge_do("merge/totem", {"id": ti}))
 			totem_row.add_child(tb)
 	var grid = GridContainer.new()
 	grid.columns = int(v.cols)
-	grid.add_theme_constant_override("h_separation", 6)
-	grid.add_theme_constant_override("v_separation", 6)
-	content.add_child(grid)
+	grid.add_theme_constant_override("h_separation", 4)
+	grid.add_theme_constant_override("v_separation", 4)
+	var board_tex = skin_art("merge_board_bg.png")
+	if board_tex != null:
+		var board_panel = PanelContainer.new()
+		board_panel.clip_contents = true
+		board_panel.add_theme_stylebox_override("panel", box(Color("0d1a24"), Color("6e6042"), 1, 12, 0))
+		content.add_child(board_panel)
+		var board_back = TextureRect.new()
+		board_back.texture = board_tex
+		board_back.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		board_back.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		board_back.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		board_panel.add_child(board_back)
+		var board_margin = MarginContainer.new()
+		for side in ["left", "right", "top", "bottom"]:
+			board_margin.add_theme_constant_override("margin_" + side, 8)
+		board_panel.add_child(board_margin)
+		board_margin.add_child(grid)
+	else:
+		content.add_child(grid)
 	for i in range(g.board.size()):
 		var cell = g.board[i]
 		var b = Button.new()
-		b.custom_minimum_size = Vector2(0, 74)
 		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 		b.clip_text = true
 		var fill = Color("172530")
@@ -669,12 +746,25 @@ func render_merge() -> void:
 		if cell != null:
 			var kind = v.kinds[int(cell.k)]
 			var m = pow(1.9, int(cell.t) - 1) * (1.0 + 0.1 * int(g.stars))
-			text = "%s\nSv %d\n⚔%d ♥%d" % [kind.name, int(cell.t), int(round(kind.atk * m)), int(round(kind.hp * m))]
+			text = "%d·⚔%d ♥%d" % [int(cell.t), int(round(kind.atk * m)), int(round(kind.hp * m))]
 			fill = MERGE_COLORS[int(cell.k)]
+			var unit_tex = skin_art("unit_%s_%d.png" % [kind.id, (int(cell.t) + 1) / 2])
+			if unit_tex != null:
+				b.icon = unit_tex
+				b.expand_icon = true
+				b.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+				b.vertical_icon_alignment = VERTICAL_ALIGNMENT_TOP
+				b.add_theme_constant_override("icon_max_width", 40)
+			else:
+				text = "%s\n%s" % [kind.name, text]
 		b.text = text
-		b.add_theme_font_size_override("font_size", 11)
-		b.add_theme_stylebox_override("normal", box(fill, GOLD if i == merge_pick else Color("3a4a55"), 3 if i == merge_pick else 1, 8, 4))
-		b.add_theme_stylebox_override("pressed", box(fill.lightened(0.2), GOLD, 3, 8, 4))
+		b.custom_minimum_size = Vector2(0, 100)
+		b.add_theme_font_size_override("font_size", 8)
+		b.clip_text = true
+		var cell_style = merge_cell_style("merge_cell_selected.png" if i == merge_pick else "merge_cell.png", fill)
+		b.add_theme_stylebox_override("normal", cell_style)
+		b.add_theme_stylebox_override("hover", cell_style)
+		b.add_theme_stylebox_override("pressed", merge_cell_style("merge_cell_selected.png", fill.lightened(0.2)))
 		b.pressed.connect(func():
 			if merge_pick < 0:
 				if cell != null:
@@ -689,7 +779,12 @@ func render_merge() -> void:
 	var bar = HBoxContainer.new()
 	bar.add_theme_constant_override("separation", 8)
 	content.add_child(bar)
-	primary_button("Satın al (%d)" % int(v.buyCost), bar, func(): merge_do("merge/buy"), bool(g.over))
+	var buy_button = primary_button("Al (%d)" % int(v.buyCost), bar, func(): merge_do("merge/buy"), bool(g.over))
+	var buy_icon = skin_art("icon_buy.png")
+	if buy_icon != null:
+		buy_button.icon = buy_icon
+		buy_button.expand_icon = true
+		buy_button.add_theme_constant_override("icon_max_width", 26)
 	var fight = primary_button("SAVAŞ ›", bar, func(): merge_do("merge/battle"), bool(g.over))
 	var fight_icon = skin_art("icon_auto_battle.png")
 	if fight_icon != null:
@@ -698,6 +793,7 @@ func render_merge() -> void:
 		fight.add_theme_constant_override("icon_max_width", 28)
 	var speed_button = Button.new()
 	speed_button.text = "x%d" % merge_speed
+	speed_button.custom_minimum_size = Vector2(52, 0)
 	var speed_icon = skin_art("icon_speed_%d.png" % merge_speed)
 	if speed_icon != null:
 		speed_button.icon = speed_icon
@@ -710,9 +806,13 @@ func render_merge() -> void:
 	var bar2 = HBoxContainer.new()
 	bar2.add_theme_constant_override("separation", 8)
 	content.add_child(bar2)
-	primary_button("Sat", bar2, func(): merge_do("merge/sell", {"cell": merge_pick}), merge_pick < 0 or bool(g.over))
+	var sell_button = primary_button("Sat", bar2, func(): merge_do("merge/sell", {"cell": merge_pick}), merge_pick < 0 or bool(g.over))
+	var sell_icon = skin_art("icon_sell.png")
+	if sell_icon != null:
+		sell_button.icon = sell_icon
+		sell_button.expand_icon = true
+		sell_button.add_theme_constant_override("icon_max_width", 24)
 	primary_button("Yeniden doğ" if bool(g.over) else "Yeni koşu", bar2, func(): merge_do("merge/restart"))
-	primary_button("‹ Ana sayfa", bar2, func(): open_tab("play"))
 	muted_label("Aynı türden ve aynı seviyeden iki birliği üst üste sürükle/dokun: seviye atlar. Her 5 dalga en iyi sonuç +%10 güç yıldızı kazandırır.", content, 12).autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 
 func render_story() -> void:
