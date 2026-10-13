@@ -2157,7 +2157,7 @@ func loading_progress(overlay: Control, progress: float, caption: String) -> voi
 		status.text = caption
 
 func prepare_startup(overlay: Control) -> void:
-	var files = ["frame_warrior.png", "frame_spell.png", "frame_trap.png", "hero_player.png", "hero_foe.png", "lane.png", "lane_enemy.png", "background_land.png", "chest_open.png", "result_victory.png"]
+	var files = ["frame_unit.png", "frame_spell.png", "frame_trap.png", "hero_player.png", "hero_foe.png", "lane.png", "lane_enemy.png", "background_land.png", "chest_open.png", "result_victory.png"]
 	for index in files.size():
 		if not is_instance_valid(overlay):
 			return
@@ -2174,6 +2174,60 @@ func prepare_startup(overlay: Control) -> void:
 	var fade = overlay.create_tween()
 	fade.tween_property(overlay, "modulate:a", 0.0, 0.25)
 	fade.tween_callback(overlay.queue_free)
+
+var inspect_overlay: Control
+
+func inspect_card(id: int, unit: Dictionary = {}) -> void:
+	# Kart ayrıntısı: oyunun görünümüne uygun, büyük kartlı ve dokununca kapanan pencere.
+	if is_instance_valid(inspect_overlay):
+		inspect_overlay.queue_free()
+	var info: Dictionary = cards[id]
+	var overlay = ColorRect.new()
+	overlay.name = "CardInspect"
+	overlay.color = Color(0, 0, 0, 0.78)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.z_index = 170
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP
+	add_child(overlay)
+	inspect_overlay = overlay
+	var view = get_viewport_rect().size
+	var wide = view.x > view.y
+	var card_width = clampf(minf(view.x * (0.3 if wide else 0.62), (view.y - 120.0) / 1.34 * (1.0 if wide else 0.62)), 110.0, 230.0)
+	var box_node = BoxContainer.new()
+	box_node.vertical = not wide
+	box_node.add_theme_constant_override("separation", 18)
+	box_node.alignment = BoxContainer.ALIGNMENT_CENTER
+	box_node.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	box_node.offset_left = 20
+	box_node.offset_right = -20
+	box_node.offset_top = 56
+	box_node.offset_bottom = -20
+	overlay.add_child(box_node)
+	mini_card(id, box_node, card_width, unit, Callable(), "", "", false)
+	var column = VBoxContainer.new()
+	column.add_theme_constant_override("separation", 8)
+	column.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	column.custom_minimum_size.x = minf(320.0, view.x - 40.0) if not wide else minf(330.0, view.x - card_width - 80.0)
+	box_node.add_child(column)
+	var title = heading(str(info.name), column, 22)
+	title.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	title.add_theme_color_override("font_color", Color("f1dfb7"))
+	var kind = muted_label("%d enerji · %s · %s" % [int(info.cost), TYPE_NAME[info.type], RARITY_NAME[info.rarity]], column, 14)
+	kind.add_theme_color_override("font_color", Color("e0c27a"))
+	if info.type == "warrior":
+		var attack = unit_attack(unit) if not unit.is_empty() else int(info.attack)
+		label("Saldırı %d · Can %d" % [attack, int(unit.get("hp", info.hp))], column, 15)
+	if not info.keywords.is_empty():
+		var words = muted_label(", ".join(info.keywords.map(func(word): return str(word))), column, 13)
+		words.add_theme_color_override("font_color", Color("9fd6ff"))
+	var description = muted_label(str(info.text), column, 14)
+	description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	description.add_theme_color_override("font_color", Color("e8dcc0"))
+	var close_button = primary_button("Tamam", column, func(): overlay.queue_free())
+	close_button.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
+	overlay.gui_input.connect(func(event):
+		if event is InputEventMouseButton and event.pressed:
+			overlay.queue_free())
 
 func show_pack_reveal() -> void:
 	# Sandık sallanır, açılır, parlama patlar; dokununca ya da kendiliğinden kapanır.

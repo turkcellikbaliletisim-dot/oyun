@@ -23,6 +23,7 @@ async function godot(args){
 }
 try{
   if(!await godot(['--headless','--path','.','--editor','--import','--quit']))throw new Error('Godot import failed');
+  if(!await godot(['--headless','--path','.','--script','tests/native-audio.gd']))throw new Error('Godot audio import failed');
   const display=process.env.DESTAN_NATIVE_VISUAL==='1'?['--rendering-driver','opengl3','--audio-driver','Dummy']:['--headless'];
   if(!await godot([...display,'--path','.','--script','tests/native-skin-chrome.gd','--','--no-connect']))throw new Error('Mobile skin chrome failed');
   if(!await godot([...display,'--path','.','--script','tests/native-landscape-match.gd','--','--no-connect']))throw new Error('Landscape match failed');
