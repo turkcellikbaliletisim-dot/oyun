@@ -14,8 +14,8 @@ ROOT = Path(__file__).resolve().parent.parent
 RATE = 44100
 CHANNELS = 2
 
-def decode(path):
-    raw = subprocess.run(['ffmpeg','-v','error','-i',str(path),'-ac','2','-ar',str(RATE),'-f','f32le','-'],check=True,capture_output=True).stdout
+def decode(path, rate=RATE):
+    raw = subprocess.run(['ffmpeg','-v','error','-i',str(path),'-ac','2','-ar',str(rate),'-f','f32le','-'],check=True,capture_output=True).stdout
     samples = array('f')
     samples.frombytes(raw)
     if sys.byteorder != 'little': samples.byteswap()
@@ -68,7 +68,15 @@ def main():
         for i in range(len(samples)): samples[i]*=gain
         if sys.byteorder!='little': samples.byteswap()
         path=destination/name
-        subprocess.run(['ffmpeg','-v','error','-y','-f','f32le','-ar',str(RATE),'-ac','2','-i','pipe:0',*codec,'-q:a','5',str(path)],input=samples.tobytes(),check=True)
+        for attempt in range(4):
+            subprocess.run(['ffmpeg','-v','error','-y','-f','f32le','-ar',str(RATE),'-ac','2','-i','pipe:0',*codec,'-q:a','5',str(path)],input=samples.tobytes(),check=True)
+            measured_rms=level(decode(path))
+            measured_peak=max(map(abs,decode(path,RATE*4)))
+            if measured_rms==0: raise ValueError('Encoded effect is silent: '+name)
+            correction=min(target/measured_rms,10**(-1.5/20)/measured_peak)
+            if abs(20*math.log10(correction))<0.15: break
+            if attempt<3:
+                for i in range(len(samples)): samples[i]*=correction
         manifest[name]={'file':'native/skin/audio/'+name,'method':'Runway AI sound effects; onset crop, short fades, shared RMS normalization; FFmpeg Vorbis',
                         'task_id':jobs[name]['taskId'],'prompt':item['spec']['prompt'],'source':'native-builds/audio-sources/'+name.replace('.ogg','.mp3'),
                         'sample_rate':RATE,'channels':CHANNELS,'duration_seconds':item['spec']['seconds'],'loop':False,

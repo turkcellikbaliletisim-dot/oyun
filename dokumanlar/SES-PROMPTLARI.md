@@ -32,3 +32,8 @@ Atmosfer: Anadolu efsanesi, ney, bağlama, kopuz, davul, zurna, def. Telifli mel
 - Müzik dosyalarında döngü noktasında tık sesi olmamalı.
 - Tüm efektlerde tepe ses -1 dB altında, ses seviyeleri birbirine yakın.
 - Üretimden sonra `native/skin/audio/manifest.json` kaynağı ve araç adı ile güncellenir; geçici sentez README'si değiştirilir.
+
+## Üretim durumu
+12 efekt Runway ile üretildi ve aynı adlarla `native/skin/audio/` içine kondu. OGG/Vorbis, 44,1 kHz, hedef süreler ve kodlama sonrası -1 dB tepe sınırı kontrol edildi; aktif RMS seviye farkı yaklaşık 0,21 dB. Kaynaklar ve eski sürüm yedeği `native-builds/` içindedir. İşiterek ve oyun içindeki miks kabulü bekler.
+
+İki yeni müzik mevcut ücretsiz Runway planında engellendi; bu görevde müzik üretimi başlamadı. Eski 96 saniyelik geçici sentez müzikler korunur. Yeni müzik üretimi için ücretli plan gerekir.

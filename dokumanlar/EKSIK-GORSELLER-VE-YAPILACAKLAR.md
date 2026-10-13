@@ -33,7 +33,8 @@ Son kod listesi güncellemesi: 2026-10-13 09:36 UTC. Görsel eki: 2026-10-13, PR
 - [x] Stale kart referansı regresyonu ve düğme yeniden giydirme callback düzeltmesi.
 - [x] Mac gerçek renderer görsel kontrolü ve tam test akışı.
 - [ ] Fiziksel Android cihaz kabulü. Emülatör/masaüstü testi telefon kabulü sayılmaz.
-- [ ] Gerçek enstrüman kayıtları ve müzik; mevcut OGG'ler hâlâ geçici sentezdir.
+- [x] 12 yeni Runway ses efekti, OGG/Vorbis 44,1 kHz; süre, tepe ve seviye teknik kontrolleri geçti. İşiterek miks kabulü bekler.
+- [ ] İki yeni Anadolu müziği: mevcut ücretsiz Runway planında engellendi; önceki geçici sentez müzikler korunur. Canlı enstrüman kaydı olarak sunulmaz.
 
 ## Görsel üretimleri
 Orijinal 114'lük paket manifesti korunmuştur. Yeni ekler `native/skin/generated-manifest.json` içinde boyut, kaynak ve SHA256 ile kayıtlıdır.
@@ -54,3 +55,5 @@ Uzun kart metni sağ sütunda kaydırılır; “Kartı büyüt” tam açıklama
 
 ## Gerçek ses/müzik (eksik)
 Geçici sesler yerine gerçek kayıt: `music_menu.ogg`, `music_battle.ogg` (96 sn, döngüsel; ney/saz/zurna), efektler `click, card_flip, play_card, attack, hit, spell, heal, pack_open, turn_start, end_turn, victory, defeat`. Prompt: "Anadolu ezgili, ney ve bağlama ağırlıklı, 96 sn kesintisiz döngülü menü müziği; ikinci parça savaş için davul/zurna ile tempolu."
+
+Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve dosya bazlı kaynak/kalite bilgileri için `native/skin/audio/manifest.json`.
