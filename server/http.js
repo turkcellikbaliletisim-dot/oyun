@@ -7,7 +7,7 @@ import {Service,ApiError} from './service.js';
 import {Store} from './store.js';
 
 const ROOT=fileURLToPath(new URL('../',import.meta.url));
-const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json','.svg':'image/svg+xml','.png':'image/png','.pdf':'application/pdf','.md':'text/plain; charset=utf-8'};
+const MIME={'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.json':'application/json; charset=utf-8','.webmanifest':'application/manifest+json','.svg':'image/svg+xml','.png':'image/png','.pdf':'application/pdf','.md':'text/plain; charset=utf-8','.wasm':'application/wasm','.pck':'application/octet-stream','.apk':'application/vnd.android.package-archive','.zip':'application/zip'};
 const fail=(ok,status,message)=>{if(!ok)throw new ApiError(status,message);};
 function keys(body,allowed){fail(body&&typeof body==='object'&&!Array.isArray(body),400,'JSON nesnesi gerekli.');fail(Object.keys(body).every(k=>allowed.includes(k)),400,'İstekte desteklenmeyen alan var.');}
 function cleanAction(action){
@@ -27,7 +27,7 @@ function sessionCookie(token,secure,remove=false){return `destan_session=${remov
 function send(res,status,body,headers={}){
   const text=JSON.stringify(body);res.writeHead(status,{'Content-Type':'application/json; charset=utf-8','Cache-Control':'no-store',...headers});res.end(text);
 }
-export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,production=false}={}){
+export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,production=false,mobileDir=process.env.DESTAN_MOBILE_DIR??join(ROOT,'mobile')}={}){
   if(production&&(!origin||!origin.startsWith('https://')))throw new Error('Üretim için HTTPS APP_ORIGIN gerekli.');
   const release=await new Store(dataDir).acquire();let service;
   try{service=await Service.open(dataDir,now);}catch(error){await release();throw error;}
@@ -37,6 +37,7 @@ export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,
     res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
     try{
       const path=new URL(req.url,'http://localhost').pathname,token=cookie(req),csrf=req.headers['x-destan-csrf'];
+      if(path.startsWith('/mobile/'))res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; worker-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'self'");
       if(path.startsWith('/api/')){
         const rateKey=service.session(token)?.userId??req.socket.remoteAddress,rate=rates.get(rateKey)??{since:now(),count:0};
         if(now()-rate.since>=60000){rate.since=now();rate.count=0;}rate.count++;rates.set(rateKey,rate);fail(rate.count<=360,429,'Çok sık istek gönderildi. Biraz bekle.');
@@ -69,11 +70,18 @@ export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,
       }
       fail(req.method==='GET'||req.method==='HEAD',405,'Yöntem desteklenmiyor.');
       const decoded=decodeURIComponent(path);fail(!decoded.split('/').some(part=>part.startsWith('.')),404,'Dosya bulunamadı.');
-      let file=resolve(ROOT,'.'+decoded);fail(file===ROOT.slice(0,-1)||file.startsWith(ROOT),404,'Dosya bulunamadı.');
+      const mobile=decoded==='/mobile'||decoded.startsWith('/mobile/');
+      const staticRoot=(mobile?await realpath(resolve(mobileDir)):resolve(ROOT))+sep;
+      const relative=mobile?decoded.slice('/mobile'.length)||'/':decoded;
+      let file=resolve(staticRoot,'.'+relative);fail(file===staticRoot.slice(0,-1)||file.startsWith(staticRoot),404,'Dosya bulunamadı.');
       let info=await stat(file);if(info.isDirectory()){file=join(file,'index.html');info=await stat(file);}
-      const actual=await realpath(file);fail(actual.startsWith(ROOT),404,'Dosya bulunamadı.');
+      const actual=await realpath(file);fail(actual.startsWith(staticRoot),404,'Dosya bulunamadı.');
       const mime=MIME[extname(file)];fail(mime,404,'Dosya bulunamadı.');
-      res.writeHead(200,{'Content-Type':mime,'Content-Length':info.size,'Cache-Control':extname(file)==='.png'?'public, max-age=86400':'no-cache'});
+      let encoding={};
+      if(mobile&&/\bbr\b/.test(req.headers['accept-encoding']??'')&&['.wasm','.js','.pck'].includes(extname(file))){
+        try{const compressed=await realpath(file+'.br');fail(compressed.startsWith(staticRoot),404,'Dosya bulunamadı.');const packed=await stat(compressed);file=compressed;info=packed;encoding={'Content-Encoding':'br',Vary:'Accept-Encoding'};}catch(error){if(error instanceof ApiError)throw error;if(error.code!=='ENOENT')throw error;}
+      }
+      res.writeHead(200,{'Content-Type':mime,'Content-Length':info.size,'Cache-Control':extname(file)==='.png'?'public, max-age=86400':'no-cache',...encoding});
       if(req.method==='HEAD'){res.end();return;}
       createReadStream(file).on('error',()=>res.destroy()).pipe(res);
     }catch(error){

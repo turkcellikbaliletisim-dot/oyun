@@ -1,0 +1,15 @@
+.git
+.godot
+.data
+node_modules
+native-builds
+test-results
+*.log
+.mobile-tools
+.mobile-server.env
+.mobile-server.env.tmp
+export_credentials.cfg
+!native-builds/
+native-builds/*
+!native-builds/web/
+!native-builds/web/**
