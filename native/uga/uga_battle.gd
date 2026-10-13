@@ -381,6 +381,8 @@ func draw_field() -> void:
 		if enemy_flash.has(en.id):
 			mod = Color(1.6, 1.2, 1.2)
 		var t = tex(en.art)
+		if t == null:
+			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
 		if t != null:
 			draw_fit(t, r, mod)
 		else:
