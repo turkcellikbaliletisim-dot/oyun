@@ -831,6 +831,21 @@ func battlefield_lane(units: Array, own: bool, legal: Array, area: Rect2, card_w
 		if own and not options.is_empty():
 			install_drag(card, options)
 
+func compact_portrait_button(node: Button) -> void:
+	# Dikey maçta düğme kahraman portresinin yanında kalır; kenar boşlukları daraltılır.
+	var tight = StyleBoxEmpty.new()
+	tight.content_margin_left = 20
+	tight.content_margin_right = 12
+	tight.content_margin_top = 8
+	tight.content_margin_bottom = 8
+	for key in ["normal", "hover", "pressed", "disabled", "focus"]:
+		node.add_theme_stylebox_override(key, tight)
+	node.add_theme_font_size_override("font_size", 11)
+	node.alignment = HORIZONTAL_ALIGNMENT_CENTER
+	node.clip_text = false
+	node.custom_minimum_size.x = 0
+	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+
 func render_match() -> void:
 	if room.get("state") == null:
 		render_waiting_room()
@@ -949,18 +964,23 @@ func render_match() -> void:
 		if not options.is_empty():
 			install_drag(card, options)
 	var controls = VBoxContainer.new()
-	controls.position = Vector2(width - 186, height - 142) if landscape else Vector2(width - 186, own_hero_y + portrait_size * 0.12)
-	controls.size = Vector2(180, 0)
+	var controls_x = width * 0.5 + portrait_size * 0.5 + 6.0
+	controls.position = Vector2(width - 186, height - 142) if landscape else Vector2(controls_x, own_hero_y + portrait_size * 0.12)
+	controls.size = Vector2(180, 0) if landscape else Vector2(width - controls_x - 8.0, 0)
 	arena.add_child(controls)
 	if state.status == "finished":
 		pass
 	elif state.active == 0:
 		if mulligan:
-			primary_button("Başla", controls, func(): move({"type": "mulligan", "indices": mulligan_indices.duplicate()}))
+			var start_button = primary_button("Başla", controls, func(): move({"type": "mulligan", "indices": mulligan_indices.duplicate()}))
+			if not landscape:
+				compact_portrait_button(start_button)
 		else:
 			for action in legal:
 				if action.type == "end":
-					primary_button("Turu bitir", controls, func(): move(action))
+					var end_button = primary_button("Turu bitir", controls, func(): move(action))
+					if not landscape:
+						compact_portrait_button(end_button)
 				elif action.type in ["scry", "discard"]:
 					small_button(action_name(action), controls, func(): move(action))
 	else:
