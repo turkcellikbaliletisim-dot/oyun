@@ -44,6 +44,23 @@ func _initialize() -> void:
 	check(l.over and int(l.lives) == 0, "üç kayıp koşuyu bitirir")
 	check(e.buy(l).is_empty(), "bitmiş koşuda eylem yok")
 	check(Merge.stars_for_best(12) == 2, "yeniden doğuş yıldızı")
+	# totem ve boss
+	var t = Merge.new_run(3)
+	check(not e.choose_totem(t, 0, 0).is_empty() and int(t.totem) == 0, "ilk totem açık")
+	check(e.choose_totem(t, 1, 0).is_empty(), "kilitli totem reddedilir")
+	check(not e.choose_totem(t, 3, 15).is_empty() and int(t.lives) == 4, "can totemi +1 can")
+	check(not e.choose_totem(t, 0, 15).is_empty() and int(t.lives) == 3, "totem değişince can geri alınır")
+	t.board[0] = {"k": 0, "t": 1}
+	var st = Merge.unit_stats(t.board[0], t)
+	check(st.atk == int(round(3 * 1.15)), "savaş totemi saldırıyı artırır")
+	check(Merge.is_boss(5) and not Merge.is_boss(4), "5. dalga boss")
+	var foes = Merge.enemy_wave(5)
+	check(foes[foes.size() - 1].has("boss"), "boss düşmanı eklenir")
+	var f = Merge.new_run(2)
+	for i in range(8):
+		f.board[i] = {"k": i % 4, "t": 4}
+	var fr = e.battle(f)
+	check(fr.frames.size() > 0 and fr.frames.size() <= 40, "savaş kareleri")
 	# çevrimdışı sunucu rotaları
 	var dir = OS.get_environment("DESTAN_SESSION_DIR")
 	if dir.is_empty():

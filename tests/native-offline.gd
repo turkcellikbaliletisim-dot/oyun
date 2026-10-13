@@ -74,6 +74,9 @@ func run() -> void:
 	app.merge_do("merge/buy")
 	var mv = app.merge_call("merge")
 	check(int(mv.state.gold) == 20, "Birleştir alımı altın düşürmedi")
+	app.merge_do("merge/totem", {"id": 0})
+	check(int(app.merge_call("merge").state.totem) == 0, "Totem seçilmedi")
+	app.render()
 	app.merge_do("merge/restart")
 	app.open_tab("play")
 	# Kalıcılık: yeni servis aynı dosyadan aynı hesabı okumalı

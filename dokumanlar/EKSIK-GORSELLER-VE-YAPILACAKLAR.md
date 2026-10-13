@@ -70,3 +70,4 @@ Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve do
 ## Birleştirme modu (2026-10-13)
 - Eklendi: `native/merge_engine.gd` (5x4 tahta, 4 tür, 8 seviye, dalga/can/altın, yeniden doğuş yıldızı), çevrimdışı rotalar `merge/*`, ana sayfada "Birleştir" kutusu ve `render_merge` ekranı. Testler: `tests/merge-engine.gd` + `native-offline.gd`.
 - Eksik görseller: `merge_frame`, `merge_burst`, `glow_*`, `totem_*` (şimdilik düz renkli düğmeler). Sıradaki: otomatik savaş animasyonu, totemler, bosslar.
+- Eklendi (aynı gün): 4 totem (savaş/kalkan/altın/can; en iyi dalga 0/5/10/15'te açılır), her 5. dalgada boss (Kara Kurt, Demir Dev, Gölge Ejder; ödül ×2), tur tur savaş animasyonu (can çubukları). Görsel olarak totem_1..4, boss_1..3 ve merge_burst gelince arayüze takılacak.

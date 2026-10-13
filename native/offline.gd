@@ -600,7 +600,7 @@ func wallet(user: Dictionary, operation: String, body: Dictionary) -> Dictionary
 func merge_view(user: Dictionary) -> Dictionary:
 	var g: Dictionary = user.merge
 	return {"state": g, "buyCost": Merge_.buy_cost(g), "best": int(user.get("mergeBest", 0)), "cols": Merge_.COLS, "rows": Merge_.ROWS, "kinds": Merge_.KINDS,
-		"enemies": Merge_.enemy_wave(int(g.wave)).size()}
+		"enemies": Merge_.enemy_wave(int(g.wave)).size(), "totems": Merge_.TOTEMS, "boss": Merge_.is_boss(int(g.wave))}
 
 func merge_route(user: Dictionary, sub: String, body: Dictionary) -> Dictionary:
 	if not user.has("merge") or not user.merge is Dictionary:
@@ -625,6 +625,8 @@ func merge_route(user: Dictionary, sub: String, body: Dictionary) -> Dictionary:
 				extra = {"battle": result}
 				if int(g.wave) - 1 > int(user.get("mergeBest", 0)) and result.won:
 					user["mergeBest"] = int(g.wave) - 1
+		"totem":
+			result = eng.choose_totem(g, int(body.get("id", -1)), int(user.get("mergeBest", 0)))
 		"restart":
 			user["merge"] = Merge_.new_run(now_ms(), Merge_.stars_for_best(int(user.get("mergeBest", 0))))
 			save_store()

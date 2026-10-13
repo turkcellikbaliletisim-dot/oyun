@@ -527,10 +527,49 @@ func render_lobby() -> void:
 var merge_pick: int = -1
 var merge_info: String = ""
 
+const Merge_ = preload("res://native/merge_engine.gd")
 const MERGE_COLORS = [Color("5a2b2b"), Color("2b4a2b"), Color("3c2b5a"), Color("2b3f5a")]
+
+func merge_animate(b: Dictionary) -> void:
+	clear_content()
+	var title = ("BOSS · " if b.boss else "") + "Dalga %d savaşı" % int(b.wave)
+	heading(title, content, 24)
+	var counts = muted_label("", content, 14)
+	muted_label("Düşman", content, 12)
+	var foe_bar = ProgressBar.new()
+	foe_bar.custom_minimum_size = Vector2(0, 26)
+	foe_bar.max_value = maxf(1.0, float(b.foes_hp0))
+	foe_bar.value = foe_bar.max_value
+	foe_bar.show_percentage = false
+	foe_bar.add_theme_stylebox_override("fill", box(Color("b0443a"), Color(0, 0, 0, 0), 0, 6, 0))
+	content.add_child(foe_bar)
+	muted_label("Senin ordun", content, 12)
+	var my_bar = ProgressBar.new()
+	my_bar.custom_minimum_size = Vector2(0, 26)
+	my_bar.max_value = maxf(1.0, float(b.mine_hp0))
+	my_bar.value = my_bar.max_value
+	my_bar.show_percentage = false
+	my_bar.add_theme_stylebox_override("fill", box(Color("4c9a52"), Color(0, 0, 0, 0), 0, 6, 0))
+	content.add_child(my_bar)
+	var round_no = 0
+	for frame in b.frames:
+		round_no += 1
+		var fsum = 0
+		for h in frame.foes:
+			fsum += int(h)
+		var msum = 0
+		for h in frame.mine:
+			msum += int(h)
+		foe_bar.value = fsum
+		my_bar.value = msum
+		counts.text = "Tur %d · %d birliğin vs %d düşman" % [round_no, frame.mine.size(), frame.foes.size()]
+		if is_inside_tree() and not DisplayServer.get_name() == "headless":
+			await get_tree().create_timer(0.3).timeout
 
 func merge_do(path: String, body: Dictionary = {}) -> void:
 	var result = merge_call(path, body)
+	if result.has("battle"):
+		await merge_animate(result.battle)
 	if result.has("error"):
 		merge_info = str(result.error)
 	elif result.has("battle"):
@@ -548,6 +587,26 @@ func render_merge() -> void:
 	muted_label("Altın %d · Can %d · Rakip %d birlik · En iyi dalga %d · Yıldız %d" % [int(g.gold), int(g.lives), int(v.enemies), int(v.best), int(g.stars)], content, 13)
 	if merge_info != "":
 		label(merge_info, content, 15)
+	if bool(v.boss):
+		label("⚠ Boss dalgası: %s seni bekliyor (ödül ×2)" % Merge_.BOSS_NAMES[(int(g.wave) / 5 - 1) % Merge_.BOSS_NAMES.size()], content, 14)
+	if int(g.wave) == 1 and g.log.is_empty() and not bool(g.over):
+		muted_label("Totem seç (koşunun başında):", content, 12)
+		var totem_row = HBoxContainer.new()
+		totem_row.add_theme_constant_override("separation", 6)
+		content.add_child(totem_row)
+		for ti in range(v.totems.size()):
+			var tt = v.totems[ti]
+			var tb = Button.new()
+			tb.text = "%s\n%s" % [tt.name, tt.text]
+			tb.add_theme_font_size_override("font_size", 10)
+			tb.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			tb.custom_minimum_size = Vector2(0, 52)
+			tb.disabled = int(v.best) < int(tt.unlock)
+			if tb.disabled:
+				tb.text = "🔒 %d. dalga" % int(tt.unlock)
+			tb.add_theme_stylebox_override("normal", box(Color("172530"), GOLD if int(g.totem) == ti else Color("3a4a55"), 3 if int(g.totem) == ti else 1, 8, 4))
+			tb.pressed.connect(func(): merge_do("merge/totem", {"id": ti}))
+			totem_row.add_child(tb)
 	var grid = GridContainer.new()
 	grid.columns = int(v.cols)
 	grid.add_theme_constant_override("h_separation", 6)
