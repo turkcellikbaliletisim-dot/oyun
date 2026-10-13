@@ -9,6 +9,8 @@ const D = preload("res://native/uga/uga_data.gd")
 const Sim = preload("res://native/uga/uga_sim.gd")
 
 const STAR_COLORS = [Color("b07a4a"), Color("c9d2da"), Color("e6c15a"), Color("3fd0c9"), Color("b06be0"), Color("ff5a4a")]
+# battle_bg.png (720x1280) üzerindeki boyalı yolun orta çizgisi
+const PATH_IMG = [Vector2(410, -30), Vector2(400, 60), Vector2(425, 130), Vector2(430, 175), Vector2(385, 230), Vector2(345, 290), Vector2(355, 345), Vector2(420, 395), Vector2(440, 450), Vector2(400, 505), Vector2(355, 555), Vector2(370, 610), Vector2(360, 650)]
 const PATH = [Vector2(0.12, -0.02), Vector2(0.12, 0.26), Vector2(0.88, 0.26), Vector2(0.88, 0.56), Vector2(0.12, 0.56), Vector2(0.12, 0.84), Vector2(0.5, 0.84), Vector2(0.5, 1.0)]
 
 var sim
@@ -22,6 +24,7 @@ var auto_acc: float = 0.0
 var end_delay: float = -1.0
 var ended: bool = false
 var paused: bool = false
+var cur_off: Vector2 = Vector2.ZERO
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -103,15 +106,16 @@ func layout() -> void:
 	r_hud = Rect2(0, 0, w, 54)
 	var bar_h = 112.0
 	r_bar = Rect2(0, h - bar_h, w, bar_h)
-	var cell = minf((w - 24) / 5.0, 74.0)
-	var board_h = cell * 3 + 16
+	var cell = minf((w - 24) / 5.0, 72.0)
+	var cell_h = cell * 1.2
+	var board_h = cell_h * 3 + 16
 	r_board = Rect2((w - cell * 5) / 2.0 - 6, r_bar.position.y - board_h - 4, cell * 5 + 12, board_h)
 	r_field = Rect2(0, r_hud.end.y, w, r_board.position.y - r_hud.end.y - 4)
 	slot_rects = []
 	for i in range(D.SLOTS):
 		var c = i % D.COLS
 		var r = i / D.COLS
-		slot_rects.append(Rect2(r_board.position.x + 6 + c * cell + 2, r_board.position.y + 8 + r * cell + 2, cell - 4, cell - 4))
+		slot_rects.append(Rect2(r_board.position.x + 6 + c * cell + 2, r_board.position.y + 8 + r * cell_h + 2, cell - 4, cell_h - 4))
 	r_summon = Rect2(w / 2.0 - 78, r_bar.position.y + 10, 156, 58)
 	r_auto = Rect2(w - 70, r_bar.position.y + 10, 60, 27)
 	r_speed = Rect2(w - 70, r_bar.position.y + 41, 60, 27)
@@ -124,8 +128,18 @@ func layout() -> void:
 		potion_rects[kinds[i]] = Rect2(px, py, 40, 40)
 	# yol
 	path_pts = PackedVector2Array()
-	for p in PATH:
-		path_pts.append(Vector2(r_field.position.x + 24 + p.x * (r_field.size.x - 48), r_field.position.y + 8 + p.y * (r_field.size.y - 16)))
+	var bg = tex("battle_bg")
+	if bg != null:
+		var area = Rect2(Vector2(0, r_hud.end.y), Vector2(w, r_bar.position.y - r_hud.end.y))
+		var ts = bg.get_size()
+		var sc = maxf(area.size.x / ts.x, area.size.y / ts.y)
+		var crop = (ts - area.size / sc) / 2.0
+		for p in PATH_IMG:
+			var q = p * (ts.x / 720.0)
+			path_pts.append(area.position + (q - crop) * sc)
+	else:
+		for p in PATH:
+			path_pts.append(Vector2(r_field.position.x + 24 + p.x * (r_field.size.x - 48), r_field.position.y + 8 + p.y * (r_field.size.y - 16)))
 	path_len = [0.0]
 	for i in range(1, path_pts.size()):
 		path_len.append(path_len[i - 1] + path_pts[i].distance_to(path_pts[i - 1]))
@@ -270,8 +284,12 @@ func _draw() -> void:
 	if slot_rects.is_empty():
 		layout()
 	var off = Vector2(randf_range(-3, 3), randf_range(-3, 3)) * (shake / 0.6) if shake > 0 else Vector2.ZERO
+	cur_off = off
 	draw_set_transform(off)
 	draw_rect(Rect2(Vector2.ZERO, size), Color("0b141c"))
+	var bg = tex("battle_bg")
+	if bg != null:
+		draw_cover(bg, Rect2(Vector2(0, r_hud.end.y), Vector2(size.x, r_bar.position.y - r_hud.end.y)))
 	draw_field()
 	draw_board()
 	draw_set_transform(Vector2.ZERO)
@@ -297,21 +315,20 @@ func draw_fit(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 	draw_texture_rect(t, Rect2(r.position + (r.size - s) / 2.0, s), false, mod)
 
 func draw_field() -> void:
-	var bg = tex("battle_bg")
-	if bg != null:
-		draw_cover(bg, r_field)
-	else:
+	if tex("battle_bg") == null:
 		draw_rect(r_field, Color("1d3326"))
 		for i in range(18):
 			var x = fmod(i * 97.0, r_field.size.x)
 			var y = r_field.position.y + fmod(i * 53.0, r_field.size.y)
 			draw_circle(Vector2(x, y), 10 + (i % 4) * 4, Color(0.12, 0.25, 0.16, 0.6))
 	# yol
-	draw_polyline(path_pts, Color(0.18, 0.12, 0.07, 0.85), 30.0, true)
-	draw_polyline(path_pts, Color(0.55, 0.42, 0.25, 0.9), 22.0, true)
-	draw_polyline(path_pts, Color(0.66, 0.53, 0.33, 0.6), 8.0, true)
+	var pa = 0.0 if tex("battle_bg") != null else 0.9
+	if pa > 0.0:
+		draw_polyline(path_pts, Color(0.18, 0.12, 0.07, pa), 30.0, true)
+		draw_polyline(path_pts, Color(0.62, 0.48, 0.28, pa), 22.0, true)
+		draw_polyline(path_pts, Color(0.8, 0.66, 0.42, pa * 0.6), 8.0, true)
 	# kapı
-	var gate_r = Rect2(path_pts[path_pts.size() - 1] - Vector2(34, 46), Vector2(68, 54))
+	var gate_r = Rect2(path_pts[path_pts.size() - 1] - Vector2(40, 52), Vector2(80, 64))
 	var gate = tex("gate_castle")
 	if gate != null:
 		draw_fit(gate, gate_r)
@@ -347,7 +364,13 @@ func draw_field() -> void:
 		var p = s.from.lerp(s.to, f)
 		var pt = tex("proj_" + str(s.proj))
 		if pt != null:
-			draw_fit(pt, Rect2(p - Vector2(12, 12), Vector2(24, 24)))
+			var dir: Vector2 = s.to - s.from
+			if s.proj in ["arrow", "spear"]:
+				draw_set_transform(p + cur_off, dir.angle() + PI / 4.0)
+				draw_fit(pt, Rect2(Vector2(-14, -14), Vector2(28, 28)))
+				draw_set_transform(cur_off)
+			else:
+				draw_fit(pt, Rect2(p - Vector2(13, 13), Vector2(26, 26)))
 		else:
 			var col = {"arrow": Color("f0e6c8"), "orb": Color("54e0ff"), "fireball": Color("ff7a2a"), "rock": Color("a08a6a"), "spear": Color("e0d0a0")}.get(s.proj, Color.WHITE)
 			draw_circle(p, 4.5, col)
@@ -377,7 +400,7 @@ func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
 	if t == null:
 		t = tex("unit_" + ["kilic", "okcu", "buyucu", "kalkan"][abs(str(c.h).hash()) % 4] + "_%d" % clampi((stars + 1) / 2, 1, 4))
 	if t != null:
-		draw_fit(t, r.grow(-5), Color(1, 1, 1, alpha))
+		draw_cover(t, Rect2(r.position + Vector2(r.size.x * 0.1, r.size.y * 0.08), Vector2(r.size.x * 0.8, r.size.y * 0.74)), Color(1, 1, 1, alpha))
 	var frame = tex("card_star_%d" % stars)
 	if frame != null:
 		draw_texture_rect(frame, r, false, Color(1, 1, 1, alpha))
@@ -388,7 +411,7 @@ func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
 	text(Vector2(r.position.x, r.end.y - 4), star_text, 10 if stars > 3 else 12, Color(col.lightened(0.3), alpha), HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 
 func draw_board() -> void:
-	draw_rect(r_board, Color(0.04, 0.07, 0.1, 0.92))
+	draw_rect(r_board, Color(0.04, 0.07, 0.1, 0.78))
 	draw_rect(r_board, Color("6e6042"), false, 2.0)
 	var cell_t = tex("merge_cell")
 	for i in range(slot_rects.size()):
