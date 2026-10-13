@@ -25,6 +25,8 @@ const MobileGeometry = preload("res://native/mobile_geometry.gd")
 func _ready() -> void:
 	super._ready()
 	Engine.max_fps = 60
+	if OS.get_environment("DESTAN_SESSION_DIR") == "":
+		show_loading_screen.call_deferred(false)
 	reconnect_timer = Timer.new()
 	reconnect_timer.one_shot = true
 	reconnect_timer.timeout.connect(attempt_reconnect)
@@ -1909,6 +1911,66 @@ func render_result(state: Dictionary, width: float, height: float) -> void:
 	small_button("Maç kaydı", column, export_replay)
 
 var pack_anim_shown: Array = []
+
+const LOADING_TIPS = [
+	"Enerjin her tur artar; güçlü kartları sabırla oyna.",
+	"Hedef halkası yanan kahramana saldırabilirsin.",
+	"Desteni koleksiyon ekranından kendin kurabilirsin.",
+	"Sandıklardan nadir ve efsane kartlar çıkabilir."
+]
+
+func show_loading_screen(force: bool = true) -> Control:
+	# Uygulama içi yükleme ekranı: splash + ilerleme çubuğu + ipucu paneli, ~1.4 sn sonra solar.
+	var overlay = ColorRect.new()
+	overlay.name = "LoadingScreen"
+	overlay.color = Color(0.05, 0.03, 0.02, 1)
+	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	overlay.z_index = 200
+	overlay.mouse_filter = Control.MOUSE_FILTER_STOP if force else Control.MOUSE_FILTER_IGNORE
+	add_child(overlay)
+	var view_size = get_viewport_rect().size
+	var splash = skin_art("splash.png")
+	if splash != null:
+		var bg = TextureRect.new()
+		bg.texture = splash
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		overlay.add_child(bg)
+	var bar_width = minf(view_size.x * 0.8, 420.0)
+	var bar = art_slice(overlay, "loading_bar_frame.png", Rect2(0, 0, 800, 80))
+	var fill = art_slice(overlay, "loading_bar_fill.png", Rect2(0, 0, 800, 64))
+	var tip_panel = art_slice(overlay, "loading_tip_panel.png", Rect2(0, 0, 900, 160))
+	if bar != null and fill != null:
+		bar.size = Vector2(bar_width, bar_width * 0.1)
+		bar.position = Vector2((view_size.x - bar_width) / 2, view_size.y * 0.78)
+		bar.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		fill.position = bar.position + Vector2(bar.size.x * 0.045, bar.size.y * 0.16)
+		fill.size = Vector2(0, bar.size.y * 0.68)
+		fill.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var grow = create_tween()
+		grow.tween_property(fill, "size:x", bar.size.x * 0.86, 1.2)
+	if tip_panel != null:
+		tip_panel.size = Vector2(bar_width, bar_width * 160.0 / 900.0)
+		tip_panel.position = Vector2((view_size.x - bar_width) / 2, view_size.y * 0.78 + bar_width * 0.14)
+		tip_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		var tip = Label.new()
+		tip.text = LOADING_TIPS[randi() % LOADING_TIPS.size()]
+		tip.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		tip.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		tip.add_theme_font_size_override("font_size", 12)
+		tip.add_theme_color_override("font_color", Color(0.98, 0.9, 0.7))
+		tip.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT, Control.PRESET_MODE_MINSIZE, 18)
+		tip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		tip_panel.add_child(tip)
+	if not force:
+		var fade = create_tween()
+		fade.tween_interval(1.3)
+		fade.tween_property(overlay, "modulate:a", 0.0, 0.3)
+		fade.tween_callback(overlay.queue_free)
+	return overlay
 
 func show_pack_reveal() -> void:
 	# Sandık sallanır, açılır, parlama patlar; dokununca ya da kendiliğinden kapanır.
