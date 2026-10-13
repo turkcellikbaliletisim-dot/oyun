@@ -870,7 +870,7 @@ func compact_portrait_button(node: Button) -> void:
 	node.add_theme_font_size_override("font_size", 11)
 	node.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	node.clip_text = false
-	node.custom_minimum_size.x = 0
+	node.custom_minimum_size = Vector2(0, 42)
 	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 func render_match() -> void:
