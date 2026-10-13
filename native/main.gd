@@ -530,13 +530,13 @@ func connect_account() -> void:
 	busy = false
 	if result.has("error"):
 		notice.text = result.error
-		network_panel.visible = true
+		network_panel.get_parent().visible = true
 		render()
 		updated.emit()
 		return
 	accept_account(result)
 	notice.text = "Bağlandı · Oynamaya hazırsın"
-	network_panel.visible = false
+	network_panel.get_parent().visible = false
 	if FileAccess.file_exists(PENDING_FILE):
 		var saved = JSON.parse_string(FileAccess.get_file_as_string(PENDING_FILE))
 		if saved is Dictionary and saved.get("accountId") == account.id and saved.get("endpoint") == endpoint:
@@ -586,7 +586,14 @@ func refresh() -> void:
 func clear_pending() -> void:
 	pending = {}
 	if FileAccess.file_exists(PENDING_FILE):
-		DirAccess.remove_absolute(PENDING_FILE)
+		if OS.has_feature("web"):
+			# Do not unlink while the browser's asynchronous IDBFS sync reads it.
+			var file = FileAccess.open(PENDING_FILE, FileAccess.WRITE)
+			if file != null:
+				file.store_string("{}")
+				file.close()
+		else:
+			DirAccess.remove_absolute(PENDING_FILE)
 
 func mutate(path: String, body: Dictionary, retryable: bool = false) -> void:
 	if busy or account.is_empty():

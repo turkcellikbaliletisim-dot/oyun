@@ -15,8 +15,21 @@ func hand_card(node: Node, index: int) -> Control:
 			return found
 	return null
 func drag(app, card: Control, target: Vector2) -> void:
+	# A rendered card can disappear while network/tween frames are awaited.
+	# Keep its semantic identity, then resolve the live node after settling.
+	var hand_index = int(card.get_meta("hand_index", -1))
+	var uid = -1
+	for key in app.unit_nodes:
+		if app.unit_nodes[key] == card:
+			uid = int(key)
+	if OS.get_environment("DESTAN_INTERACTION_STRESS") == "1":
+		app.render.call_deferred()
 	for frame in range(5):
 		await process_frame
+	card = app.unit_nodes.get(uid) if uid >= 0 else hand_card(app, hand_index)
+	if not is_instance_valid(card):
+		check(false, "Current draggable card was not rendered")
+		return
 	var origin = card.get_global_rect().get_center()
 	var press = InputEventMouseButton.new()
 	press.button_index = MOUSE_BUTTON_LEFT

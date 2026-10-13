@@ -250,13 +250,20 @@ func landscape_render_commands(state: Dictionary, mine: Dictionary, legal: Array
 	if not focus.is_empty():
 		var info: Dictionary = cards[int(focus.id)]
 		label(info.name, details, 13)
-		muted_label(info.text, details, 11)
+		var description = muted_label(info.text, details, 12)
+		description.custom_minimum_size.x = rect.size.x - 20
+		description.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+		var inspect = landscape_button("Kartı büyüt", details, func(): inspect_card(int(info.id)))
+		inspect.tooltip_text = "Kartın tam metnini aç"
 		for action in selected:
 			var target = str(action.get("target", ""))
 			if not target.begins_with("unit:") and not target.begins_with("hero:"):
 				landscape_button(action_name(action), details, func(): move(action))
 		if not selected.is_empty():
-			landscape_button("İptal", details, func(): selected = []; focus = {}; render())
+			var cancel = landscape_button("İptal", details, func(): selected = []; focus = {}; render())
+			cancel.icon = skin_art("icon_close.png")
+			cancel.expand_icon = true
+			cancel.add_theme_constant_override("icon_max_width", 18)
 	elif state.status != "finished":
 		muted_label("Kart seç veya sahaya sürükle.", details, 11)
 	var energy_row = HBoxContainer.new()

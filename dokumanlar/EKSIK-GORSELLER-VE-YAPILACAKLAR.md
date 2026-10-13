@@ -1,8 +1,12 @@
 # Eksik görseller ve yapılacaklar
 
-Son kod listesi güncellemesi: 2026-10-13 10:50 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
+Son kod listesi güncellemesi: 2026-10-13 09:36 UTC. Görsel eki: 2026-10-13, PR #4 — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/landscape_match.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
 
 ## Yapılanlar
+- 2026-10-13 (Mac, commit): yeni kahramanlar, rozetler, temiz splash ve yerel kod bağlantıları GitHub'a gönderildi.
+- Yerel tamamlamalar (2026-10-13): `header_bar` ve `table_center`; küçük kontrol/lig/tekrar simgeleri; birim hedef halkaları; maçta kahraman çerçevesi; altı kahraman seçeneği; karta göre büyü efektleri ve hasar sayı zemini bağlandı. Sağ sütunda tam kart inceleme düğmesi var. Yükleme ilerlemesi tamamlanan yerel kaynak hazırlığı ve sunucu bağlantı kontrolüne bağlı; sabit 1,6 saniyelik dolum kaldırıldı. Temiz splash ve alt3–5 kahramanlar, üç lig rozeti üretildi.
+- Aralıklı test hatası yeniden üretildi: sürükleme yordamı beş kare beklerken arayüz yenileniyor ve elindeki kart düğümü siliniyordu. Test semantik el indeksi/birim UID'sini saklayıp beklemeden sonra canlı düğümü buluyor. `DESTAN_INTERACTION_STRESS=1` bu araya gerçek yeniden çizim koyarak regresyonu kontrol eder. Oyun, ekran yenilenirken aktif sürüklemeyi iptal etmeyi korur.
+- Mac Godot 4.7.2 / Apple M5 OpenGL kontrolleri: üst/alt çubuk, dört ekran boyutu, 667×375–1280×720 savaş geometrisi, dokunma, stres girdileri, yaşam döngüsü ve eğitim/ödül/paket/tekrar/kurtarma geçti. Görsel kabul örnekleri `native-builds/previews/acceptance/` içinde. Bir ara gerçek hesap izolasyonu kontrolü açık editördeki eşzamanlı kayıt nedeniyle başarısız oldu; son gerçek renderer çalışması bu kontrol dahil geçti.
 - 2026-10-13 10:50 UTC: Yeni ChatGPT yüklemesi/dal yoktu (main hâlâ e336526). `claude/oynanis-duzeltmeleri` (Turu bitir düğmesi / yatay kart büyütme) bu dala birleştirildi. `icon_replay` (Maç kaydı), `icon_league` (Lig maçı), `icon_close` (paket kapat) düğmelere bağlandı (`icon_on` yardımcısı). `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb).
 - 2026-10-13 09:50 UTC: Son saatte yeni ChatGPT yüklemesi/dal yoktu (tüm uzak dallar bu dalda birleşik; `otomatik/saatlik`, `yeni-gorsel-*`, `ogg-ci-dogrulama` yalnızca eski çalışma). Bölüm kartı düğmesine `icon_check.png` (tamamlandı) ve `icon_lock.png` (kilitli) bağlandı. `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb).
 - 2026-10-13 08:45 UTC: `gorsel-kalite/serit-yenileme-20261013` dalı (şeffaf şeritler, `loading_tip_panel.png`) bu dala birleştirildi; `gorsel-kalite/ogg-ci-dogrulama` ve `otomatik/saatlik` dallarında yeni olan şey yalnızca eski `main.gd` çalışmasıydı, kopyalanmadı. `mobile.gd`'ye uygulama içi yükleme ekranı eklendi (`show_loading_screen`): `splash.png` + `loading_bar_frame/fill.png` (1,2 sn dolum) + `loading_tip_panel.png` içinde rastgele ipucu, 1,6 sn sonra solar; test ortamında (`DESTAN_SESSION_DIR` tanımlı) açılmaz. `tests/shots.gd` `0-yukleme` görüntüsü alır. `npm test` 78/78, `test:native` GEÇTİ (Godot 4.7.2, xvfb), yükleme ve ana ekran gözle kontrol edildi.
@@ -20,31 +24,33 @@ Son kod listesi güncellemesi: 2026-10-13 10:50 UTC. Görsel eki: 2026-10-13, PR
 - `.import` dosyaları `.gitignore`'a eklendi. `tests/shots.gd` hesap/sandık ekranlarıyla genişletildi.
 - Önceki kod çalışmasının test kaydı: `npm test` 78/78; `npm run test:native` (Godot 4.7.2 linux, xvfb) GEÇTİ. Güncel `tests/run-native.js`, `ERROR:` / `SCRIPT ERROR` kayıtlarını başarısızlık sayar; eski "resources still in use yok sayılıyor" notu güncel değildir. Önbellek/oynatım temizliği korunur. Yaşam döngüsü kapanış uyarısı hâlâ ayrıdır.
 
-## Hâlâ eksik / yapılacak (kod)
-- [x] Uygulama içi yükleme ekranı bağlandı (süre sabit 1,6 sn; gerçek yükleme ilerlemesine bağlı değil — yapılacak).
-- [ ] `header_bar.png`, `table_center.png` bağlı değil.
-- [ ] Kalan küçük simgeler bağlı değil: `icon_cards/play/story` (`icon_check/lock/close/replay/league` bağlandı), `fx_fire/flood/frost/shield/number_bg` (büyü efektleri kart bazlı eşlenmedi), `gem_*` (eski), `icon_cards/deck/play/story` (alt gezinme soketlerinde kullanılmıyor olabilir, denetle).
-- [ ] Hedef halkası birim kartlarında yok (yalnızca kahraman); kartta dikdörtgen vurgu kullanılıyor.
-- [ ] `hero_player_alt3..5` ve hero_ring maç içi çerçeve olarak kullanılmıyor.
-- [ ] Gerçek ses/müzik (aşağıda).
-- [ ] `tests/native-interaction.gd` bazen (nadiren) "freed instance" ile düşüyor; yeniden çalışınca geçiyor — zamanlama kaynaklı, incelenmeli. PR #4'ün başarılı çalışması bu aralıklı hatanın çözüldüğü anlamına gelmez.
-- [ ] Gerçek cihaz/Mac'te görsel kabul; Linux llvmpipe ekran görüntüleri gözle kontrol edildi.
+## Güncel durum
+- [x] Gerçek hazırlık adımlarına bağlı uygulama yükleme ilerlemesi; bağlantı beklemesi en fazla 8 saniye, başarısızlıkta adres ayarlarına dönüş.
+- [x] `header_bar.png`, `table_center.png` bağlı.
+- [x] `icon_check/close/lock/replay/league` bağlı; `fx_fire/flood/frost/shield/number_bg` kullanılıyor. `icon_cards/deck/play/story` dört gezinme soketinde zaten bağlı ve Mac görüntülerinde kontrol edildi. Eski `gem_*` yerine mevcut kristal/stat varlıkları korunuyor; eski varlıkları sırf kullanılmaları için eklemek gerekmiyor.
+- [x] Birim kartlarında hedef halkası; kahramanlarda nabız ve maç içi `hero_ring`.
+- [x] Alt3–5 kahramanlar ve oturuma kaydedilen altı seçenekli seçim; dar ekranda satırlara bölünür.
+- [x] Stale kart referansı regresyonu ve düğme yeniden giydirme callback düzeltmesi.
+- [x] Mac gerçek renderer görsel kontrolü ve tam test akışı.
+- [ ] Fiziksel Android cihaz kabulü. Emülatör/masaüstü testi telefon kabulü sayılmaz.
+- [ ] Gerçek enstrüman kayıtları ve müzik; mevcut OGG'ler hâlâ geçici sentezdir.
 
-## Sorunlar
-- `splash.png` içinde iki boş çubuk/çerçeve çizimi gömülü; yükleme ekranında kendi çubuğumuzla çakışıyor (aşağıdaki tabloda temiz splash isteniyor).
-- Yatay maç düzeninde seçili kart bilgi paneli (sağ sütun) uzun efekt metninde dar kalabilir.
-- [x] `lane*.png` opak/dikdörtgen dış kenar sorunu için yeni şeffaf şeritler ve kesit bağlantısı hazırlandı; sınırlı yatay/dikey ekran kontrolü yapıldı. Fiziksel cihaz kabulü ayrıca gerekli.
+## Görsel üretimleri
+Orijinal 114'lük paket manifesti korunmuştur. Yeni ekler `native/skin/generated-manifest.json` içinde boyut, kaynak ve SHA256 ile kayıtlıdır.
 
-## Ek görsel üretimleri (ChatGPT için)
-Orijinal paket dosyalarında eksik yok (114/114 mevcut). İpucu paneli bu pakete ek dosyadır; eski 114'lük manifest sayımı değiştirilmedi.
-
-| Dosya | Boyut | Durum / kısa prompt |
+| Dosya | Boyut | Durum |
 |---|---|---|
-| `hero_player_alt3.png` .. `alt5.png` | 512x512 | YAPILACAK: Mevcut kahramanla aynı stil ve altın çerçeve; farklı yaş/cinsiyet/kıyafetle Anadolu kahramanı; şeffaf dış. |
-| `lane.png` / `lane_enemy.png` | 1024x400 | GÖRSEL YENİLENDİ: Ahşap-altın şerit, şeffaf yuvarlak dış kenar, koyu-mat ve sade merkez. |
-| `loading_tip_panel.png` | 900x160 | DOSYA HAZIR: Yazısız ahşap-altın panel, şeffaf dış. Yükleme akışı BAĞLI DEĞİL. |
-| `splash.png` (temiz) | 1242x2688 | YAPILACAK: Mevcut splash'ın aynısı (elma, kahraman, minareler, gün batımı) ama alt kısımdaki çubuk/çerçeve çizimleri OLMADAN; alt %25 koyu sade zemin. |
-| `badge_rank_bronze/silver/gold.png` | 128x128 | YAPILACAK: Türk motifli rütbe rozeti, şeffaf arka plan. |
+| `hero_player_alt3.png` .. `alt5.png` | 512×512 | Üretildi, şeffaf dış; hesap seçicisine ve maç portresine bağlı. |
+| `splash_clean.png` | 1242×2688 | Gömülü iki çubuk temizlendi; motor ve uygulama yükleme ekranı bu dosyayı kullanır. Eski `splash.png` korunur. |
+| `badge_rank_bronze/silver/gold.png` | 128×128 | Üretildi, şeffaf; mevcut sunucu MMR'sinden gösterilir. Lig kuralları değiştirilmedi. |
+| `lane.png` / `lane_enemy.png` | 1024×400 | Önceki şeffaf şeritler korunur. |
+| `loading_tip_panel.png` | 900×160 | Gerçek hazırlık ekranına bağlı. |
+
+## Paket ve Web doğrulaması
+Güncel kaynaklardan Web ve Android geliştirme APK'si yeniden üretildi; APK v2/v3 imzası doğrulandı. Yeni Web paketinde gerçek sürükleme saldırısı ile rakip canı 19→17 oldu; tarayıcı hata günlüğü boştu. Görüntü `native-builds/previews/mobile-web-final.jpg` içinde. Son APK'nin emülatör kurulum denemesi cihaz bağlantısı beklerken 90 saniyede zaman aşımına uğradı; yeni paketin Android açılış testi tamamlanmış sayılmaz. Paket içine HTTPS adresi henüz eklenmedi.
+
+## Kalan sınırlamalar
+Uzun kart metni sağ sütunda kaydırılır; “Kartı büyüt” tam açıklamayı açar. Yükleme ilerlemesi yerel hazırlık adımlarının tamamlanmasını ölçer; ağ indirmesinin bayt ilerlemesi değildir. Godot Web motorunun ilk indirme ekranı ayrıca bulunur. Fiziksel telefon, çentik/ısı/batarya ve ses miks kabulü bekler.
 
 ## Gerçek ses/müzik (eksik)
 Geçici sesler yerine gerçek kayıt: `music_menu.ogg`, `music_battle.ogg` (96 sn, döngüsel; ney/saz/zurna), efektler `click, card_flip, play_card, attack, hit, spell, heal, pack_open, turn_start, end_turn, victory, defeat`. Prompt: "Anadolu ezgili, ney ve bağlama ağırlıklı, 96 sn kesintisiz döngülü menü müziği; ikinci parça savaş için davul/zurna ile tempolu."
