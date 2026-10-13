@@ -189,7 +189,10 @@ func update_nav() -> void:
 	if not is_instance_valid(chrome_navigation):
 		super.update_nav()
 		return
-	var active = "collection" if gallery_open else "deck" if view == "deck" else "story" if view == "story" else "play"
+	var active = "play"
+	for key in TAB_VIEWS:
+		if TAB_VIEWS[key] == view and key != "play" and not gallery_open:
+			active = key
 	for key in nav_buttons:
 		var selected_tab = key == active
 		nav_buttons[key].set_meta("selected_tab", selected_tab)

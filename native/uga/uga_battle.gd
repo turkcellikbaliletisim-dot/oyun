@@ -25,6 +25,10 @@ var end_delay: float = -1.0
 var ended: bool = false
 var paused: bool = false
 var cur_off: Vector2 = Vector2.ZERO
+var tutorial: bool = false
+var tut_step: int = 0
+var tut_t: float = 0.0
+var tut_pair: Array = []
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -215,6 +219,9 @@ func consume_events() -> void:
 					shake = 0.6
 					show_banner("BOSS YENİLDİ!", "banner_victory")
 			"merge":
+				if tutorial and tut_step <= 2:
+					tut_step = 3
+					tut_t = 3.0
 				flashes.append({"slot": e.slot, "age": 0.0})
 				sound("spell")
 			"summon":
@@ -266,12 +273,24 @@ func advance_fx(delta: float) -> void:
 	banner_t = maxf(0.0, banner_t - delta)
 	message_t = maxf(0.0, message_t - delta)
 	hit_sound_t = maxf(0.0, hit_sound_t - delta)
+	tut_t = maxf(0.0, tut_t - delta)
+	if tutorial and tut_step == 0 and sim.stats.summons >= 2:
+		tut_step = 1
+	if tutorial and tut_step == 1:
+		for a in range(sim.slots.size()):
+			for b in range(a + 1, sim.slots.size()):
+				if sim.can_merge(a, b):
+					tut_step = 2
+					tut_pair = [a, b]
 
 # ---------- çizim ----------
 
 func _notification(what: int) -> void:
 	if what == NOTIFICATION_RESIZED:
 		layout()
+	elif what == NOTIFICATION_WM_GO_BACK_REQUEST or what == NOTIFICATION_APPLICATION_PAUSED or what == NOTIFICATION_APPLICATION_FOCUS_OUT:
+		if sim != null and not sim.over:
+			paused = true
 
 func text(pos: Vector2, s: String, sz: int, col: Color, align: int = HORIZONTAL_ALIGNMENT_LEFT, width: float = -1, f: Font = null) -> void:
 	var use = f if f != null else font
@@ -538,11 +557,40 @@ func draw_overlays() -> void:
 		draw_rect(ir, STAR_COLORS[int(c.s) - 1], false, 2.0)
 		text(ir.position + Vector2(10, 22), "%s  %s" % [h.name, "★".repeat(int(c.s))], 15, Color("ffe9b0"))
 		text(ir.position + Vector2(10, 44), "%s · hasar %d" % [h.text, int(round(sim.hero_damage(info_slot)))], 12, Color("cfd8de"))
+	if tutorial and not paused:
+		draw_tutorial()
 	if paused:
 		draw_rect(Rect2(Vector2.ZERO, size), Color(0, 0, 0, 0.6))
 		text(Vector2(0, size.y * 0.4), "DURAKLATILDI", 28, Color("ddbf7e"), HORIZONTAL_ALIGNMENT_CENTER, size.x, title_font)
 		button_rect(Rect2(size.x / 2 - 90, size.y * 0.46, 180, 48), "Devam et", true, 16)
 		button_rect(Rect2(size.x / 2 - 90, size.y * 0.46 + 60, 180, 48), "Koşuyu bitir", false, 16)
+
+func hint(r: Rect2, msg: String) -> void:
+	var pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 180.0)
+	draw_rect(r.grow(4 + pulse * 4), Color(1, 0.88, 0.4, 0.5 + pulse * 0.4), false, 3.0)
+	var box_r = Rect2(16, r_field.end.y - 70, size.x - 32, 56)
+	draw_rect(box_r, Color(0.03, 0.05, 0.08, 0.92))
+	draw_rect(box_r, Color("ddbf7e"), false, 2.0)
+	text(Vector2(box_r.position.x + 10, box_r.position.y + 24), msg.get_slice("\n", 0), 15, Color("ffe9b0"), HORIZONTAL_ALIGNMENT_CENTER, box_r.size.x - 20)
+	if msg.get_slice_count("\n") > 1:
+		text(Vector2(box_r.position.x + 10, box_r.position.y + 45), msg.get_slice("\n", 1), 12, Color("cfd8de"), HORIZONTAL_ALIGNMENT_CENTER, box_r.size.x - 20)
+
+func draw_tutorial() -> void:
+	match tut_step:
+		0:
+			hint(r_summon, "ÇAĞIR'a dokun: rastgele bir kahraman gelir\nAltınla kahraman çağır, düşmanlara kendileri saldırır")
+		1:
+			hint(r_summon, "Biraz daha çağır\nAynı kahramandan iki tane olunca birleştirebilirsin")
+		2:
+			if tut_pair.size() == 2 and sim.can_merge(tut_pair[0], tut_pair[1]):
+				hint(slot_rects[tut_pair[0]].merge(slot_rects[tut_pair[1]]), "Aynı iki kartı üst üste sürükle!\nBirleşince 1 yıldız artar ve rastgele bir kahramana dönüşür")
+			else:
+				tut_step = 1
+		3:
+			if tut_t > 0.0:
+				hint(r_board, "Harika! Yıldız arttıkça güç katlanır\nİksirler (solda) zor anlarda hayat kurtarır")
+			else:
+				tut_step = 4
 
 # ---------- girdi ----------
 

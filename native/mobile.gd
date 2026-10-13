@@ -297,7 +297,7 @@ func build_shell() -> void:
 	nav_bar = HBoxContainer.new()
 	nav_bar.add_theme_constant_override("separation", 0)
 	layout.add_child(nav_bar)
-	for entry in [["play", "Oyna", "play"], ["story", "Yolculuk", "story"], ["collection", "Kartlar", "cards"], ["deck", "Destem", "deck"]]:
+	for entry in [["play", "Oyna", "play"], ["story", "Kahraman", "story"], ["collection", "Sandık", "cards"], ["deck", "Totem", "deck"]]:
 		var nav = Button.new()
 		nav.custom_minimum_size = Vector2(0, 66)
 		nav.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -348,18 +348,23 @@ func heading(text: String, parent: Node, size: int = 22) -> Label:
 		title.add_theme_font_override("font", portrait_font)
 	return title
 
+const TAB_VIEWS = {"play": "lobby", "story": "uga_heroes", "collection": "uga_chests", "deck": "uga_totems"}
+
 func open_tab(tab: String) -> void:
 	if busy:
 		return
-	gallery_open = tab == "collection"
-	view = "deck" if tab == "deck" else "story" if tab == "story" else "merge" if tab == "merge" else "lobby"
+	gallery_open = false
+	view = TAB_VIEWS.get(tab, tab if tab in ["merge", "duel", "uga_missions", "uga_rebirth", "uga_result"] else "lobby")
 	selected = []
 	focus = {}
 	scroll.scroll_vertical = 0
 	render()
 
 func update_nav() -> void:
-	var active = "collection" if gallery_open else "deck" if view == "deck" else "story" if view == "story" else "play"
+	var active = "play"
+	for key in TAB_VIEWS:
+		if TAB_VIEWS[key] == view and key != "play":
+			active = key
 	for key in nav_buttons:
 		var on = key == active
 		var style = box(Color("263b43") if on else Color("111e27"), GOLD if on else Color("293741"), 1, 4, 3)

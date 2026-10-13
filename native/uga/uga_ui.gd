@@ -364,6 +364,7 @@ func start_run(world: int) -> void:
 	battle = Battle.new()
 	battle.setup(sim, app.skin_art, app.get_theme_default_font(), app.portrait_font)
 	battle.sfx = func(name: String) -> AudioStream: return null if app.muted else app.sfx_stream(name)
+	battle.tutorial = not bool(meta.p.tutorial)
 	battle.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	battle.z_index = 50
 	app.add_child(battle)
@@ -373,6 +374,7 @@ func start_run(world: int) -> void:
 
 func on_finished(result: Dictionary) -> void:
 	last_result = result
+	meta.p.tutorial = true
 	last_reward = meta.finish_run(result)
 	if is_instance_valid(battle):
 		battle.queue_free()
