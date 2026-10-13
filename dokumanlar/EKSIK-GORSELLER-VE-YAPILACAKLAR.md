@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-13 02:50 UTC (7. saatlik çalışma; önceki: 01:50, 00:50, 23:55, 22:45, 21:45, 20:40 UTC) (dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
+Son güncelleme: 2026-10-13 03:50 UTC (8. saatlik çalışma; önceki: 02:50, 01:50, 00:50, 23:55, 22:45, 21:45, 20:40 UTC) (dal: `otomatik/saatlik`). Kaynak: GitHub `main` (e336526). Mac'teki ~/Desktop/oyun bu çalışmada erişilebilir değildi.
 
 ## Yapılanlar
+- 2026-10-13 03:50 UTC: main ve ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlama (`native/main.gd`):** lobide bölüm seçiciye `chapter_NN.png` önizleme görseli (seçim değişince güncellenir); `integration.gd` skin testine chapter_01/10 eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'teki ~/Desktop/oyun bu çalışmada da erişilemedi.
 - 2026-10-13 02:50 UTC: main ve ChatGPT dallarında yeni commit yok. **Yeni bağlamalar (`native/main.gd`):** maç ekranında `portrait()` yardımcısı; rakip portresi (bölüm maçında `enemy_NN.png`, yoksa `hero_foe.png`), oyuncu `hero_player.png`, maç sonunda `result_victory/defeat.png`. `integration.gd` skin testine 6 dosya eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Ekran görüntüsüyle doğrulama Mac'te hâlâ gerekli.
 - 2026-10-13 01:50 UTC: main ve tüm ChatGPT dallarında yeni commit yok (main e336526). **Yeni bağlamalar (`native/main.gd`):** paket açılış animasyonu `show_pack_reveal()` (chest_closed sallanır → chest_open + `pack_reveal_burst.png`, tıkla/otomatik kapanır); lobide `scene_play.png`, koleksiyonda `scene_chest.png` banner. `integration.gd` testi genişletildi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2). Mac'te ekran görüntüsüyle görsel doğrulama hâlâ gerekli.
 - 2026-10-13 00:50 UTC: main ve ChatGPT dallarında (gorsel-kalite/*) yeni commit yok; hepsi zaten dalda. **Yeni bağlamalar (`native/main.gd`):** `toast_banner.png` (bildirim şeridi, 9-slice 65/43), `tooltip_panel.png` (TooltipPanel teması, 60/40 tahmini kenar), `target_ring.png` ("HEDEF SEÇ" başlığında simge). `integration.gd` skin yükleme testine toast/tooltip/target_ring/drag_arrow eklendi. `npm test` 74/74, `npm run test:native` GEÇTİ (Godot 4.7.2).
@@ -30,7 +31,7 @@ Son güncelleme: 2026-10-13 02:50 UTC (7. saatlik çalışma; önceki: 01:50, 00
 - [ ] Hedef halkası kısmen bağlandı (başlıkta simge); asıl hedef birimlerin üstüne halka ve `drag_arrow.png` sürükleme oku (sürükle-bırak yok, yapılmalı).
 - [ ] Alt gezinme: `nav_bar.png`, `nav_active.png`; tur butonu `end_turn_ready/wait.png`; ipucu için ``tooltip_panel.png` ve `toast_banner.png` bağlandı (kalan: nav_bar/nav_active; alt gezinme çubuğu henüz yok).
 - [ ] Kart çerçeveleri `frame_unit/spell/trap/legend.png`, `gem_*`, `icon_type_*`, `fx_*` efektleri.
-- [ ] Oyuncu portreleri: (maçta hero_player/hero_foe/enemy_NN bağlandı) kalan: `hero_player_alt1/alt2.png` seçici, `hero_ring.png` çerçeve, bölüm `chapter_01..10` (bölüm seçiminde).
+- [ ] Oyuncu portreleri: (maçta hero_player/hero_foe/enemy_NN bağlandı) kalan: `hero_player_alt1/alt2.png` seçici, `hero_ring.png` çerçeve, bölüm `chapter_01..10` (lobide bölüm seçiciye bağlandı; hikâye giriş ekranı/`scene_story` hâlâ yok).
 - [ ] Ses: `audio/*.ogg` için `AudioStreamPlayer` bağlantısı (`muted` bayrağı mevcut), müzik döngüsü.
 - [ ] `integration.gd` içine skin dosyalarının yüklenebildiğini doğrulayan test ekle.
 

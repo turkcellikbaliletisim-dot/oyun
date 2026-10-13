@@ -420,6 +420,18 @@ func render_lobby() -> void:
 		chapter_select.add_item("%d. %s" % [chapter.id, chapter.title], int(chapter.id))
 		chapter_select.set_item_disabled(chapter_select.item_count - 1, chapter.id > 1 and not account.profile.chapterRewards.has(chapter.id - 1))
 	actions.add_child(chapter_select)
+	var chapter_preview = TextureRect.new()
+	chapter_preview.custom_minimum_size = Vector2(0, 150)
+	chapter_preview.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	chapter_preview.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	chapter_preview.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	var show_chapter = func(index: int):
+		var tex = skin("chapter_%02d.png" % chapter_select.get_item_id(index))
+		chapter_preview.texture = tex
+		chapter_preview.visible = tex != null
+	chapter_select.item_selected.connect(show_chapter)
+	content.add_child(chapter_preview)
+	show_chapter.call(chapter_select.selected)
 	button("Hikâyeye başla", actions, func(): mutate("solo", {"chapterId": chapter_select.get_selected_id()}))
 	button("Arkadaş odası oluştur", actions, func(): mutate("rooms", {"deck": custom_deck if use_custom else data.decks.starter.cards}))
 	room_code = LineEdit.new()
