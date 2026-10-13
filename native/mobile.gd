@@ -893,6 +893,7 @@ func render_match() -> void:
 	var turn = label("TUR %d" % ceili(float(state.turn) / 2), arena, 12)
 	turn.autowrap_mode = TextServer.AUTOWRAP_OFF
 	turn.position = Vector2(14, 76) if landscape else Vector2(12, height * 0.34)
+	small_icon(arena, "icon_turn.png", turn.position + Vector2(0, -22), 20)
 	turn.add_theme_color_override("font_color", Color("f1dfb7"))
 	turn_clock = label("", arena, 11)
 	turn_clock.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -975,6 +976,7 @@ func render_match() -> void:
 		var deck_count = label(str(mine.deck.size()), arena, 12)
 		deck_count.autowrap_mode = TextServer.AUTOWRAP_OFF
 		deck_count.position = Vector2(46, own_hero_y - 66 + 54)
+		small_icon(arena, "icon_deck_count.png", deck_count.position + Vector2(-18, -2), 16)
 	for child in controls.get_children():
 		if child is Button:
 			child.custom_minimum_size.x = minf(child.custom_minimum_size.x, 180)
@@ -1272,6 +1274,8 @@ func run_effects(state: Dictionary) -> void:
 			flash(hero_nodes[index], Color(1.5, 0.6, 0.5) if delta < 0 else Color(0.6, 1.5, 0.8))
 			burst(hero_nodes[index].get_global_rect().get_center(), Color("ff5a4a") if delta < 0 else Color("7dffb0"), 22)
 			fx_sprite("fx_hit.png" if delta < 0 else "fx_heal.png", hero_nodes[index].get_global_rect().get_center(), 150, 0.5, delta > 0)
+			if delta > 0:
+				fx_sprite("fx_spark.png", hero_nodes[index].get_global_rect().get_center(), 120, 0.6, true)
 			big_hit = big_hit or delta <= -3
 	for uid in current.units:
 		var node = unit_nodes.get(uid)
@@ -1281,6 +1285,7 @@ func run_effects(state: Dictionary) -> void:
 			pop(node)
 			burst(node.get_global_rect().get_center(), Color("ffd479"), 14, 120.0)
 			fx_sprite("fx_summon.png", node.get_global_rect().get_center(), node.size.x * 2.1, 0.6, true)
+			fx_sprite("fx_dust.png", node.get_global_rect().get_center() + Vector2(0, node.size.y * 0.35), node.size.x * 1.6, 0.5)
 		elif current.units[uid].hp != old.units[uid].hp:
 			var change = current.units[uid].hp - old.units[uid].hp
 			float_text(node, ("+%d" if change > 0 else "%d") % change, Color("ff7567") if change < 0 else Color("90e6af"))
@@ -1348,6 +1353,20 @@ func skin_texture_font() -> Font:
 	var body = skin_font("font.ttf", 600)
 	return body if body != null else super.skin_texture_font()
 var number_font: Font
+
+func small_icon(parent: Node, file: String, position: Vector2, size: float) -> TextureRect:
+	var texture = skin_art(file)
+	if texture == null:
+		return null
+	var icon = TextureRect.new()
+	icon.texture = texture
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.position = position
+	icon.size = Vector2(size, size)
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	parent.add_child(icon)
+	return icon
 
 func skin_art(file: String) -> Texture2D:
 	if art_cache.has(file):
@@ -1598,6 +1617,10 @@ func mini_card(id: int, parent: Node, width: float, unit: Dictionary = {}, tap: 
 	outlined(second, Color(0, 0, 0, 0.9), 2)
 	second.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	face.add_child(second)
+	if not narrow and width > 70:
+		var kind_icon = "icon_type_spell.png" if info.type == "spell" else "icon_type_trap.png" if info.type == "trap" else "icon_rarity_%s.png" % info.rarity
+		var icon_size = plate_h * 0.36
+		small_icon(face, kind_icon, Vector2(width * 0.5 - name_width * 0.5, plate_top + plate_h * 0.52), icon_size)
 	if full:
 		var slab = Panel.new()
 		slab.position = Vector2(4, frame_height + 2)
