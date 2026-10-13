@@ -29,6 +29,8 @@ var tutorial: bool = false
 var tut_step: int = 0
 var tut_t: float = 0.0
 var tut_pair: Array = []
+var kick: Dictionary = {}
+var enemy_flash: Dictionary = {}
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -201,7 +203,9 @@ func consume_events() -> void:
 			"shot":
 				var to = path_at(float(e.d)) + Vector2(0, -14)
 				shots.append({"from": slot_center(e.slot), "to": to, "age": 0.0, "proj": e.proj})
+				kick[e.slot] = 0.12
 			"hit":
+				enemy_flash[e.enemy] = 0.1
 				if e.slot >= 0:
 					var pos = path_at(float(e.d))
 					if e.crit:
@@ -274,6 +278,14 @@ func advance_fx(delta: float) -> void:
 	message_t = maxf(0.0, message_t - delta)
 	hit_sound_t = maxf(0.0, hit_sound_t - delta)
 	tut_t = maxf(0.0, tut_t - delta)
+	for k in kick.keys():
+		kick[k] = float(kick[k]) - delta
+		if kick[k] <= 0.0:
+			kick.erase(k)
+	for k in enemy_flash.keys():
+		enemy_flash[k] = float(enemy_flash[k]) - delta
+		if enemy_flash[k] <= 0.0:
+			enemy_flash.erase(k)
 	if tutorial and tut_step == 0 and sim.stats.summons >= 2:
 		tut_step = 1
 	if tutorial and tut_step == 1:
@@ -366,6 +378,8 @@ func draw_field() -> void:
 			mod = Color(0.6, 0.85, 1.0)
 		if float(en.poison_t) > 0.0:
 			mod = mod * Color(0.75, 1.0, 0.7)
+		if enemy_flash.has(en.id):
+			mod = Color(1.6, 1.2, 1.2)
 		var t = tex(en.art)
 		if t != null:
 			draw_fit(t, r, mod)
@@ -443,6 +457,8 @@ func draw_board() -> void:
 		if c == null or i == drag_from:
 			continue
 		var highlight = drag_from >= 0 and sim.can_merge(drag_from, i)
+		if kick.has(i):
+			r = Rect2(r.position - Vector2(0, 4.0 * float(kick[i]) / 0.12), r.size)
 		draw_card(r, c)
 		if highlight:
 			draw_rect(r.grow(2), Color("ffe27a"), false, 3.0)
@@ -486,6 +502,14 @@ func draw_hud() -> void:
 	x = icon_text("icon_wave", Vector2(x, 44), "%d" % alive, Color("cfe8ff"))
 	if sim.boss_timer > 0.0:
 		text(Vector2(x, 44), "⏱ %d" % int(ceil(sim.boss_timer)), 15, Color("ff9a5a"))
+	for en in sim.enemies:
+		if en.boss:
+			var bb = Rect2(10, r_hud.end.y + 6, size.x - 20, 14)
+			draw_rect(bb, Color(0, 0, 0, 0.75))
+			draw_rect(Rect2(bb.position, Vector2(bb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), bb.size.y)), Color("ff7a2a"))
+			draw_rect(bb, Color("ddbf7e"), false, 1.5)
+			text(Vector2(bb.position.x, bb.end.y - 2), str(en.get("boss_name", "BOSS")), 11, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, bb.size.x)
+			break
 	# kale can çubuğu
 	var hb = Rect2(size.x * 0.52, 12, size.x * 0.48 - 56, 8)
 	draw_rect(hb, Color(0, 0, 0, 0.6))
