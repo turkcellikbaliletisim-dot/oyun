@@ -140,6 +140,11 @@ func build_shell() -> void:
 	if grabber != null:
 		for state in ["grabber", "grabber_highlight", "grabber_pressed"]:
 			palette.set_stylebox(state, "VScrollBar", grabber)
+	# tooltip_panel.png: ipucu paneli (600x300); kenar degerleri manifestte yok, 60/40 secildi
+	var tip = skin_box("tooltip_panel.png", 60, 40, 16, 10)
+	if tip != null:
+		palette.set_stylebox("panel", "TooltipPanel", tip)
+		palette.set_color("font_color", "TooltipLabel", Color("f1dfb2"))
 	palette.set_color("font_color", "LineEdit", Color("f1dfb2"))
 	palette.set_color("font_color", "Button", Color("f1dfb2"))
 	palette.set_color("font_disabled_color", "Button", Color("829093"))
@@ -176,7 +181,15 @@ func build_shell() -> void:
 	address.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	network.add_child(address)
 	button("Bağlan", network, connect_account)
-	notice = label("Sunucu için depo kökünde: npm run online", layout, 16)
+	# toast_banner.png: bildirim seridi, 9-slice [65, 43, 65, 43] (manifest_v2.json)
+	var toast = skin_box("toast_banner.png", 65, 43, 40, 14)
+	var notice_parent: Node = layout
+	if toast != null:
+		var toast_panel = PanelContainer.new()
+		toast_panel.add_theme_stylebox_override("panel", toast)
+		layout.add_child(toast_panel)
+		notice_parent = toast_panel
+	notice = label("Sunucu için depo kökünde: npm run online", notice_parent, 16)
 	var scroll = ScrollContainer.new()
 	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	layout.add_child(scroll)
@@ -565,7 +578,17 @@ func render_match() -> void:
 						turn_button.custom_minimum_size = Vector2(200, 64)
 						skin_button(turn_button, "end_turn_ready.png", 90, 60)
 		if not selected.is_empty():
-			label("HEDEF SEÇ", content, 21)
+			var target_head = HBoxContainer.new()
+			content.add_child(target_head)
+			var ring = skin("target_ring.png")
+			if ring != null:
+				var ring_icon = TextureRect.new()
+				ring_icon.texture = ring
+				ring_icon.custom_minimum_size = Vector2(40, 40)
+				ring_icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				ring_icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+				target_head.add_child(ring_icon)
+			label("HEDEF SEÇ", target_head, 21)
 			var targets = HFlowContainer.new()
 			content.add_child(targets)
 			for action in selected:
