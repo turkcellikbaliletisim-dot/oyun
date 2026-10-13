@@ -38,4 +38,16 @@ func run() -> void:
 	app.view = "lobby"
 	app.render()
 	await shot("6-ayarlar")
+	app.network_panel.get_parent().visible = false
+	app.render_profile()
+	await shot("7-hesap")
+	app.view = "lobby"
+	app.render_social()
+	await shot("5b-arkadas-giris")
+	app.show_collection()
+	app.network_panel.get_parent().visible = false
+	app.show_pack_reveal()
+	await create_timer(0.75).timeout
+	await RenderingServer.frame_post_draw
+	root.get_texture().get_image().save_png("%s/8-sandik.png" % OS.get_environment("DESTAN_SHOT_DIR"))
 	quit(0)

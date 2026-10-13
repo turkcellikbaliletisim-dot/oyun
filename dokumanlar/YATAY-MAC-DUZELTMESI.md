@@ -1,10 +1,15 @@
-# Yatay mac duzeltmesi - 2026-10-13
+# Yatay mac duzeltmesi ve eszamanli dal uzlastirmasi
 
-Baslangic: mobil arayuz abbfe8c, onceki chrome duzeltmesi d5a41c6 (PR #3).
-Onceki renderer ekraninda tur dugmesi dost saha bolgesinin uzerine geliyor ve saha kartlari ekran yuksekliginin sabit %12.5'iyle gereksiz kuculuyordu. Sadece bos saha veya yolculuk ekrani bu sorunu dogrulamaya yetmiyordu.
+Kaynaklar: mobil dal `7b0bf33d30bc0eeae5e758689e912e04b686f55b` ve PR #3 duzeltmesi `928bfdda7e533443c23ca4b0d63b26e208ea9586`.
 
-Bu duzeltme native/landscape_match.gd sunum katmaninda saha, el, kahraman ve komut alanlarini ayirir. PNG'ler yeniden uretilmez; oyun kurallari degistirilmez. Dar alanda el yatay, uzun secenekler kendi komut alaninda dikey kayar. Sonuc penceresi kisa yatay ekrana sigar. Dikey ekran eski renderer ile devam eder.
+Onceki incelemede yatay yolculuk ekraninin dogrulanmasi, yatay mac ekraninin dogrulanmasi degildi. Yeni `native/landscape_match.gd`, skin_chrome -> mobile -> main zincirinde yalniz yatay mac sunumunu duzenler. Kahraman, iki saha seridi, kaydirilabilir el ve komut alani ayridir; sonuc penceresi ekran icinde kalir.
 
-Yeni test: 667x375, 740x360, 844x390, 1280x720. Baslangic eli, 5'e 5 dolu saha, 7 kartlik el, 8 enerji, hedef secimi, rakip turu ve sonuc penceresi. Dolu saha goruntuleri yalniz test fiksturudur; gercek oynanis testi diye sunulmaz. Mevcut dokunma, etkilesim ve server entegrasyon testleri kaldirilmamistir.
+Mobil daldaki eszamanli degisiklikler korunur: ana ekran, tema dokulari, hedef halkasi/ok, paket acilisi, kahraman secici, PNG degisiklikleri, shot araclari ve mevcut kaynak dosyalari. `native/mobile.gd` aynen korunur. Etkin yatay duzen yeni alt siniftadir; dikey duzen mobil daldan gelir.
 
-Durum: degisiklik inceleme dalina hazirlandi. Actions sonuclari ve dogrudan ekran incelemesi tamamlanmadan basarili veya birlestirildi olarak kabul edilmez. Fiziksel iOS/Android testi yapilmadi. main ve otomatik/saatlik dallari bu degisikligin hedefi degildir.
+Iki tarafta degisen test dosyalari uzlastirildi. OGG oynatimi durdurulur; diger dalin doku/font/ses onbellek temizligi de korunur. Test yurutucusunda kaynak-hatasi mesajini yok sayan istisna kullanilmaz; butun ERROR/SCRIPT ERROR kayitlari hata sayilir. Yeni skin/yatay testleri mevcut testlere eklenir.
+
+928bfdd icin GitHub oyun kontrolu 38355630426 ve ekran kontrolu 38355630457 basariliydi. Eszamanli degisikliklerle birlesmis yeni commit ayni kontrollerden yeniden gecmelidir; onceki basari yeni birlesimin onayi degildir. Sonuc kaydi PR #3 aciklamasindadir.
+
+Yatay kontrol: 667x375, 740x360, 844x390, 1280x720; baslangic eli, 5+5 dolu saha/7 kart, hedef secimi, rakip turu ve sonuc. Ozel durumlar yerlesim verisidir; gercek oyun simulasyonu degildir. Sunucu destekli tam oyun ve dokunma testleri ayrica calisir. Fiziksel cihaz testi yapilmadi. Eski atlas kalitesi ve yasam dongusu kapanis uyarisi ayri acik islerdir.
+
+Main ve otomatik/saatlik hedef alinmadi; saatlik gorev ayarlari degistirilmedi. Font ikili dosyasi eklenmedi veya degistirilmedi.
