@@ -870,7 +870,7 @@ func compact_portrait_button(node: Button) -> void:
 	node.add_theme_font_size_override("font_size", 11)
 	node.alignment = HORIZONTAL_ALIGNMENT_CENTER
 	node.clip_text = false
-	node.custom_minimum_size.x = 0
+	node.custom_minimum_size = Vector2(0, 42)
 	node.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 func render_match() -> void:
@@ -911,6 +911,10 @@ func render_match() -> void:
 	var play_w = (width - side - right_col) if landscape else width * 0.9
 	var portrait_size = 58.0 if landscape else clampf(height * 0.14, 40, 92)
 	var hand_width = clampf(height * 0.2, 56, 68) if landscape else clampf(height * 0.22, 56, 96)
+	if not landscape:
+		# Elde 5+ kart varsa hepsi ekrana sığsın (yatay kaydırma gerekmesin).
+		var hand_count = maxi(1, mine.hand.size())
+		hand_width = minf(hand_width, maxf(46.0, (width - 16.0 - 4.0 * (hand_count - 1)) / hand_count))
 	var hand_height = hand_width * 1.34 + 6
 	var hand_top = height - hand_height
 	var foe_hero_at = Vector2((side - portrait_size) / 2, 8) if landscape else Vector2((width - portrait_size) / 2, 2)
@@ -1835,7 +1839,7 @@ func hero(parent: Control, index: int, player: Dictionary, at: Vector2, diameter
 		hero_border.mouse_filter = Control.MOUSE_FILTER_IGNORE
 		hero_border.set_meta("skin_asset", "hero_ring.png")
 	hero_nodes[index] = frame
-	var hp = int(player.hp)
+	var hp = maxi(0, int(player.hp))
 	var gem = clampf(diameter * 0.6, 30, 52)
 	stat_gem(parent, "health", str(hp), at + Vector2(diameter - gem * 0.72, diameter - gem * 0.8), gem, Color.WHITE if hp > 8 else Color(1.0, 0.45, 0.35))
 	var target = selected.filter(func(action): return str(action.get("target", "")) == "hero:" + str(index))
@@ -2148,7 +2152,7 @@ func loading_progress(overlay: Control, progress: float, caption: String) -> voi
 		status.text = caption
 
 func prepare_startup(overlay: Control) -> void:
-	var files = ["frame_warrior.png", "frame_spell.png", "frame_trap.png", "hero_player.png", "hero_foe.png", "lane.png", "lane_enemy.png", "background_land.png", "chest_open.png", "result_victory.png"]
+	var files = ["frame_unit.png", "frame_spell.png", "frame_trap.png", "hero_player.png", "hero_foe.png", "lane.png", "lane_enemy.png", "background_land.png", "chest_open.png", "result_victory.png"]
 	for index in files.size():
 		if not is_instance_valid(overlay):
 			return
