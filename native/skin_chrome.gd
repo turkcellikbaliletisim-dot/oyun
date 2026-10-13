@@ -47,6 +47,11 @@ func build_shell() -> void:
 	install_connection_art()
 	install_navigation_art()
 
+func render() -> void:
+	super.render()
+	refresh_connection_art()
+	sync_navigation_visibility()
+
 func install_background_art() -> void:
 	var texture = skin_art("backdrop.png")
 	if texture == null:
@@ -71,6 +76,13 @@ func install_connection_art() -> void:
 	game_header.add_child(chrome_connection)
 	game_header.move_child(chrome_connection, connection_indicator.get_index())
 	refresh_connection_art()
+	# Observe the existing connection state without adding another API coroutine.
+	# The signal disconnects automatically when this Control is freed.
+	get_tree().process_frame.connect(refresh_connection_if_changed)
+
+func refresh_connection_if_changed() -> void:
+	if is_instance_valid(chrome_connection) and chrome_connection.get_meta("connection_state", null) != connected:
+		refresh_connection_art()
 
 func refresh_connection_art() -> void:
 	if not is_instance_valid(chrome_connection):
@@ -83,15 +95,10 @@ func refresh_connection_art() -> void:
 	chrome_connection.set_meta("skin_asset", file)
 	chrome_connection.set_meta("connection_state", connected)
 	chrome_connection.visible = texture != null
-	# The original label remains a real text fallback, not the visible status UI.
+	# Preserve a text fallback for missing art and an explanation for the icon.
 	connection_indicator.visible = texture == null
 	connection_indicator.text = "Bağlı" if connected else "Bekliyor"
 	connection_indicator.tooltip_text = description
-
-func api(path: String, method: int = HTTPClient.METHOD_GET, body: Dictionary = {}) -> Dictionary:
-	var response = await super.api(path, method, body)
-	refresh_connection_art()
-	return response
 
 func install_navigation_art() -> void:
 	var texture = skin_art("nav_bar.png")
@@ -115,7 +122,7 @@ func install_navigation_art() -> void:
 	var halo_texture: Texture2D = halo_source
 	if halo_source != null:
 		var image = halo_source.get_image()
-		if image != null and not image.get_used_rect().has_area() == false:
+		if image != null and image.get_used_rect().has_area():
 			var centered = AtlasTexture.new()
 			centered.atlas = halo_source
 			centered.region = Rect2(image.get_used_rect())
@@ -157,8 +164,9 @@ func install_navigation_art() -> void:
 	update_nav()
 
 func sync_navigation_visibility() -> void:
-	if is_instance_valid(chrome_navigation) and chrome_navigation.visible != nav_bar.visible:
-		chrome_navigation.visible = nav_bar.visible
+	if is_instance_valid(chrome_navigation) and is_instance_valid(nav_bar):
+		if chrome_navigation.visible != nav_bar.visible:
+			chrome_navigation.visible = nav_bar.visible
 
 func update_nav() -> void:
 	if not is_instance_valid(chrome_navigation):
