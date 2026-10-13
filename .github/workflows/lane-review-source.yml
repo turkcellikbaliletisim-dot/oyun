@@ -1,0 +1,30 @@
+name: Lane source review
+on:
+  push:
+    branches: ['gorsel-kalite/serit-yenileme-20261013']
+    paths: ['.github/workflows/lane-review-source.yml']
+permissions:
+  contents: read
+jobs:
+  sources:
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Package only lane assets and relevant source, never fonts or secrets
+        run: |
+          python3 - <<'PY'
+          import zipfile, subprocess
+          from pathlib import Path
+          names = ['native/skin/lane.png','native/skin/lane_enemy.png','native/skin/background_land.png','native/skin/manifest.json','native/skin/manifest_v2.json','native/data.json','native/mobile.gd','native/landscape_match.gd','native/art_slice.gd','native/main.tscn','native/skin_chrome.gd','tests/run-native.js','tests/native-landscape-match.gd','tests/native-layout.gd','project.godot','dokumanlar/EKSIK-GORSELLER-VE-YAPILACAKLAR.md','dokumanlar/YENI-GORSEL.md','dokumanlar/YENI-GORSEL-2.md','dokumanlar/skin_v2_expected.json','dokumanlar/GORSEL-KALITE-DENETIMI.md','scripts/skin_audit.py']
+          with zipfile.ZipFile('lane-source-review.zip','w',zipfile.ZIP_DEFLATED) as z:
+              z.writestr('source-commit.txt',subprocess.check_output(['git','rev-parse','HEAD']))
+              for name in names:
+                  if Path(name).is_file(): z.write(name,name)
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: lane-source-review
+          path: lane-source-review.zip
+          retention-days: 7
+          if-no-files-found: error
