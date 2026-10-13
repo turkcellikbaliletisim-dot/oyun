@@ -80,6 +80,15 @@ func run() -> void:
 	app.play_sound()
 	check(app.audio.stream != null and (app.audio.stream is AudioStreamOggVorbis or app.audio.stream.data.size() > 1000), "Native sound missing")
 	await create_timer(0.2).timeout
+	# Do not exit while the audio mixer still holds the tested OGG decoder.
+	app.audio.stop()
+	check(not app.audio.playing, "Test sound failed to stop")
+	app.audio.stream = null
+	if is_instance_valid(app.music_player):
+		app.music_player.stop()
+		app.music_player.stream = null
+	app.poll.stop()
+	await create_timer(0.15).timeout
 	app.queue_free()
 	await process_frame
 	await process_frame
