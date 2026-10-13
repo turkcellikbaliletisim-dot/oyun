@@ -39,6 +39,7 @@ func _ready() -> void:
 			custom_deck = saved.duplicate()
 			use_custom = bool(cfg.get_value("preferences", "use_custom", false))
 		sound_button.text = "Ses: kapalı" if muted else "Ses: açık"
+		sound_icon()
 
 # ---------- ses ve müzik (skin/audio) ----------
 const SFX_FILES = {"play": "play_card", "attack": "attack", "hit": "hit", "heal": "heal", "spell": "spell", "turn": "turn_start", "end": "end_turn", "win": "victory", "lose": "defeat", "click": "click", "pack": "pack_open", "flip": "card_flip"}
@@ -108,8 +109,16 @@ func persist_session() -> void:
 	cfg.set_value("preferences", "deck_account", account.get("id", deck_account))
 	cfg.save(SESSION_FILE)
 
+func sound_icon() -> void:
+	var tex = skin_art("icon_sound_off.png" if muted else "icon_sound_on.png")
+	if tex != null and is_instance_valid(sound_button):
+		sound_button.icon = tex
+		sound_button.expand_icon = true
+		sound_button.add_theme_constant_override("icon_max_width", 24)
+
 func toggle_sound() -> void:
 	super.toggle_sound()
+	sound_icon()
 	set_music("music_battle" if (not room.is_empty() and not gallery_open) else "music_menu")
 	play_sound("click")
 	persist_session()
@@ -253,6 +262,7 @@ func build_shell() -> void:
 	var tools = HFlowContainer.new()
 	network_panel.add_child(tools)
 	sound_button = button("Ses: kapalı", tools, toggle_sound)
+	sound_icon()
 	button("Hesabım", tools, func(): network_panel.get_parent().visible = false; render_profile())
 	if OS.get_name() not in ["Android", "iOS"]:
 		button("Yerel sunucu", tools, func(): address.text = "http://127.0.0.1:8080"; connect_account())
@@ -548,6 +558,11 @@ func render_collection() -> void:
 			continue
 		var amount = int(account.profile.inventory.get(str(id), 0)) if not account.is_empty() else 1
 		mini_card(id, grid, width, {}, collection_detail.bind(id), "" if amount else "dim", "×%d" % amount, true)
+	if grid.get_child_count() == 0:
+		var empty = art_slice(content, "empty_collection.png")
+		if empty != null:
+			empty.custom_minimum_size = Vector2(minf(300, content_width()), minf(300, content_width()) * 0.667)
+		label("Bu türde kart yok. Sandık açarak koleksiyonunu büyüt.", content, 14)
 
 func collection_detail(id: int) -> void:
 	var dialog = AcceptDialog.new()
@@ -964,17 +979,16 @@ func render_match() -> void:
 		if child is Button:
 			child.custom_minimum_size.x = minf(child.custom_minimum_size.x, 180)
 	var max_energy = maxi(int(mine.maxEnergy), 1)
-	if skin_art("gem_mana.png") != null:
+	if skin_art("icon_energy_full.png") != null:
 		var crystal_row = HBoxContainer.new()
 		crystal_row.add_theme_constant_override("separation", -2)
 		var crystal_size = 24.0 if landscape else minf(24.0, 120.0 / max_energy)
 		crystal_row.position = Vector2(width - 14 - 22.0 * max_energy, height - 62) if landscape else Vector2(14, own_hero_y + portrait_size * 0.2)
 		arena.add_child(crystal_row)
 		for crystal_index in max_energy:
-			var crystal = art_slice(crystal_row, "gem_mana.png")
+			var full = crystal_index < int(mine.energy)
+			var crystal = art_slice(crystal_row, "icon_energy_full.png" if full else "icon_energy_empty.png")
 			crystal.custom_minimum_size = Vector2(crystal_size, crystal_size)
-			if crystal_index >= int(mine.energy):
-				crystal.modulate = Color(0.35, 0.38, 0.5, 0.75)
 	else:
 		var crystals = label("◆".repeat(int(mine.energy)) + "◇".repeat(maxi(0, int(mine.maxEnergy) - int(mine.energy))), arena, 18)
 		crystals.autowrap_mode = TextServer.AUTOWRAP_OFF
@@ -1727,6 +1741,10 @@ func button(text: String, parent: Node, callback: Callable, disabled: bool = fal
 		return node
 	if text.begins_with("Teslim"):
 		dress_button(node, "button_red.png", Color("fff1e0"), Color.WHITE)
+		if skin_art("icon_surrender.png") != null:
+			node.icon = skin_art("icon_surrender.png")
+			node.expand_icon = true
+			node.add_theme_constant_override("icon_max_width", 22)
 	else:
 		dress_button(node, "button_dark.png", Color("f6e3ae"), Color("fff6d6"))
 	return node

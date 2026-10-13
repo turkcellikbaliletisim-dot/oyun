@@ -1,8 +1,9 @@
 # Eksik görseller ve yapılacaklar
 
-Son güncelleme: 2026-10-13 (UTC) — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
+Son güncelleme: 2026-10-13 06:55 UTC — dal: `claude/mobil-arayuz-skin-v2` (arayüz `native/mobile.gd` + `native/skin_chrome.gd` + `native/art_slice.gd`). Eski `otomatik/saatlik` dalındaki tek dosyalı `main.gd` çalışması esas alınmadı; yalnızca düzeltilmiş PNG'ler (`icon_net_ok/bad.png`, `logo.png`) taşındı.
 
 ## Yapılanlar
+- 2026-10-13 06:55 UTC: Enerji kristalleri `icon_energy_full/empty.png` ile (eski soluk gem_mana kaldırıldı), ses düğmesine `icon_sound_on/off.png`, "Teslim ol" düğmesine `icon_surrender.png`, boş koleksiyon filtresinde `empty_collection.png` bağlandı. Yeni ChatGPT yüklemesi yoktu (main'de yeni commit yok). `npm test` 78/78, `test:native` GEÇTİ, ekran görüntüleri gözle kontrol edildi.
 - 2026-10-13: ChatGPT dalları birleştirildi: `gorsel-kalite/mobil-skin-baglantilari` (skin_chrome.gd: arka plan, ağ rozeti, 4 soketli alt gezinme), `gorsel-ihtiyac-denetimi`, `gorsel-kalite/denetim`. Wi-Fi simgeleri ve `logo.png` yeniden üretilmiş sürümle değiştirildi (ekranda doğrulandı).
 - Yatay maç düzeni yeniden yazıldı: solda kahramanlar + deste + tur sayacı, ortada iki şerit (`lane_enemy/lane.png`) ve el, sağda "Turu bitir" + enerji. Kartlar ~40 → ~60 px, düğme artık şeride binmiyor. Dikeyde "Turu bitir" kahramanın sağına alındı. Rakip turunda `end_turn_wait.png`.
 - Ana ekran: başlıkta `logo_wordmark.png`; alt yarı için "Sandık" ve "Düello" kutuları (`scene_chest/friends.png`, tüm kutu dokunulabilir); yolculuk ilerlemesi `progress_frame/fill.png`.
@@ -15,8 +16,8 @@ Son güncelleme: 2026-10-13 (UTC) — dal: `claude/mobil-arayuz-skin-v2` (arayü
 
 ## Hâlâ eksik / yapılacak (kod)
 - [ ] `loading_bar_frame/fill.png`, `splash` giriş/yükleme ekranı akışı (proje splash'ı hariç uygulama içi yükleme ekranı yok).
-- [ ] `header_bar.png`, `table_center.png`, `empty_collection.png` (boş koleksiyon durumu) bağlı değil.
-- [ ] Kalan küçük simgeler bağlı değil: `icon_check/close/lock/replay/surrender/turn/league/deck_count/energy_full/energy_empty/sound_on/sound_off`, `icon_rarity_*`, `icon_type_*` (denetle), `fx_dust/fire/flood/frost/shield/spark/number_bg` (büyü efektleri kart bazlı eşlenmedi).
+- [ ] `header_bar.png`, `table_center.png` bağlı değil.
+- [ ] Kalan küçük simgeler bağlı değil: `icon_check/close/lock/replay/turn/league/deck_count`, `icon_rarity_*`, `icon_type_*` (denetle), `fx_dust/fire/flood/frost/shield/spark/number_bg` (büyü efektleri kart bazlı eşlenmedi).
 - [ ] Hedef halkası birim kartlarında yok (yalnızca kahraman); kartta dikdörtgen vurgu kullanılıyor.
 - [ ] `hero_player_alt3..5` ve hero_ring maç içi çerçeve olarak kullanılmıyor.
 - [ ] Gerçek ses/müzik (aşağıda).
