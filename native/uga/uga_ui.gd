@@ -519,61 +519,96 @@ func render_result() -> void:
 
 # ---------- kahramanlar ----------
 
+var hero_sel: String = ""
+
 func render_heroes() -> void:
 	var c = app.content
 	back(c, "Kahramanlar")
 	var dp = card_panel(c)
-	txt("Takım: değiştirmek istediğin yuvaya dokun, sonra aşağıdan kahraman seç.", dp, 12, MUTED, true)
+	txt("Takımın · değiştirmek için bir yuvaya dokun", dp, 12, MUTED, true)
 	var cards = row(dp, 5)
 	for i in range(5):
 		var h = meta.p.deck[i]
 		var t = hero_tile(cards, h, 1, 60, i == deck_slot)
 		var idx = i
-		press(t, func(): deck_slot = idx; open("uga_heroes"))
-	var all = D.SUMMON_POOL.duplicate()
-	all.append("ejder_yavrusu")
-	for h in all:
-		var spec = D.HEROES[h]
-		var lv = meta.hero_level(h)
-		var p = card_panel(c, GOLD_C if meta.p.deck.has(h) else Color("6e6042"))
-		var r = row(p, 8)
-		var pic = TextureRect.new()
-		pic.texture = hero_art(h, 3)
-		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-		pic.custom_minimum_size = Vector2(64, 64)
-		if lv <= 0:
-			pic.modulate = Color(0.3, 0.3, 0.3)
-		r.add_child(pic)
-		var v = VBoxContainer.new()
-		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		v.add_theme_constant_override("separation", 2)
-		r.add_child(v)
-		txt("%s%s" % [spec.name, ("  · Sv %d" % lv) if lv > 0 else ""], v, 15, GOLD_C if lv > 0 else MUTED)
-		txt(str(spec.text), v, 12, INK, true)
-		var reach = float(spec.get("reach", 0.2))
-		txt("Menzil: " + ("kısa (kaleye yakın)" if reach > 0.3 else "uzun" if reach < 0.15 else "orta"), v, 11, MUTED)
-		if h == "ejder_yavrusu":
-			txt("Yalnızca 4★ ve üstü birleştirmede çıkar.", v, 11, MUTED, true)
-			continue
-		if lv <= 0:
-			txt("Kilitli · sandıklardan açılır", v, 12, MUTED)
-			continue
-		var cost = meta.upgrade_cost(h)
-		var sh = int(meta.p.shards.get(h, 0))
-		txt("Parça %d/%d · %d altın" % [sh, cost.shards, cost.gold], v, 12, Color("cfe8ff"))
+		press(t, func(): deck_slot = idx; hero_sel = meta.p.deck[idx]; open("uga_heroes"))
+	if hero_sel == "" or not D.HEROES.has(hero_sel):
+		hero_sel = meta.p.deck[deck_slot]
+	# seçili kahraman ayrıntısı
+	var spec = D.HEROES[hero_sel]
+	var lv = meta.hero_level(hero_sel)
+	var p = card_panel(c, GOLD_C)
+	var r = row(p, 10)
+	var pic = TextureRect.new()
+	pic.texture = hero_art(hero_sel, 3)
+	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	pic.custom_minimum_size = Vector2(110, 120)
+	if lv <= 0 and hero_sel != "ejder_yavrusu":
+		pic.modulate = Color(0.35, 0.35, 0.35)
+	r.add_child(pic)
+	var v = VBoxContainer.new()
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	v.add_theme_constant_override("separation", 3)
+	r.add_child(v)
+	title(str(spec.name), v, 20)
+	txt(("Seviye %d / %d" % [lv, Meta.MAX_HERO_LEVEL]) if lv > 0 else "Kilitli", v, 13, Color("ffd25a") if lv > 0 else MUTED)
+	txt(str(spec.text), v, 12, INK, true)
+	var reach = float(spec.get("reach", 0.2))
+	txt("Menzil: " + ("kısa (kaleye yakın)" if reach > 0.3 else "uzun" if reach < 0.15 else "orta"), v, 11, MUTED)
+	if hero_sel == "ejder_yavrusu":
+		txt("Yalnızca 4★ ve üstü birleştirmede rastgele çıkar.", p, 12, MUTED, true)
+	elif lv <= 0:
+		txt("Sandıklardan açılır (nadir sandık %35, destansı sandık kesin).", p, 12, MUTED, true)
+	else:
+		var cost = meta.upgrade_cost(hero_sel)
+		var sh = int(meta.p.shards.get(hero_sel, 0))
+		var bar = ProgressBar.new()
+		bar.max_value = cost.shards
+		bar.value = mini(sh, cost.shards)
+		bar.show_percentage = false
+		bar.custom_minimum_size = Vector2(0, 12)
+		bar.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 6, 0))
+		bar.add_theme_stylebox_override("fill", app.box(Color("54e0ff"), Color(0, 0, 0, 0), 0, 6, 0))
+		p.add_child(bar)
+		txt("Parça %d/%d · %d altın" % [sh, cost.shards, cost.gold], p, 12, Color("cfe8ff"))
 		var br = row(p, 8)
-		var hh = h
-		btn("Yükselt", br, func():
+		var hh = hero_sel
+		btn("YÜKSELT", br, func():
 			if meta.upgrade_hero(hh):
 				toast("%s seviye %d!" % [spec.name, meta.hero_level(hh)])
 			else:
 				toast(meta.err, false)
-			open("uga_heroes"), lv >= Meta.MAX_HERO_LEVEL or sh < cost.shards or int(meta.p.gold) < cost.gold)
-		btn("Takımda" if meta.p.deck.has(h) else "Takıma al", br, func():
+			open("uga_heroes"), lv >= Meta.MAX_HERO_LEVEL or sh < cost.shards or int(meta.p.gold) < cost.gold, true, 46)
+		btn("Takımda" if meta.p.deck.has(hh) else "Takıma al", br, func():
 			if meta.set_deck_slot(deck_slot, hh):
 				toast("%s takımda" % spec.name)
-			open("uga_heroes"), meta.p.deck.has(h))
+			open("uga_heroes"), meta.p.deck.has(hh), false, 46)
+	# tüm kahramanlar ızgarası
+	title("Koleksiyon", c, 18)
+	var grid = GridContainer.new()
+	grid.columns = 4
+	grid.add_theme_constant_override("h_separation", 6)
+	grid.add_theme_constant_override("v_separation", 6)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	c.add_child(grid)
+	var all = D.SUMMON_POOL.duplicate()
+	all.append("ejder_yavrusu")
+	for h in all:
+		var hl = meta.hero_level(h)
+		var t = hero_tile(grid, h, mini(6, maxi(1, hl / 3 + 1)), 74, h == hero_sel)
+		var holder_v = t.get_child(0)
+		var info = txt(("Sv %d" % hl) if hl > 0 else ("Efsane" if h == "ejder_yavrusu" else "Kilitli"), holder_v, 10, Color("ffd25a") if hl > 0 else MUTED)
+		info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if hl <= 0 and h != "ejder_yavrusu":
+			holder_v.get_child(0).modulate = Color(0.3, 0.3, 0.3)
+		if hl > 0:
+			var cost = meta.upgrade_cost(h)
+			if int(meta.p.shards.get(h, 0)) >= cost.shards and int(meta.p.gold) >= cost.gold and hl < Meta.MAX_HERO_LEVEL:
+				var up = txt("▲ yükselt", holder_v, 9, Color("7dff9a"))
+				up.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var hh2 = h
+		press(t, func(): hero_sel = hh2; open("uga_heroes"))
 
 # ---------- totemler ----------
 
