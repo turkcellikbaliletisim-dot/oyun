@@ -66,3 +66,7 @@ Sıradaki: sunucuyu yayına almak, oyuncu adı, mağaza/IAP (isteğe bağlı), d
 - 4. parti görseller: dünya savaş arka planları (aynı yol), amblemler, başlık şeritleri, efektler.
 - Dokunma düzeltmesi: savaş ekranında bir dokunuş artık iki kez sayılmıyor (testli).
 - Android 0.4.0 (kod 4), dikey ekran. APK: Mac'te `oyun/DestanDiyarlari-ugacha.apk` ve Masaüstü.
+
+### 0.6.0 (2026-10-14)
+- Kare kare animasyon: 12 kahramanın 4 karelik saldırı şeridi (`attack_<kahraman>.png`), düşman yürüme şeritleri (`walk_<tür>.png`, kurt eklendi). ChatGPT 5. parti.
+- Menüler sahne düzenine geçti: Totem sunağı (2x2 totem heykeli), Sandık hazinesi (raf + 4 karelik açılma animasyonu + yeni kahraman gösterimi), Görev panosu (parşömen notlar).
