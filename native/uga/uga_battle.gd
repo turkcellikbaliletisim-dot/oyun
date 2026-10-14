@@ -128,6 +128,8 @@ func tex(name: String) -> Texture2D:
 # ---------- yerleşim ----------
 
 func layout() -> void:
+	if sim == null:
+		return
 	var w = size.x
 	var h = size.y
 	r_hud = Rect2(0, 0, w, 54)
@@ -262,7 +264,7 @@ func consume_events() -> void:
 				sound("spell")
 				buzz(25)
 			"summon":
-				if tex("summon_fx") != null:
+				if tex("summon_fx") != null and e.slot < slot_rects.size():
 					fx.append({"rect": slot_rects[e.slot].grow(10), "tex": "summon_fx", "age": 0.0, "dur": 0.45})
 				else:
 					flashes.append({"slot": e.slot, "age": 0.25})
@@ -733,15 +735,17 @@ func _gui_input(event: InputEvent) -> void:
 	var pressed = false
 	var released = false
 	var motion = false
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	# Yalnızca dokunma olayları: masaüstünde fare dokunmaya çevrilir
+	# (emulate_touch_from_mouse), telefonda dokunma fareye de çevrilir;
+	# ikisini birden işlemek her dokunuşu iki kez sayardı.
+	if event is InputEventMouse:
+		accept_event()
+		return
+	if event is InputEventScreenTouch and event.index == 0:
 		pos = event.position
 		pressed = event.pressed
 		released = not event.pressed
-	elif event is InputEventScreenTouch:
-		pos = event.position
-		pressed = event.pressed
-		released = not event.pressed
-	elif event is InputEventMouseMotion or event is InputEventScreenDrag:
+	elif event is InputEventScreenDrag and event.index == 0:
 		pos = event.position
 		motion = true
 	else:

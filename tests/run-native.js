@@ -36,6 +36,7 @@ try{
   if(!await godot(['--headless','--path','.','--script','tests/offline-parity.gd','--',join(dir,'parity.json')]))throw new Error('Offline engine parity failed');
   if(!await godot(['--headless','--path','.','--script','tests/uga-sim.gd']))throw new Error('UGA sim failed');
   if(!await godot(['--headless','--path','.','--script','tests/uga-meta.gd']))throw new Error('UGA meta failed');
+  if(!await godot(['--headless','--path','.','--script','tests/uga-input.gd']))throw new Error('UGA input failed');
   if(!await godot(['--headless','--path','.','--script','tests/merge-engine.gd','--','--no-connect']))throw new Error('Merge engine failed');
   if(!await godot(['--headless','--path','.','--script','tests/native-offline.gd','--','--no-connect']))throw new Error('Offline mode failed');
   if(await realSession()!==beforeSession)throw new Error('Native test changed real player session');
