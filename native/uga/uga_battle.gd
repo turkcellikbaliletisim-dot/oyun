@@ -232,6 +232,7 @@ func consume_events() -> void:
 					shake = 0.6
 					show_banner("BOSS YENİLDİ!", "banner_victory")
 			"merge":
+				floats.append({"pos": slot_center(e.slot) + Vector2(0, -10), "text": "★".repeat(int(e.stars)), "color": STAR_COLORS[int(e.stars) - 1].lightened(0.3), "age": 0.0})
 				if tutorial and tut_step <= 2:
 					tut_step = 3
 					tut_t = 3.0
@@ -433,6 +434,11 @@ func draw_field() -> void:
 func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
 	var stars = int(c.s)
 	var col = STAR_COLORS[stars - 1]
+	if stars >= 4:
+		var glow = tex(["glow_rare", "glow_epic", "glow_legendary"][stars - 4])
+		if glow != null:
+			var pulse = 0.75 + 0.25 * sin(Time.get_ticks_msec() / 260.0)
+			draw_texture_rect(glow, r.grow(r.size.x * 0.18), false, Color(1, 1, 1, alpha * pulse))
 	draw_rect(r, Color(0.05, 0.08, 0.12, 0.95 * alpha))
 	var h = D.HEROES[c.h]
 	var art_name = str(h.art)
