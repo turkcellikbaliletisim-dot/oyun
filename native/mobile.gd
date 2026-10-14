@@ -532,14 +532,16 @@ func render_lobby() -> void:
 	cards_holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	more.add_child(cards_holder)
 	var cards_tile = feature(cards_holder, -1, "Sandık", "Kartlarını topla.", 140, "scene_chest.png")
-	tile_press(cards_tile, func(): open_tab("collection"))
+	tile_press(cards_tile, show_collection)
 	var friends_holder = VBoxContainer.new()
 	friends_holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	more.add_child(friends_holder)
 	var friends_tile = feature(friends_holder, 2, "Düello", "Oda kur, kodu paylaş.", 140, "scene_friends.png")
 	tile_press(friends_tile, render_social)
-	var merge_tile = feature(content, 4, "Birleştir", "Birlikleri birleştir, dalgaları geç. İnternetsiz oynanır.", 120)
-	tile_press(merge_tile, func(): open_tab("merge"))
+	var deck_tile = feature(content, 4, "Destem", "Kart destesini düzenle.", 110)
+	tile_press(deck_tile, func(): gallery_open = false; view = "deck"; render())
+	var home_tile = feature(content, 5, "‹ UGACHA ana sayfası", "Kahraman çağır, birleştir, dalgaları geç.", 100)
+	tile_press(home_tile, func(): open_tab("play"))
 
 var merge_pick: int = -1
 var merge_speed: int = 1
