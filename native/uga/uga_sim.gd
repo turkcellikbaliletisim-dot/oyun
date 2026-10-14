@@ -222,7 +222,9 @@ func is_boss_wave(n: int) -> bool:
 	return n % 10 == 0
 
 func wave_hp(n: int) -> float:
-	return 44.0 * pow(1.135, n - 1) * float(D.WORLDS[world].hp)
+	# dünya zorluğu ilk dalgalarda yavaşça devreye girer (erken dalgada ani duvar olmasın)
+	var wm = lerpf(minf(float(D.WORLDS[world].hp), 1.6 + world * 0.5), float(D.WORLDS[world].hp), minf(1.0, float(n) / 15.0))
+	return 44.0 * pow(1.135, n - 1) * wm
 
 func start_wave() -> void:
 	wave += 1
@@ -245,7 +247,7 @@ func start_wave() -> void:
 
 func enemy_spec(kind: String, n: int) -> Dictionary:
 	var e = D.ENEMIES[kind]
-	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp) * 0.2, "speed": float(e.speed) * 1.15 * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
+	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp) * 0.24, "speed": float(e.speed) * 1.15 * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
 
 func spawn(spec: Dictionary) -> void:
 	var e = spec.duplicate()

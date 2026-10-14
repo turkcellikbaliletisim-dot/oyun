@@ -53,7 +53,7 @@ const BOSSES = [
 	{"name": "Şahmeran", "art": "boss_5"},
 ]
 const WORLDS = [
-	{"name": "Yeşil Ova", "enemies": ["kurt", "haydut", "iskelet"], "hp": 1.9},
+	{"name": "Yeşil Ova", "enemies": ["kurt", "haydut", "iskelet"], "hp": 2.6},
 	{"name": "Karanlık Orman", "enemies": ["iskelet", "cin", "kara_okcu", "kurt"], "hp": 4.4},
 	{"name": "Taş Dağlar", "enemies": ["golem_kucuk", "haydut", "kara_okcu", "albasti"], "hp": 6.5},
 	{"name": "Kayıp Bozkır", "enemies": ["gulyabani", "albasti", "karakoncolos", "cin"], "hp": 10.0},
@@ -72,9 +72,9 @@ const POTIONS = {
 # Ortada 3 sütun x 5 satır kahraman ızgarası; düşmanlar sol üstten girip
 # saat yönünde ızgaranın etrafını dolaşır ve sol taraftaki kale kapısına varır.
 const REF = Vector2(390, 632)
-const ROAD_INSET = 30.0
+const ROAD_INSET = 40.0
 const ROAD_W = 46.0
-const GRID_RECT = Rect2(68, 66, 254, 500)
+const GRID_RECT = Rect2(78, 76, 234, 480)
 
 static func path_ref() -> PackedVector2Array:
 	var l = ROAD_INSET

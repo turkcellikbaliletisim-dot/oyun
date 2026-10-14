@@ -623,7 +623,7 @@ func draw_units() -> void:
 		if dt == null:
 			continue
 		var f = dd.age / 0.4
-		var dsz = (120.0 if dd.boss else 54.0) * arena_sc * (1.0 - 0.5 * f)
+		var dsz = (104.0 if dd.boss else 54.0) * arena_sc * (1.0 - 0.5 * f)
 		var dp = dd.pos + Vector2(0, -dsz * 0.6 - 30.0 * f)
 		draw_set_transform(dp + cur_off, f * 1.2, Vector2.ONE)
 		draw_fit(dt, Rect2(-Vector2(dsz, dsz) / 2.0, Vector2(dsz, dsz)), Color(1.6, 1.3, 1.3, 1.0 - f))
@@ -685,7 +685,7 @@ func enemy_screen_pos(en: Dictionary) -> Vector2:
 
 func draw_enemy(en: Dictionary) -> void:
 	var pos = enemy_screen_pos(en)
-	var sz = (120.0 if en.boss else 54.0) * arena_sc
+	var sz = (104.0 if en.boss else 54.0) * arena_sc
 	if en.boss:
 		# boss altında kırmızı tehdit halkası
 		var pr = 0.5 + 0.5 * sin(clock * 5.0)
