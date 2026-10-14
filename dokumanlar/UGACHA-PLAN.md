@@ -59,3 +59,10 @@ Yapılanlar: deterministik savaş simülasyonu (`native/uga/uga_sim.gd`), kalıc
 Denge: ilerleme simülasyonu ile ayarlandı (otomatik oyuncuyla 1. dünya ilk koşu, 2. dünya ~6, 3. ~17, 4. ~27 koşu; 5. dünya için yeniden doğuş ve yeni kahraman gerekir).
 Testler: `tests/uga-sim.gd`, `tests/uga-meta.gd`, `tests/uga-server.test.js`, düzen testi tüm UGACHA ekranlarını 360/390/844/1280 genişlikte taşma için kontrol eder. Ekran görüntüleri: `tests/uga-shots.gd`.
 Sıradaki: sunucuyu yayına almak, oyuncu adı, mağaza/IAP (isteğe bağlı), daha çok dünya arka planı (4. parti istendi), ses efektlerinin çeşitlenmesi.
+
+### Gece sonu eklemeleri
+- Günün meydan okuması (herkese aynı tohum, günde bir elmas ödülü), oyuncu adı (sıralama), dünya kartında düşman listesi.
+- Zırhlı düşmanlar (Taş Golem %30, Tepegöz %40, bosslar %15) ve iyileşen Karakoncolos; zehir/yanma zırhı deler.
+- 4. parti görseller: dünya savaş arka planları (aynı yol), amblemler, başlık şeritleri, efektler.
+- Dokunma düzeltmesi: savaş ekranında bir dokunuş artık iki kez sayılmıyor (testli).
+- Android 0.4.0 (kod 4), dikey ekran. APK: Mac'te `oyun/DestanDiyarlari-ugacha.apk` ve Masaüstü.
