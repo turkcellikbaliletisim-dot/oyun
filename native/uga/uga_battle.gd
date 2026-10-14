@@ -557,7 +557,7 @@ func draw_hud() -> void:
 			text(Vector2(bb.position.x, bb.end.y - 2), str(en.get("boss_name", "BOSS")), 11, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, bb.size.x)
 			break
 	# kale can çubuğu
-	var hb = Rect2(size.x * 0.52, 12, size.x * 0.48 - 56, 8)
+	var hb = Rect2(size.x * 0.64, 32, size.x * 0.36 - 56, 10)
 	draw_rect(hb, Color(0, 0, 0, 0.6))
 	draw_rect(Rect2(hb.position, Vector2(hb.size.x * float(sim.castle_hp) / float(sim.castle_max), hb.size.y)), Color("4caf50"))
 	# çıkış
