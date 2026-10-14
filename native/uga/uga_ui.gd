@@ -418,6 +418,8 @@ func on_finished(result: Dictionary) -> void:
 	last_result = result
 	meta.p.tutorial = true
 	last_reward = meta.finish_run(result)
+	if last_reward.get("unlocked", false):
+		world_sel = int(meta.p.world)
 	if is_instance_valid(battle):
 		battle.queue_free()
 	battle = null
@@ -474,6 +476,8 @@ func render_result() -> void:
 	btn("Ana sayfa", rr, func(): open("lobby"))
 	if race_active != "":
 		btn("Yarışa dön", rr, func(): open("uga_online"))
+	elif last_reward.get("unlocked", false):
+		btn("SONRAKİ DÜNYA", rr, func(): start_run(int(r.get("world", 0)) + 1), false, true, 48)
 	else:
 		btn("TEKRAR", rr, func(): start_run(int(r.get("world", 0))), false, true, 48)
 
