@@ -79,6 +79,18 @@ func run() -> void:
 	app.render()
 	app.merge_do("merge/restart")
 	app.open_tab("play")
+	# UGACHA koşusu baştan sona: savaş başlar, kale düşer, ödül işlenir, sonuç ekranı açılır
+	var ui = app.uga_ui()
+	var runs_before = int(ui.meta.p.runs)
+	ui.start_run(0)
+	check(ui.battle != null and not app.shell_margin.visible, "UGACHA savaşı açılmadı")
+	ui.battle.sim.summon()
+	ui.battle.sim.castle_hp = 0
+	await create_timer(2.6).timeout
+	check(ui.battle == null and app.view == "uga_result", "UGACHA koşu sonu ekranı açılmadı")
+	check(int(ui.meta.p.runs) == runs_before + 1, "UGACHA koşu ödülü işlenmedi")
+	check(app.shell_margin.visible, "Savaştan sonra menü geri gelmedi")
+	app.open_tab("play")
 	# Kalıcılık: yeni servis aynı dosyadan aynı hesabı okumalı
 	var again = Offline.new(app.data, app.offline_save_path())
 	check(again.store.user != null and again.store.user.id == app.account.id, "Çevrimdışı kayıt kalıcı değil")
