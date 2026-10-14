@@ -422,3 +422,31 @@ func claim_ach(id: String) -> bool:
 			save()
 			return true
 	return fail("Böyle bir başarım yok.")
+
+# ---------- kahraman çağırma (elmas) ----------
+
+const SUMMON_COST = {1: 60, 10: 540}
+
+func summon_heroes(count: int) -> Array:
+	# Her çekiliş: %12 kilitli bir kahraman (varsa), yoksa sahip olunan bir kahramana 3-8 parça.
+	err = ""
+	var cost = int(SUMMON_COST.get(count, 60 * count))
+	if int(p.diamond) < cost:
+		fail("Elmas yetmiyor.")
+		return []
+	p.diamond = int(p.diamond) - cost
+	var out = []
+	for i in range(count):
+		var locked = D.SUMMON_POOL.filter(func(h): return hero_level(h) <= 0)
+		if not locked.is_empty() and rng.randf() < 0.12:
+			var h = locked[rng.randi() % locked.size()]
+			p.heroes[h] = 1
+			out.append({"h": h, "new": true, "n": 0})
+		else:
+			var pool = p.heroes.keys().filter(func(x): return x != "ejder_yavrusu" and int(p.heroes[x]) > 0)
+			var h = pool[rng.randi() % pool.size()]
+			var n = rng.randi_range(3, 8)
+			p.shards[h] = int(p.shards.get(h, 0)) + n
+			out.append({"h": h, "new": false, "n": n})
+	save()
+	return out

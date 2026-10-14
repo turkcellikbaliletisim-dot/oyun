@@ -42,7 +42,7 @@ func run() -> void:
 		check_bounds(app.shell_margin, app.get_viewport_rect().size.x)
 		stage = "lobby"
 		await snapshot("lobby", dimensions)
-		for uga_view in ["uga_heroes", "uga_totems", "uga_chests", "uga_missions", "uga_rebirth", "uga_online", "uga_map", "duel"]:
+		for uga_view in ["uga_heroes", "uga_totems", "uga_chests", "uga_missions", "uga_rebirth", "uga_online", "uga_map", "uga_summon", "duel"]:
 			app.view = uga_view
 			app.render()
 			for frame in range(4):

@@ -70,3 +70,11 @@ Sıradaki: sunucuyu yayına almak, oyuncu adı, mağaza/IAP (isteğe bağlı), d
 ### 0.6.0 (2026-10-14)
 - Kare kare animasyon: 12 kahramanın 4 karelik saldırı şeridi (`attack_<kahraman>.png`), düşman yürüme şeritleri (`walk_<tür>.png`, kurt eklendi). ChatGPT 5. parti.
 - Menüler sahne düzenine geçti: Totem sunağı (2x2 totem heykeli), Sandık hazinesi (raf + 4 karelik açılma animasyonu + yeni kahraman gösterimi), Görev panosu (parşömen notlar).
+
+### 0.7.0 (2026-10-14)
+- Kahramanlar arenada: kart düzeni kale önünde savunma hattı; saldırı kareleri, yakın dövüşçüler hedefe atılır, mermiler kahramandan çıkar.
+- Sahneli ana merkez (takım canlı, boss arkada, yan düğmeler), dünya haritası, kahraman sahnesi, elmasla kahraman çağırma (1x/10x, portal animasyonu).
+- Boss: büyük boy, yürüme şeridi (5 boss), portreli can çubuğu ve süre; boss ölünce süre sıfırlanır.
+- 4★+ kahramanlarda ulti (her 6. saldırı, öndeki 5 düşmana 3 kat hasar), efekt şeritleri (kılıç, patlama, şimşek, şifa).
+- Öğretici kutusu hedefi kapatmıyor, güçlendirme şeridi anlaşılır, koşu sonunda takım sahnesi ve sonraki hedef, kalıcı başarımlar.
+- ChatGPT 6. parti görseller.

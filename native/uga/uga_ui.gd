@@ -253,6 +253,8 @@ func render(v: String) -> void:
 			render_online()
 		"uga_map":
 			render_map()
+		"uga_summon":
+			render_summon()
 		_:
 			render_hub()
 
@@ -378,7 +380,7 @@ func render_hub() -> void:
 	var right = [
 		["icon_map.png" if art("icon_map.png") != null else "icon_story.png", "Harita", func(): open("uga_map"), false],
 		["icon_leaderboard.png", "Sıralama", func(): open("uga_online"), false],
-		["icon_star_rebirth.png", "Doğuş", func(): open("uga_rebirth"), meta.can_rebirth()],
+		["icon_summon.png" if art("icon_summon.png") != null else "summon_fx.png", "Çağır", func(): open("uga_summon"), int(meta.p.diamond) >= 60],
 	]
 	for i in range(left.size()):
 		round_btn(layer, 0.015, 0.2 + i * 0.105, left[i])
@@ -503,7 +505,7 @@ func tile(parent: Node, name: String, sub: String, file: String, cb: Callable) -
 
 # ---------- dünya haritası ----------
 
-const MAP_NODES = [[0.5, 0.83], [0.28, 0.66], [0.68, 0.49], [0.32, 0.31], [0.56, 0.13]]
+const MAP_NODES = [[0.62, 0.8], [0.38, 0.62], [0.62, 0.44], [0.4, 0.27], [0.6, 0.1]]
 
 func render_map() -> void:
 	var c = app.content
@@ -570,6 +572,86 @@ func render_map() -> void:
 				pulse.tween_property(disc, "scale", Vector2(1.1, 1.1), 0.6).set_trans(Tween.TRANS_SINE)
 				pulse.tween_property(disc, "scale", Vector2(1.0, 1.0), 0.6).set_trans(Tween.TRANS_SINE)
 	txt("Bir dünyanın 30 dalgasını geçince sonraki açılır. Her dünyanın kendi boss'u ve düşmanları var.", c, 11, MUTED, true)
+
+# ---------- kahraman çağırma ----------
+
+var summon_out: Array = []
+
+func render_summon() -> void:
+	var c = app.content
+	back(c, "Kahraman Çağır")
+	var holder = PanelContainer.new()
+	holder.clip_contents = true
+	holder.custom_minimum_size.y = 560
+	holder.add_theme_stylebox_override("panel", app.box(Color("111b24"), Color("6e6042"), 1, 16, 0))
+	c.add_child(holder)
+	var bg = TextureRect.new()
+	bg.texture = art("bg_summon_altar.png") if art("bg_summon_altar.png") != null else art("bg_totem_altar.png")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(bg)
+	var layer = Control.new()
+	holder.add_child(layer)
+	var got = summon_out
+	summon_out = []
+	if not got.is_empty():
+		# portal açılır, sonra kartlar sırayla belirir
+		var portal = TextureRect.new()
+		portal.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		portal.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		portal.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		place(layer, portal, 0.1, 0.12, 0.9, 0.52)
+		var sheet = art("summon_portal.png")
+		var tw = portal.create_tween()
+		if sheet != null:
+			var at = AtlasTexture.new()
+			at.atlas = sheet
+			var fw = sheet.get_width() / 4.0
+			at.region = Rect2(0, 0, fw, sheet.get_height())
+			portal.texture = at
+			tw.tween_method(func(f: float): at.region = Rect2(fw * mini(3, int(f)), 0, fw, sheet.get_height()), 0.0, 3.99, 0.7)
+		tw.tween_property(portal, "modulate:a", 0.35, 0.4)
+		var grid = GridContainer.new()
+		grid.columns = 5 if got.size() > 1 else 1
+		grid.add_theme_constant_override("h_separation", 4)
+		grid.add_theme_constant_override("v_separation", 4)
+		place(layer, grid, 0.04, 0.2 if got.size() > 1 else 0.22, 0.96, 0.72)
+		for i in range(got.size()):
+			var g = got[i]
+			var cell = VBoxContainer.new()
+			cell.add_theme_constant_override("separation", 0)
+			cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			grid.add_child(cell)
+			var big = got.size() == 1
+			var t = hero_tile(cell, str(g.h), 3 if g.new else 1, 150 if big else 62, g.new)
+			t.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+			if big:
+				t.custom_minimum_size.x = 130
+			var lab = txt("YENİ!" if g.new else "+%d parça" % int(g.n), cell, 13 if big else 10, Color("7dff9a") if g.new else Color("9fe8ff"))
+			lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+			cell.modulate.a = 0.0
+			var ct = cell.create_tween()
+			ct.tween_interval(0.75 + i * 0.12)
+			ct.tween_property(cell, "modulate:a", 1.0, 0.2)
+	else:
+		var tip = txt("Elmasla kahraman çağır: yeni kahraman şansı %12, yoksa kahraman parçası.", layer, 13, INK, true)
+		tip.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		place(layer, tip, 0.08, 0.6, 0.92, 0.7)
+	var row_ = HBoxContainer.new()
+	row_.add_theme_constant_override("separation", 10)
+	place(layer, row_, 0.05, 0.8, 0.95, 0.95)
+	for n in [1, 10]:
+		var cost = int(Meta.SUMMON_COST[n])
+		var k = n
+		var b = btn("%dx ÇAĞIR\n%d elmas" % [n, cost], row_, func():
+			var out = meta.summon_heroes(k)
+			if out.is_empty():
+				toast(meta.err, false)
+			else:
+				summon_out = out
+			open("uga_summon"), int(meta.p.diamond) < cost, n == 10, 64)
+		b.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 # ---------- savaş ----------
 

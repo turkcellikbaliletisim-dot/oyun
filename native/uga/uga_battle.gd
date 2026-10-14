@@ -357,6 +357,12 @@ func consume_events() -> void:
 				sound("powerup", -6.0)
 			"potion":
 				show_banner(D.POTIONS[e.kind].name.to_upper(), "")
+				if e.kind == "heal" and tex("fxs_heal") != null and path_pts.size() > 0:
+					hits.append({"pos": path_pts[path_pts.size() - 1] + Vector2(0, 10), "age": 0.0, "kind": "fxs_heal", "scale": 2.6})
+				elif e.kind == "rage":
+					for i in range(sim.slots.size()):
+						if sim.slots[i] != null:
+							ult_glow[i] = 0.7
 			"end":
 				show_banner("ZAFER!" if e.won else "KALE DÜŞTÜ", "banner_victory" if e.won else "banner_defeat")
 				sound("victory" if e.won else "defeat")
