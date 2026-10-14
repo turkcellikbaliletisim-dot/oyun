@@ -99,6 +99,16 @@ func setup(sim_in, art_in: Callable, font_in: Font, title_in: Font) -> void:
 	set_process(true)
 
 var tex_cache: Dictionary = {}
+const WORLD_TINT = [Color(1, 1, 1), Color(0.72, 0.85, 0.75), Color(0.8, 0.86, 1.0), Color(1.0, 0.82, 0.62), Color(0.95, 0.66, 0.78)]
+
+func bg_tex() -> Texture2D:
+	var own = tex("battle_bg_%d" % (sim.world + 1)) if sim.world > 0 else null
+	return own if own != null else tex("battle_bg")
+
+func bg_tint() -> Color:
+	if sim.world > 0 and tex("battle_bg_%d" % (sim.world + 1)) != null:
+		return Color.WHITE
+	return WORLD_TINT[sim.world]
 
 func tex(name: String) -> Texture2D:
 	if name == "" or not art.is_valid():
@@ -143,7 +153,7 @@ func layout() -> void:
 		potion_rects[kinds[i]] = Rect2(px, py, 40, 40)
 	# yol
 	path_pts = PackedVector2Array()
-	var bg = tex("battle_bg")
+	var bg = bg_tex()
 	if bg != null:
 		var area = Rect2(Vector2(0, r_hud.end.y), Vector2(w, r_bar.position.y - r_hud.end.y))
 		var ts = bg.get_size()
@@ -328,9 +338,9 @@ func _draw() -> void:
 	cur_off = off
 	draw_set_transform(off)
 	draw_rect(Rect2(Vector2.ZERO, size), Color("0b141c"))
-	var bg = tex("battle_bg")
+	var bg = bg_tex()
 	if bg != null:
-		draw_cover(bg, Rect2(Vector2(0, r_hud.end.y), Vector2(size.x, r_bar.position.y - r_hud.end.y)))
+		draw_cover(bg, Rect2(Vector2(0, r_hud.end.y), Vector2(size.x, r_bar.position.y - r_hud.end.y)), bg_tint())
 	draw_field()
 	draw_board()
 	draw_set_transform(Vector2.ZERO)

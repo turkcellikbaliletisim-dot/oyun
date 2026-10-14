@@ -261,6 +261,7 @@ func render_hub() -> void:
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	bg.modulate = [Color(1, 1, 1), Color(0.72, 0.85, 0.75), Color(0.8, 0.86, 1.0), Color(1.0, 0.82, 0.62), Color(0.95, 0.66, 0.78)][world_sel]
 	holder.add_child(bg)
 	var shade = ColorRect.new()
 	shade.color = Color(0.02, 0.04, 0.07, 0.45)
@@ -281,6 +282,9 @@ func render_hub() -> void:
 	name_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	name_box.add_theme_constant_override("separation", 0)
 	top.add_child(name_box)
+	if art("world_%d.png" % (world_sel + 1)) != null:
+		var emblem = icon(name_box, "world_%d.png" % (world_sel + 1), 56)
+		emblem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
 	var t1 = title("%d. Dünya" % (world_sel + 1), name_box, 16)
 	t1.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var t2 = title(w.name, name_box, 26)
