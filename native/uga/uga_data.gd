@@ -53,8 +53,8 @@ const BOSSES = [
 	{"name": "Şahmeran", "art": "boss_5"},
 ]
 const WORLDS = [
-	{"name": "Yeşil Ova", "enemies": ["kurt", "haydut", "iskelet"], "hp": 1.45},
-	{"name": "Karanlık Orman", "enemies": ["iskelet", "cin", "kara_okcu", "kurt"], "hp": 3.4},
+	{"name": "Yeşil Ova", "enemies": ["kurt", "haydut", "iskelet"], "hp": 1.9},
+	{"name": "Karanlık Orman", "enemies": ["iskelet", "cin", "kara_okcu", "kurt"], "hp": 4.4},
 	{"name": "Taş Dağlar", "enemies": ["golem_kucuk", "haydut", "kara_okcu", "albasti"], "hp": 6.5},
 	{"name": "Kayıp Bozkır", "enemies": ["gulyabani", "albasti", "karakoncolos", "cin"], "hp": 10.0},
 	{"name": "Yeraltı", "enemies": ["tepegoz", "karakoncolos", "gulyabani", "iskelet"], "hp": 17.0},
