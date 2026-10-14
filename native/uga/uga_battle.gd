@@ -606,7 +606,7 @@ func draw_power() -> void:
 			ht = tex(str(D.HEROES[h].art) + "_1")
 		if ht != null:
 			draw_cover(ht, Rect2(r.position + Vector2(2, 2), Vector2(32, 36)))
-		text(Vector2(r.position.x + 36, r.position.y + 16), "Sv%d" % lv if lv < 5 else "MAX", 11, Color("ffe9b0"))
+		text(Vector2(r.position.x + 36, r.position.y + 16), "+%d" % lv if lv < 5 else "MAX", 12, Color("ffe9b0"))
 		if lv < 5:
 			text(Vector2(r.position.x + 36, r.position.y + 33), str(cost), 11, Color("ffd25a") if can else Color("8a949b"))
 

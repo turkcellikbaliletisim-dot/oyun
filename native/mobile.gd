@@ -2621,6 +2621,8 @@ func _notification(what: int) -> void:
 	elif what == NOTIFICATION_APPLICATION_PAUSED:
 		application_paused = true
 		cancel_gesture()
+		if uga != null:
+			uga.meta.save()
 		if is_instance_valid(poll):
 			poll.stop()
 		if is_instance_valid(reconnect_timer):
@@ -2635,6 +2637,9 @@ func _notification(what: int) -> void:
 				poll.start()
 			elif is_instance_valid(reconnect_timer):
 				reconnect_timer.start(0.2)
+	elif what == NOTIFICATION_WM_CLOSE_REQUEST:
+		if uga != null:
+			uga.meta.save()
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		cancel_gesture()
 		if uga != null and uga.battle != null and is_instance_valid(uga.battle):
