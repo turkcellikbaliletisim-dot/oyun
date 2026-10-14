@@ -34,6 +34,7 @@ var enemy_flash: Dictionary = {}
 var fx: Array = []
 var coins: Array = []
 var attack_anim: Dictionary = {}
+var ult_glow: Dictionary = {}   # slot -> kalan süre
 var lunge: Dictionary = {}      # slot -> {to: Vector2, t: kalan süre}
 var hero_face: Dictionary = {}  # slot -> true ise sola bakar
 const MELEE = ["kilic", "kalkan"]
@@ -341,6 +342,19 @@ func consume_events() -> void:
 				sound("powerup", -4.0)
 				if power_rects.has(e.hero):
 					fx.append({"rect": power_rects[e.hero].grow(12), "tex": "levelup_fx" if tex("levelup_fx") != null else "merge_burst", "age": 0.0, "dur": 0.6})
+			"ult":
+				var up = path_at(float(e.d))
+				var big = "fxs_explosion" if tex("fxs_explosion") != null else "merge_burst"
+				if big.begins_with("fxs_"):
+					hits.append({"pos": up + Vector2(0, 30), "age": 0.0, "kind": big, "scale": 2.4})
+				else:
+					fx.append({"rect": Rect2(up - Vector2(70, 90), Vector2(140, 140)), "tex": big, "age": 0.0, "dur": 0.5})
+				ult_glow[e.slot] = 0.7
+				attack_anim[e.slot] = 0.36
+				var sp2 = hero_spot(e.slot)
+				floats.append({"pos": sp2 + Vector2(0, -78), "text": "ULTİ!", "color": Color("ffd25a"), "age": 0.0, "size": 18})
+				shake = maxf(shake, 0.22)
+				sound("powerup", -6.0)
 			"potion":
 				show_banner(D.POTIONS[e.kind].name.to_upper(), "")
 			"end":
@@ -382,6 +396,10 @@ func advance_fx(delta: float) -> void:
 		attack_anim[k] = float(attack_anim[k]) - delta * speed
 		if attack_anim[k] <= 0.0:
 			attack_anim.erase(k)
+	for k in ult_glow.keys():
+		ult_glow[k] = float(ult_glow[k]) - delta
+		if ult_glow[k] <= 0.0:
+			ult_glow.erase(k)
 	for k in lunge.keys():
 		lunge[k].t = float(lunge[k].t) - delta * speed
 		if lunge[k].t <= 0.0:
@@ -528,7 +546,7 @@ func draw_field() -> void:
 		if dt == null:
 			continue
 		var f = dd.age / 0.4
-		var dsz = (86.0 if dd.boss else 44.0) * (1.0 - 0.5 * f)
+		var dsz = (124.0 if dd.boss else 44.0) * (1.0 - 0.5 * f)
 		var dp = dd.pos + Vector2(0, -dsz * 0.6 - 30.0 * f)
 		draw_set_transform(dp + cur_off, f * 1.2, Vector2.ONE)
 		draw_fit(dt, Rect2(-Vector2(dsz, dsz) / 2.0, Vector2(dsz, dsz)), Color(1.6, 1.3, 1.3, 1.0 - f))
@@ -560,7 +578,8 @@ func draw_field() -> void:
 		if ht != null and str(h.kind).begins_with("fxs_"):
 			# 4 karelik efekt şeridi
 			var fr = clampi(int(h.age / 0.35 * 4.0), 0, 3)
-			draw_fit(frame_tex(h.kind, fr), Rect2(h.pos - Vector2(30, 46), Vector2(60, 60)), Color(1, 1, 1, minf(1.0, a * 2.0)))
+			var hs = 60.0 * float(h.get("scale", 1.0))
+			draw_fit(frame_tex(h.kind, fr), Rect2(h.pos - Vector2(hs / 2.0, hs * 0.77), Vector2(hs, hs)), Color(1, 1, 1, minf(1.0, a * 2.0)))
 		elif ht != null:
 			draw_fit(ht, Rect2(h.pos - Vector2(22, 34), Vector2(44, 44)), Color(1, 1, 1, a))
 		else:
@@ -584,7 +603,14 @@ func enemy_screen_pos(en: Dictionary) -> Vector2:
 
 func draw_enemy(en: Dictionary) -> void:
 	var pos = enemy_screen_pos(en)
-	var sz = 86.0 if en.boss else 44.0
+	var sz = 124.0 if en.boss else 44.0
+	if en.boss:
+		# boss altında kırmızı tehdit halkası
+		var pr = 0.5 + 0.5 * sin(clock * 5.0)
+		draw_set_transform(pos + Vector2(0, -4) + cur_off, 0.0, Vector2(1.0, 0.35))
+		draw_circle(Vector2.ZERO, sz * 0.5, Color(0.8, 0.1, 0.05, 0.25 + 0.15 * pr))
+		draw_arc(Vector2.ZERO, sz * 0.52, 0, TAU, 32, Color(1.0, 0.35, 0.2, 0.7), 3.0, true)
+		draw_set_transform(cur_off)
 	var moving = float(en.stun_t) <= 0.0 and sim.freeze_t <= 0.0
 	var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
 	var ahead = path_at(minf(1.0, float(en.d) + 0.01))
@@ -643,8 +669,13 @@ func hero_spot(i: int) -> Vector2:
 	var r = i / D.COLS
 	var top = r_field.position.y + r_field.size.y * 0.5
 	var row_h = r_field.size.y * 0.15
-	var x = r_field.position.x + r_field.size.x * (0.11 + c * 0.195) + (9.0 if r % 2 == 1 else 0.0)
-	return Vector2(x, top + r * row_h + row_h)
+	var xf = [0.09, 0.27, 0.5, 0.73, 0.91][c]
+	var y = top + r * row_h + row_h
+	if c == 2:
+		# orta sütun yolu kapatmasın: kapının iki yanına
+		xf = 0.38 if r % 2 == 0 else 0.62
+		y += row_h * 0.45
+	return Vector2(r_field.position.x + r_field.size.x * xf, y)
 
 func hero_size(i: int) -> float:
 	var c = sim.slots[i] if i >= 0 and i < sim.slots.size() else null
@@ -688,6 +719,13 @@ func draw_hero(i: int) -> void:
 	if D.HEROES[h].has("aura"):
 		draw_arc(Vector2.ZERO, sz * 0.62 + 3.0 * sin(clock * 3.0), 0, TAU, 28, Color(1.0, 0.9, 0.5, 0.35), 2.0, true)
 	draw_set_transform(cur_off)
+	if ult_glow.has(i):
+		var ug = float(ult_glow[i]) / 0.7
+		var gl = tex("glow_legendary")
+		if gl != null:
+			draw_fit(gl, Rect2(pos - Vector2(sz * 0.9, sz * 1.3), Vector2(sz * 1.8, sz * 1.8)), Color(1, 1, 1, ug))
+		else:
+			draw_circle(pos - Vector2(0, sz * 0.45), sz * 0.7, Color(1, 0.85, 0.3, 0.35 * ug))
 	# kare: saldırıda şeridin 4 karesi, beklerken 0. kare ve hafif nefes
 	var frame = 0
 	if attack_anim.has(i):
@@ -814,17 +852,23 @@ func draw_hud() -> void:
 	x = icon_text("icon_gold_coin", Vector2(x, 44), "%d" % sim.gold, Color("ffd25a"))
 	var alive = sim.enemies.size() + sim.spawn_queue.size()
 	x = icon_text("icon_wave", Vector2(x, 44), "%d" % alive, Color("cfe8ff"))
-	if sim.boss_timer > 0.0:
-		var urgent = sim.boss_timer < 10.0
-		var tcol = Color("ff4a3a") if urgent and int(Time.get_ticks_msec() / 250) % 2 == 0 else Color("ff9a5a")
-		text(Vector2(x, 44), "⏱ %d" % int(ceil(sim.boss_timer)), 17 if urgent else 15, tcol)
 	for en in sim.enemies:
 		if en.boss:
-			var bb = Rect2(10, r_hud.end.y + 6, size.x - 20, 14)
-			draw_rect(bb, Color(0, 0, 0, 0.75))
-			draw_rect(Rect2(bb.position, Vector2(bb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), bb.size.y)), Color("ff7a2a"))
-			draw_rect(bb, Color("ddbf7e"), false, 1.5)
-			text(Vector2(bb.position.x, bb.end.y - 2), str(en.get("boss_name", "BOSS")), 11, Color.WHITE, HORIZONTAL_ALIGNMENT_CENTER, bb.size.x)
+			# büyük boss çubuğu: portre + ad + can + süre
+			var panel = Rect2(6, r_hud.end.y + 4, size.x - 12, 40)
+			draw_rect(panel, Color(0.05, 0.02, 0.02, 0.85))
+			draw_rect(panel, Color("ff7a2a"), false, 2.0)
+			var bt_ = tex(str(en.art))
+			if bt_ != null:
+				draw_fit(bt_, Rect2(panel.position + Vector2(4, 2), Vector2(36, 36)))
+			var bb = Rect2(panel.position.x + 46, panel.position.y + 20, panel.size.x - 100, 14)
+			draw_rect(bb, Color(0, 0, 0, 0.8))
+			draw_rect(Rect2(bb.position, Vector2(bb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), bb.size.y)), Color("ff4a2a"))
+			draw_rect(bb, Color("ddbf7e"), false, 1.0)
+			text(Vector2(bb.position.x, panel.position.y + 16), str(en.get("boss_name", "BOSS")).to_upper(), 13, Color("ffd2a0"), HORIZONTAL_ALIGNMENT_LEFT, -1, title_font)
+			if sim.boss_timer > 0.0:
+				var urg = sim.boss_timer < 10.0 and int(Time.get_ticks_msec() / 250) % 2 == 0
+				text(Vector2(panel.end.x - 52, panel.position.y + 30), "⏱%d" % int(ceil(sim.boss_timer)), 18, Color("ff4a3a") if urg else Color("ffd25a"), HORIZONTAL_ALIGNMENT_CENTER, 48)
 			break
 	# kale can çubuğu
 	var hb = Rect2(size.x * 0.64, 32, size.x * 0.36 - 56, 10)
@@ -854,9 +898,12 @@ func draw_power() -> void:
 			ht = tex(str(D.HEROES[h].art) + "_1")
 		if ht != null:
 			draw_cover(ht, Rect2(r.position + Vector2(2, 2), Vector2(32, 36)))
-		text(Vector2(r.position.x + 36, r.position.y + 16), "+%d" % lv if lv < 5 else "MAX", 12, Color("ffe9b0"))
+		text(Vector2(r.position.x + 35, r.position.y + 16), ("▲Sv%d" % lv) if lv < 5 else "MAX", 11, Color("ffe9b0") if lv > 0 else Color("c8d2d8"))
 		if lv < 5:
-			text(Vector2(r.position.x + 36, r.position.y + 33), str(cost), 11, Color("ffd25a") if can else Color("8a949b"))
+			var ct = tex("icon_gold_coin")
+			if ct != null:
+				draw_fit(ct, Rect2(r.position.x + 35, r.position.y + 22, 12, 12))
+			text(Vector2(r.position.x + 48, r.position.y + 33), str(cost), 11, Color("ffd25a") if can else Color("8a949b"))
 
 func draw_bar() -> void:
 	draw_power()
@@ -870,13 +917,16 @@ func draw_bar() -> void:
 	else:
 		draw_rect(r_summon, Color("b8862a") if can else Color("4a4030"))
 		draw_rect(r_summon, Color("ffe9b0"), false, 2.0)
-	text(Vector2(r_summon.position.x, r_summon.position.y + 27), "ÇAĞIR", 20, Color("2a1500") if can else Color("bbbbbb"), HORIZONTAL_ALIGNMENT_CENTER, r_summon.size.x, title_font)
+	text(Vector2(r_summon.position.x, r_summon.position.y + 27), "ÇAĞIR", 20, Color("ffe9b0") if can else Color("9a9a9a"), HORIZONTAL_ALIGNMENT_CENTER, r_summon.size.x, title_font)
 	var cost_x = r_summon.position.x + r_summon.size.x / 2 - 22
 	var coin = tex("icon_gold_coin")
 	if coin != null:
 		draw_fit(coin, Rect2(cost_x, r_summon.position.y + 32, 18, 18))
-	text(Vector2(cost_x + 20, r_summon.position.y + 47), str(sim.summon_cost), 14, Color("2a1500") if can else Color("bbbbbb"))
-	text(Vector2(0, r_bar.position.y + 92), "Sürükle: aynı kart + aynı yıldız = birleş", 11, Color("9fb0bb"), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	text(Vector2(cost_x + 20, r_summon.position.y + 47), str(sim.summon_cost), 14, Color("ffd25a") if can else Color("9a9a9a"))
+	if int(sim.stats.merges) < 3:
+		text(Vector2(0, r_bar.position.y + 92), "Sürükle: aynı kart + aynı yıldız = birleş", 11, Color("9fb0bb"), HORIZONTAL_ALIGNMENT_CENTER, size.x)
+	else:
+		text(Vector2(0, r_bar.position.y + 92), "Kartı aşağı sürükle = sat", 11, Color("6f7f8a"), HORIZONTAL_ALIGNMENT_CENTER, size.x)
 	if drag_from >= 0 and sim.slots[drag_from] != null:
 		var over_sell = r_sell.has_point(drag_pos)
 		draw_rect(r_sell, Color(0.45, 0.1, 0.08, 0.95 if over_sell else 0.85))
@@ -958,7 +1008,11 @@ func draw_overlays() -> void:
 func hint(r: Rect2, msg: String) -> void:
 	var pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 180.0)
 	draw_rect(r.grow(4 + pulse * 4), Color(1, 0.88, 0.4, 0.5 + pulse * 0.4), false, 3.0)
-	var box_r = Rect2(16, r_field.end.y - 70, size.x - 32, 56)
+	# kutu hedefin üstüne binmesin: hedef alttaysa tahtanın ortasına, tahtadaysa alanın üstüne
+	var box_y = r_field.position.y + 12
+	if r.position.y >= r_power.position.y:
+		box_y = r_board.position.y + 6
+	var box_r = Rect2(16, box_y, size.x - 32, 56)
 	draw_rect(box_r, Color(0.03, 0.05, 0.08, 0.92))
 	draw_rect(box_r, Color("ddbf7e"), false, 2.0)
 	text(Vector2(box_r.position.x + 10, box_r.position.y + 24), msg.get_slice("\n", 0), 15, Color("ffe9b0"), HORIZONTAL_ALIGNMENT_CENTER, box_r.size.x - 20)
@@ -981,6 +1035,12 @@ func draw_tutorial() -> void:
 				hint(r_board, "Harika! Yıldız arttıkça güç katlanır\nİksirler (solda) zor anlarda hayat kurtarır")
 			else:
 				tut_step = 4
+				tut_t = 4.0
+		4:
+			if tut_t > 0.0:
+				hint(r_power, "Alttaki şerit: GÜÇLENDİR\nAltın harcayıp o kahraman türünün tümünü %25 güçlendir")
+			else:
+				tut_step = 5
 
 # ---------- girdi ----------
 

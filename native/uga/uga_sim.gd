@@ -303,6 +303,13 @@ func fire(slot: int) -> void:
 	for i in range(1, mini(extra + 1, front.size())):
 		var factor = 0.6 if h.has("chain") else 1.0
 		hit(front[i], dmg * factor, slot)
+	# 4★ ve üstü: her 6. saldırıda ulti (öndeki 5 düşmana 3 kat hasar)
+	c["n"] = int(c.get("n", 0)) + 1
+	if int(c.s) >= 4 and int(c.n) % 6 == 0:
+		events.append({"t": "ult", "slot": slot, "h": c.h, "d": float(target.d)})
+		stats.ults = int(stats.get("ults", 0)) + 1
+		for i in range(mini(5, front.size())):
+			hit(front[i], dmg * 3.0, slot)
 
 func step() -> void:
 	if over:
@@ -330,6 +337,8 @@ func step() -> void:
 		if spawn_timer <= 0.0:
 			spawn(spawn_queue.pop_front())
 			spawn_timer = 0.32
+	if boss_timer > 0.0 and not spawn_queue.any(func(q): return q.boss) and not enemies.any(func(q): return q.boss and float(q.hp) > 0.0):
+		boss_timer = 0.0
 	if boss_timer > 0.0:
 		boss_timer -= D.TICK
 		if boss_timer <= 0.0:

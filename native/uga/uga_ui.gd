@@ -372,7 +372,7 @@ func render_hub() -> void:
 			else:
 				toast("Yarın yeni hediye", false)
 			open("lobby"), meta.daily_ready()],
-		["icon_mission.png", "Görev", func(): open("uga_missions"), ready > 0],
+		["icon_mission.png", "Görev", func(): open("uga_missions"), ready > 0 or meta.ach_ready_count() > 0],
 		["scene_chest.png" if art("chest_rare.png") == null else "chest_rare.png", "Sandık", func(): open("uga_chests"), chests > 0],
 	]
 	var right = [
@@ -627,6 +627,34 @@ func render_result() -> void:
 	if last_reward.get("record", false):
 		var rec = txt("Yeni rekor!", c, 16, Color("ffd25a"))
 		rec.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# takım sahnesi: zaferde saldırı pozu, yenilgide yorgun
+	var stage = PanelContainer.new()
+	stage.clip_contents = true
+	stage.custom_minimum_size.y = 170
+	stage.add_theme_stylebox_override("panel", app.box(Color("0b141c"), Color("6e6042"), 1, 12, 0))
+	c.add_child(stage)
+	var wi = int(r.get("world", 0))
+	var sbg = TextureRect.new()
+	var bgf = "battle_bg.png" if wi == 0 else "battle_bg_%d.png" % (wi + 1)
+	sbg.texture = art(bgf) if art(bgf) != null else art("home_bg.png")
+	sbg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sbg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	sbg.modulate = Color(1, 1, 1) if won else Color(0.45, 0.42, 0.5)
+	sbg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(sbg)
+	var layer = Control.new()
+	layer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(layer)
+	var n = meta.p.deck.size()
+	for k in range(n):
+		var h = str(meta.p.deck[k])
+		var spr = Sprite.new()
+		spr.setup(art("attack_%s.png" % h), hero_art(h, 3), (0.9 + k * 0.17) if won else 0.0, k * 0.3)
+		spr.flip = k >= n / 2 + 1
+		if not won:
+			spr.modulate = Color(0.75, 0.72, 0.8)
+		var x0 = 0.02 + k * (0.96 / n)
+		place(layer, spr, x0, 0.12, x0 + 0.96 / n, 0.98)
 	var p = card_panel(c, GOLD_C)
 	txt("Ödüller", p, 16, GOLD_C)
 	var r1 = row(p, 14)
@@ -655,6 +683,19 @@ func render_result() -> void:
 	if challenge_gain > 0:
 		var cp = card_panel(c, Color("e6b0ff"))
 		txt("Günün meydan okuması tamamlandı: +%d elmas" % challenge_gain, cp, 15, Color("e6b0ff"), true)
+	var goal = card_panel(c)
+	var bw = meta.best_wave(int(r.get("world", 0)))
+	txt("Sonraki hedef: %d. dalga (en iyi %d / %d)" % [mini(bw + 5, D.WAVES_PER_WORLD), bw, D.WAVES_PER_WORLD], goal, 13, INK)
+	var gb = ProgressBar.new()
+	gb.max_value = D.WAVES_PER_WORLD
+	gb.value = bw
+	gb.show_percentage = false
+	gb.custom_minimum_size = Vector2(0, 10)
+	gb.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 5, 0))
+	gb.add_theme_stylebox_override("fill", app.box(GOLD_C, Color(0, 0, 0, 0), 0, 5, 0))
+	goal.add_child(gb)
+	if not won:
+		txt("İpucu: Kahramanlar ekranında seviye yükselt, totemlerle gücünü katla.", goal, 11, MUTED, true)
 	if str(last_reward.get("chest", "")) != "":
 		btn("Sandığı aç", c, func(): open("uga_chests"), false, false, 44)
 	var rr = row(c, 8)
@@ -967,7 +1008,7 @@ func render_missions() -> void:
 	var c = app.content
 	back(c, "Görevler")
 	meta.ensure_missions()
-	var board = scene_panel(c, "bg_mission_board.png", 420)
+	var board = scene_panel(c, "bg_mission_board.png", 300)
 	var hdr = txt("Günlük görevler · her gün yenilenir", board, 13, INK)
 	hdr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	for i in range(meta.p.missions.list.size()):
@@ -1006,12 +1047,47 @@ func render_missions() -> void:
 			open("uga_missions"), m.claimed or not done, done and not m.claimed, 44)
 		b.size_flags_horizontal = Control.SIZE_SHRINK_END
 		b.custom_minimum_size.x = 64
-	if meta.daily_ready():
-		btn("Günlük hediyeyi al", c, func():
-			var out = meta.claim_daily()
-			if not out.is_empty():
-				toast("+%d elmas, +%d altın, sandık" % [out.diamond, out.gold])
-			open("uga_missions"), false, true, 46)
+	# başarımlar: kalıcı hedefler, bir kez elmas
+	ribbon(c, "Başarımlar", 44)
+	var list = Meta.ACHIEVEMENTS.duplicate()
+	list.sort_custom(func(a, b):
+		var ra = 0 if (not meta.p.ach.has(a[0]) and meta.ach_value(a[2]) >= int(a[3])) else (2 if meta.p.ach.has(a[0]) else 1)
+		var rb = 0 if (not meta.p.ach.has(b[0]) and meta.ach_value(b[2]) >= int(b[3])) else (2 if meta.p.ach.has(b[0]) else 1)
+		return ra < rb)
+	var grid = GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 6)
+	grid.add_theme_constant_override("v_separation", 6)
+	c.add_child(grid)
+	for a in list:
+		var got = meta.p.ach.has(a[0])
+		var val = meta.ach_value(a[2])
+		var ready = not got and val >= int(a[3])
+		var cell = PanelContainer.new()
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.add_theme_stylebox_override("panel", app.box(Color(0.06, 0.1, 0.14, 0.95), Color("ffd25a") if ready else Color("3a4a55"), 2 if ready else 1, 10, 7))
+		grid.add_child(cell)
+		var v = VBoxContainer.new()
+		v.add_theme_constant_override("separation", 2)
+		cell.add_child(v)
+		var t = txt(str(a[1]), v, 12, INK if not got else MUTED)
+		t.custom_minimum_size.x = 10
+		t.clip_text = true
+		var pb = ProgressBar.new()
+		pb.max_value = int(a[3])
+		pb.value = mini(val, int(a[3]))
+		pb.show_percentage = false
+		pb.custom_minimum_size = Vector2(0, 6)
+		pb.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 3, 0))
+		pb.add_theme_stylebox_override("fill", app.box(Color("54e0ff") if not got else Color("4a6070"), Color(0, 0, 0, 0), 0, 3, 0))
+		v.add_child(pb)
+		var id = str(a[0])
+		var rw = int(a[4])
+		var b = btn("✓ alındı" if got else ("AL +%d elmas" % rw if ready else "%d / %d" % [mini(val, int(a[3])), int(a[3])]), v, func():
+			if meta.claim_ach(id):
+				toast("+%d elmas" % rw)
+			open("uga_missions"), not ready, ready, 30)
+		b.add_theme_font_size_override("font_size", 12)
 
 # ---------- yeniden doğuş ----------
 

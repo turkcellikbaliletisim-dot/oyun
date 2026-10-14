@@ -44,7 +44,7 @@ func fresh() -> Dictionary:
 	return {"version": 1, "gold": 200, "diamond": 50, "soul": 0, "rebirths": 0, "shards": {}, "heroes": heroes,
 		"deck": D.DEFAULT_DECK.duplicate(), "world": 0, "best": {}, "totems": {"savas": 0, "hiz": 0, "altin": 0, "kale": 0},
 		"chests": {"common": 1, "rare": 0, "epic": 0}, "missions": {"day": "", "list": []}, "daily": "", "last_seen": 0,
-		"pending_offline": 0, "runs": 0, "tutorial": false, "name": "", "challenge_day": "", "challenge_best": 0, "seed": rng.randi_range(1, 2000000000)}
+		"pending_offline": 0, "runs": 0, "tutorial": false, "name": "", "challenge_day": "", "challenge_best": 0, "totals": {"kills": 0, "bosses": 0, "merges": 0}, "ach": [], "seed": rng.randi_range(1, 2000000000)}
 
 func load_profile() -> void:
 	p = fresh()
@@ -203,6 +203,8 @@ func finish_run(r: Dictionary) -> Dictionary:
 		p.world = world + 1
 		unlocked = true
 	p.runs = int(p.runs) + 1
+	for k in ["kills", "bosses", "merges"]:
+		p.totals[k] = int(p.totals.get(k, 0)) + int(r.get(k, 0))
 	ensure_missions()
 	mission_add("kill", int(r.kills))
 	mission_add("merge", int(r.merges))
@@ -379,3 +381,44 @@ func finish_challenge(wave: int) -> int:
 	p.diamond = int(p.diamond) + gain
 	save()
 	return gain
+
+# ---------- başarımlar (kalıcı, bir kez ödül) ----------
+
+const ACHIEVEMENTS = [
+	["k1", "100 düşman yen", "kills", 100, 10], ["k2", "1.000 düşman yen", "kills", 1000, 30], ["k3", "10.000 düşman yen", "kills", 10000, 100],
+	["b1", "5 boss yen", "bosses", 5, 15], ["b2", "25 boss yen", "bosses", 25, 50],
+	["m1", "50 birleştirme", "merges", 50, 10], ["m2", "500 birleştirme", "merges", 500, 40],
+	["r1", "10 koşu oyna", "runs", 10, 15], ["r2", "50 koşu oyna", "runs", 50, 50],
+	["w2", "2. dünyayı aç", "world", 2, 25], ["w3", "3. dünyayı aç", "world", 3, 40], ["w4", "4. dünyayı aç", "world", 4, 60], ["w5", "5. dünyayı aç", "world", 5, 100],
+	["h8", "8 kahraman topla", "heroes", 8, 30], ["h12", "12 kahraman topla", "heroes", 12, 100],
+]
+
+func ach_value(key: String) -> int:
+	match key:
+		"runs":
+			return int(p.runs)
+		"world":
+			return int(p.world) + 1
+		"heroes":
+			return p.heroes.keys().filter(func(h): return int(p.heroes[h]) > 0).size()
+	return int(p.totals.get(key, 0))
+
+func ach_ready_count() -> int:
+	var n = 0
+	for a in ACHIEVEMENTS:
+		if not p.ach.has(a[0]) and ach_value(a[2]) >= int(a[3]):
+			n += 1
+	return n
+
+func claim_ach(id: String) -> bool:
+	for a in ACHIEVEMENTS:
+		if a[0] == id:
+			if p.ach.has(id):
+				return fail("Zaten alındı.")
+			if ach_value(a[2]) < int(a[3]):
+				return fail("Henüz tamamlanmadı.")
+			p.ach.append(id)
+			p.diamond = int(p.diamond) + int(a[4])
+			save()
+			return true
+	return fail("Böyle bir başarım yok.")
