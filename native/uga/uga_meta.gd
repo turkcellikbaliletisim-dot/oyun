@@ -178,7 +178,7 @@ func finish_run(r: Dictionary) -> Dictionary:
 	var wave = int(r.wave)
 	var cleared = wave - (0 if r.won else 1)
 	var gold = int(round(12 * maxi(cleared, 0) * (world + 1) * (1.0 + 0.15 * int(p.totems.altin))))
-	var diamond = cleared / 5 + int(r.bosses) * 4 + (25 if r.won else 0)
+	var diamond = cleared / 3 + int(r.bosses) * 6 + (40 if r.won else 0)
 	var shards = {}
 	var pool = p.heroes.keys().filter(func(h): return h != "ejder_yavrusu")
 	for i in range(maxi(1, cleared / 3)):
