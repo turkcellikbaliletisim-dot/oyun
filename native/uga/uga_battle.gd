@@ -266,6 +266,9 @@ func consume_events() -> void:
 				shake = 0.35
 				sound("attack", -4.0)
 				buzz(60)
+			"clear":
+				if path_pts.size() > 0:
+					floats.append({"pos": path_pts[path_pts.size() - 1] + Vector2(0, -60), "text": "Dalga temizlendi +%d" % int(e.gold), "color": Color("ffd25a"), "age": 0.0})
 			"wave":
 				if not sim.is_boss_wave(int(e.n)):
 					show_banner("DALGA %d" % int(e.n), "")
@@ -411,7 +414,11 @@ func draw_field() -> void:
 	for en in list:
 		var pos = path_at(float(en.d))
 		var sz = 70.0 if en.boss else 36.0
-		var r = Rect2(pos - Vector2(sz / 2, sz * 0.8), Vector2(sz, sz))
+		var moving = float(en.stun_t) <= 0.0 and sim.freeze_t <= 0.0
+		var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
+		var ahead = path_at(minf(1.0, float(en.d) + 0.01))
+		var face_left = ahead.x < pos.x - 0.5
+		var r = Rect2(pos - Vector2(sz / 2, sz * 0.8 + bob), Vector2(sz, sz))
 		var mod = Color.WHITE
 		if float(en.slow_f) > 0.0 or sim.freeze_t > 0.0:
 			mod = Color(0.6, 0.85, 1.0)
@@ -422,8 +429,14 @@ func draw_field() -> void:
 		var t = tex(en.art)
 		if t == null:
 			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
+		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
 		if t != null:
-			draw_fit(t, r, mod)
+			if face_left:
+				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
+				draw_fit(t, r, mod)
+				draw_set_transform(cur_off)
+			else:
+				draw_fit(t, r, mod)
 		else:
 			draw_circle(pos - Vector2(0, sz * 0.35), sz * 0.4, Color("8a2f2f") * mod)
 		# can çubuğu
