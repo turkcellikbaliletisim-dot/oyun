@@ -520,15 +520,16 @@ func draw_field() -> void:
 			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
 		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
 		if t != null:
+			# yürüme şeritleri sola bakar; tek resimler sağa bakar kabul edilir
+			var flip = (not face_left) if has_walk else face_left
+			if flip:
+				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
 			# koyu dış hat: kalabalık arka planda düşman seçilsin
 			for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
 				draw_fit(t, Rect2(r.position + o, r.size), Color(0, 0, 0, 0.55))
-			if face_left:
-				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
-				draw_fit(t, r, mod)
+			draw_fit(t, r, mod)
+			if flip:
 				draw_set_transform(cur_off)
-			else:
-				draw_fit(t, r, mod)
 		else:
 			draw_circle(pos - Vector2(0, sz * 0.35), sz * 0.4, Color("8a2f2f") * mod)
 		# can çubuğu
