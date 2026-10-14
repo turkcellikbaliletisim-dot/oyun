@@ -61,5 +61,8 @@ func run() -> void:
 	check(int(sim.run_levels.get(h, 0)) == 1, "Güçlendirme şeridi tek dokunuşta bir seviye")
 	touch(b, b.r_exit.get_center(), true)
 	check(b.paused, "Duraklat düğmesi")
+	b.queue_free()
+	for i in 3:
+		await process_frame
 	print("UGA INPUT " + ("FAIL" if failed else "OK"))
 	quit(1 if failed else 0)

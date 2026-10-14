@@ -253,7 +253,7 @@ func hit(e: Dictionary, dmg: float, slot: int, crit: bool = false) -> void:
 		stats.kills += 1
 		if e.boss:
 			stats.bosses += 1
-		events.append({"t": "die", "enemy": e.id, "gold": g, "boss": e.boss, "d": float(e.d)})
+		events.append({"t": "die", "enemy": e.id, "gold": g, "boss": e.boss, "d": float(e.d), "art": str(e.art)})
 
 var _front: Array = []
 

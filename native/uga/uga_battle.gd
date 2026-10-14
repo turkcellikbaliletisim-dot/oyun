@@ -33,6 +33,10 @@ var kick: Dictionary = {}
 var enemy_flash: Dictionary = {}
 var fx: Array = []
 var coins: Array = []
+var dying: Array = []
+var born: Dictionary = {}
+var pop: Dictionary = {}
+var clock: float = 0.0
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -81,14 +85,30 @@ func buzz(ms: int) -> void:
 	if haptics and OS.get_name() in ["Android", "iOS"]:
 		Input.vibrate_handheld(ms)
 
+var own_sfx: Dictionary = {}
+
+func _exit_tree() -> void:
+	for pl in players:
+		pl.stop()
+		pl.stream = null
+	own_sfx.clear()
+var shot_sound_t: float = 0.0
+
 func sound(name: String, vol: float = 0.0) -> void:
-	if not sfx.is_valid():
+	if host != null and host.muted:
 		return
-	var st = sfx.call(name)
+	if not own_sfx.has(name):
+		var path = "res://native/uga/sfx/%s.ogg" % name
+		own_sfx[name] = load(path) if ResourceLoader.exists(path) else null
+	var st = own_sfx[name]
+	if st == null:
+		if not sfx.is_valid():
+			return
+		st = sfx.call(name)
 	if st == null:
 		return
 	if players.is_empty():
-		for i in range(4):
+		for i in range(8):
 			var pl = AudioStreamPlayer.new()
 			add_child(pl)
 			players.append(pl)
@@ -238,6 +258,9 @@ func consume_events() -> void:
 				if kind != "" and hits.size() < 24:
 					hits.append({"pos": to + Vector2(0, 14), "age": -0.15, "kind": kind})
 				kick[e.slot] = 0.12
+				if shot_sound_t <= 0.0:
+					sound({"arrow": "arrow", "spear": "arrow", "orb": "magic", "rock": "rock", "fireball": "fire"}.get(e.proj, "arrow"), -14.0)
+					shot_sound_t = 0.09
 			"hit":
 				enemy_flash[e.enemy] = 0.1
 				if e.slot >= 0:
@@ -248,9 +271,12 @@ func consume_events() -> void:
 							floats.pop_front()
 			"die":
 				if hit_sound_t <= 0.0:
-					sound("hit", -8.0)
-					hit_sound_t = 0.12
+					sound("coin", -10.0)
+					hit_sound_t = 0.1
 				var dpos = path_at(float(e.d))
+				born.erase(e.enemy)
+				if dying.size() < 30:
+					dying.append({"pos": dpos, "art": str(e.get("art", "")), "boss": e.boss, "age": 0.0})
 				hits.append({"pos": dpos, "age": 0.0, "kind": "hit_spark"})
 				if coins.size() < 20:
 					coins.append({"from": dpos + Vector2(0, -16), "age": 0.0})
@@ -258,19 +284,20 @@ func consume_events() -> void:
 					shake = 0.6
 					show_banner("BOSS YENİLDİ!", "banner_victory")
 			"merge":
+				pop[e.slot] = 0.3
 				floats.append({"pos": slot_center(e.slot) + Vector2(0, -10), "text": "★".repeat(int(e.stars)), "color": STAR_COLORS[int(e.stars) - 1].lightened(0.3), "age": 0.0})
 				if tutorial and tut_step <= 2:
 					tut_step = 3
 					tut_t = 3.0
 				flashes.append({"slot": e.slot, "age": 0.0})
-				sound("spell")
+				sound("merge", -2.0)
 				buzz(25)
 			"summon":
 				if tex("summon_fx") != null and e.slot < slot_rects.size():
 					fx.append({"rect": slot_rects[e.slot].grow(10), "tex": "summon_fx", "age": 0.0, "dur": 0.45})
 				else:
 					flashes.append({"slot": e.slot, "age": 0.25})
-				sound("card_flip")
+				sound("summon", -6.0)
 			"leak":
 				shake = 0.35
 				sound("attack", -4.0)
@@ -281,12 +308,14 @@ func consume_events() -> void:
 			"wave":
 				if not sim.is_boss_wave(int(e.n)):
 					show_banner("DALGA %d" % int(e.n), "")
+					sound("horn", -8.0)
 			"boss":
 				show_banner(str(e.name).to_upper(), "banner_boss_warning")
-				sound("turn_start")
+				sound("roar")
 				buzz(120)
 				shake = 0.4
 			"power":
+				sound("powerup", -4.0)
 				if power_rects.has(e.hero):
 					fx.append({"rect": power_rects[e.hero].grow(12), "tex": "levelup_fx" if tex("levelup_fx") != null else "merge_burst", "age": 0.0, "dur": 0.6})
 			"potion":
@@ -322,6 +351,14 @@ func advance_fx(delta: float) -> void:
 		h.age += delta
 	hits = hits.filter(func(h): return h.age < 0.35)
 	shake = maxf(0.0, shake - delta)
+	clock += delta
+	for dd in dying:
+		dd.age += delta
+	dying = dying.filter(func(dd): return dd.age < 0.4)
+	for k in pop.keys():
+		pop[k] = float(pop[k]) - delta
+		if pop[k] <= 0.0:
+			pop.erase(k)
 	for cn in coins:
 		cn.age += delta
 	coins = coins.filter(func(cn): return cn.age < 0.55)
@@ -331,6 +368,7 @@ func advance_fx(delta: float) -> void:
 	banner_t = maxf(0.0, banner_t - delta)
 	message_t = maxf(0.0, message_t - delta)
 	hit_sound_t = maxf(0.0, hit_sound_t - delta)
+	shot_sound_t = maxf(0.0, shot_sound_t - delta)
 	tut_t = maxf(0.0, tut_t - delta)
 	for k in kick.keys():
 		kick[k] = float(kick[k]) - delta
@@ -430,7 +468,13 @@ func draw_field() -> void:
 		var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
 		var ahead = path_at(minf(1.0, float(en.d) + 0.01))
 		var face_left = ahead.x < pos.x - 0.5
-		var r = Rect2(pos - Vector2(sz / 2, sz * 0.8 + bob), Vector2(sz, sz))
+		if not born.has(en.id):
+			born[en.id] = clock
+		var grow_in = clampf((clock - float(born[en.id])) / 0.25, 0.2, 1.0)
+		var squash = 1.0 + (0.07 * sin(clock * 13.0 + int(en.id)) if moving else 0.0)
+		var w_sz = sz * grow_in / squash
+		var h_sz = sz * grow_in * squash
+		var r = Rect2(pos - Vector2(w_sz / 2, h_sz * 0.8 + bob), Vector2(w_sz, h_sz))
 		var mod = Color.WHITE
 		if float(en.slow_f) > 0.0 or sim.freeze_t > 0.0:
 			mod = Color(0.6, 0.85, 1.0)
@@ -460,6 +504,16 @@ func draw_field() -> void:
 		draw_rect(Rect2(hb.position, Vector2(hb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), hb.size.y)), Color("e04848") if not en.boss else Color("ff8a2a"))
 		if float(en.stun_t) > 0.0:
 			text(pos + Vector2(-6, -sz), "✦", 14, Color("fff27a"))
+	for dd in dying:
+		var dt = tex(dd.art)
+		if dt == null:
+			continue
+		var f = dd.age / 0.4
+		var dsz = (86.0 if dd.boss else 44.0) * (1.0 - 0.5 * f)
+		var dp = dd.pos + Vector2(0, -dsz * 0.6 - 30.0 * f)
+		draw_set_transform(dp + cur_off, f * 1.2, Vector2.ONE)
+		draw_fit(dt, Rect2(-Vector2(dsz, dsz) / 2.0, Vector2(dsz, dsz)), Color(1.6, 1.3, 1.3, 1.0 - f))
+		draw_set_transform(cur_off)
 	# mermiler
 	for s in shots:
 		var f = clampf(s.age / 0.2, 0, 1)
@@ -492,7 +546,7 @@ func draw_field() -> void:
 		var a = 1.0 - f.age / 0.8
 		text(f.pos, f.text, int(f.get("size", 13)), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
 
-func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
+func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, attack: float = 0.0) -> void:
 	var stars = int(c.s)
 	var col = STAR_COLORS[stars - 1]
 	if stars >= 4:
@@ -511,7 +565,12 @@ func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
 	if t == null:
 		t = tex("unit_" + ["kilic", "okcu", "buyucu", "kalkan"][abs(str(c.h).hash()) % 4] + "_%d" % clampi((stars + 1) / 2, 1, 4))
 	if t != null:
-		draw_cover(t, Rect2(r.position + Vector2(r.size.x * 0.1, r.size.y * 0.08), Vector2(r.size.x * 0.8, r.size.y * 0.74)), Color(1, 1, 1, alpha))
+		var art_r = Rect2(r.position + Vector2(r.size.x * 0.1, r.size.y * 0.08), Vector2(r.size.x * 0.8, r.size.y * 0.74))
+		var breathe = 1.0 + 0.025 * sin(clock * 2.2 + life)
+		var lunge = 1.0 + 0.12 * attack
+		var s_art = art_r.size * Vector2(breathe * lunge, (2.0 - breathe) * lunge)
+		var a_rect = Rect2(art_r.get_center() - s_art / 2.0 + Vector2(0, -3.0 * attack), s_art).intersection(r.grow(-2))
+		draw_cover(t, a_rect, Color(1, 1, 1, alpha) * (Color(1.35, 1.25, 1.1) if attack > 0.3 else Color.WHITE))
 	var frame = tex("card_star_%d" % stars)
 	if frame != null:
 		draw_texture_rect(frame, r, false, Color(1, 1, 1, alpha))
@@ -535,10 +594,14 @@ func draw_board() -> void:
 		if c == null or i == drag_from:
 			continue
 		var highlight = drag_from >= 0 and sim.can_merge(drag_from, i)
+		var atk = 0.0
 		if kick.has(i):
-			var k = float(kick[i]) / 0.12
-			r = Rect2(r.position - Vector2(0, 6.0 * k), r.size).grow(2.0 * k)
-		draw_card(r, c)
+			atk = float(kick[i]) / 0.12
+			r = Rect2(r.position - Vector2(0, 5.0 * atk), r.size)
+		if pop.has(i):
+			var pf = float(pop[i]) / 0.3
+			r = r.grow(r.size.x * 0.22 * pf)
+		draw_card(r, c, 1.0, float(i) * 0.7, atk)
 		if kick.has(i):
 			draw_rect(r, Color(1, 0.95, 0.7, 0.5 * float(kick[i]) / 0.12), false, 2.0)
 		if highlight:
