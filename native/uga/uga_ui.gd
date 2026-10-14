@@ -327,6 +327,12 @@ func render_hub() -> void:
 	var best = meta.best_wave(world_sel)
 	var info = txt("En iyi: %d / %d dalga%s" % [best, D.WAVES_PER_WORLD, "  ✓" if best >= D.WAVES_PER_WORLD else ""], col, 15, INK)
 	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var foes = []
+	for k in w.enemies:
+		var e = D.ENEMIES[k]
+		foes.append(str(e.name) + (" (zırhlı)" if e.has("armor") else " (iyileşir)" if e.has("regen") else ""))
+	var fl = txt("Düşmanlar: " + ", ".join(foes), col, 11, Color("cfd8de"), true)
+	fl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	var bar = ProgressBar.new()
 	bar.max_value = D.WAVES_PER_WORLD
 	bar.value = best
