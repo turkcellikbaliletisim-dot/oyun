@@ -31,6 +31,7 @@ var tut_t: float = 0.0
 var tut_pair: Array = []
 var kick: Dictionary = {}
 var enemy_flash: Dictionary = {}
+var knock: Dictionary = {}
 var fx: Array = []
 var coins: Array = []
 var attack_anim: Dictionary = {}
@@ -132,6 +133,7 @@ func setup(sim_in, art_in: Callable, font_in: Font, title_in: Font) -> void:
 	font = font_in
 	title_font = title_in if title_in != null else font_in
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	texture_repeat = CanvasItem.TEXTURE_REPEAT_ENABLED
 	set_process(true)
 
 var tex_cache: Dictionary = {}
@@ -163,21 +165,21 @@ func layout() -> void:
 	r_hud = Rect2(0, 0, w, 54)
 	var bar_h = 112.0
 	r_bar = Rect2(0, h - bar_h, w, bar_h)
-	var cell = minf((w - 24) / 5.0, 66.0)
-	var cell_h = cell * 1.08
-	var board_h = cell_h * 3 + 16
 	r_power = Rect2(0, r_bar.position.y - 48, w, 46)
-	r_board = Rect2((w - cell * 5) / 2.0 - 6, r_power.position.y - board_h - 2, cell * 5 + 12, board_h)
 	power_rects = {}
 	var pw = (w - 16) / 5.0
 	for i in range(sim.deck.size()):
 		power_rects[sim.deck[i]] = Rect2(8 + i * pw + 2, r_power.position.y + 3, pw - 4, 40)
-	r_field = Rect2(0, r_hud.end.y, w, r_board.position.y - r_hud.end.y - 4)
+	# tek arena: kahraman ızgarası ortada, yol etrafında
+	r_field = Rect2(0, r_hud.end.y, w, r_power.position.y - r_hud.end.y)
+	arena_sc = minf(r_field.size.x / D.REF.x, r_field.size.y / D.REF.y)
+	arena_off = r_field.position + (r_field.size - D.REF * arena_sc) / 2.0
 	slot_rects = []
+	var cell = D.cell_ref() * arena_sc
 	for i in range(D.SLOTS):
-		var c = i % D.COLS
-		var r = i / D.COLS
-		slot_rects.append(Rect2(r_board.position.x + 6 + c * cell + 2, r_board.position.y + 8 + r * cell_h + 2, cell - 4, cell_h - 4))
+		var c = to_screen(D.slot_ref(i))
+		slot_rects.append(Rect2(c - cell / 2.0 + Vector2(3, 3), cell - Vector2(6, 6)))
+	r_board = Rect2(to_screen(D.GRID_RECT.position), D.GRID_RECT.size * arena_sc)
 	r_summon = Rect2(w / 2.0 - 78, r_bar.position.y + 10, 156, 58)
 	r_sell = Rect2(w / 2.0 - 100, r_bar.position.y + 6, 200, 66)
 	r_auto = Rect2(w - 70, r_bar.position.y + 10, 60, 27)
@@ -189,23 +191,18 @@ func layout() -> void:
 		var px = 8 + (i % 2) * 44
 		var py = r_bar.position.y + 8 + (i / 2) * 44
 		potion_rects[kinds[i]] = Rect2(px, py, 40, 40)
-	# yol
 	path_pts = PackedVector2Array()
-	var bg = bg_tex()
-	if bg != null:
-		var area = Rect2(Vector2(0, r_hud.end.y), Vector2(w, r_bar.position.y - r_hud.end.y))
-		var ts = bg.get_size()
-		var sc = maxf(area.size.x / ts.x, area.size.y / ts.y)
-		var crop = (ts - area.size / sc) / 2.0
-		for p in PATH_IMG:
-			var q = p * (ts.x / 720.0)
-			path_pts.append(area.position + (q - crop) * sc)
-	else:
-		for p in PATH:
-			path_pts.append(Vector2(r_field.position.x + 24 + p.x * (r_field.size.x - 48), r_field.position.y + 8 + p.y * (r_field.size.y - 16)))
+	for p in D.path_ref():
+		path_pts.append(to_screen(p))
 	path_len = [0.0]
 	for i in range(1, path_pts.size()):
 		path_len.append(path_len[i - 1] + path_pts[i].distance_to(path_pts[i - 1]))
+
+var arena_sc: float = 1.0
+var arena_off: Vector2 = Vector2.ZERO
+
+func to_screen(p: Vector2) -> Vector2:
+	return arena_off + p * arena_sc
 
 func path_at(d: float) -> Vector2:
 	if path_pts.size() < 2:
@@ -285,6 +282,7 @@ func consume_events() -> void:
 					shot_sound_t = 0.09
 			"hit":
 				enemy_flash[e.enemy] = 0.1
+				knock[e.enemy] = 0.12
 				if e.slot >= 0:
 					var pos = path_at(float(e.d))
 					if e.crit or floats.size() < 18:
@@ -429,6 +427,10 @@ func advance_fx(delta: float) -> void:
 		kick[k] = float(kick[k]) - delta
 		if kick[k] <= 0.0:
 			kick.erase(k)
+	for k in knock.keys():
+		knock[k] = float(knock[k]) - delta
+		if knock[k] <= 0.0:
+			knock.erase(k)
 	for k in enemy_flash.keys():
 		enemy_flash[k] = float(enemy_flash[k]) - delta
 		if enemy_flash[k] <= 0.0:
@@ -465,9 +467,14 @@ func _draw() -> void:
 	cur_off = off
 	draw_set_transform(off)
 	draw_rect(Rect2(Vector2.ZERO, size), Color("0b141c"))
-	var bg = bg_tex()
-	if bg != null:
-		draw_cover(bg, Rect2(Vector2(0, r_hud.end.y), Vector2(size.x, r_bar.position.y - r_hud.end.y)), bg_tint())
+	var ground = tex("arena_ground_%d" % (sim.world + 1))
+	var area = Rect2(Vector2(0, r_hud.end.y), Vector2(size.x, r_bar.position.y - r_hud.end.y))
+	if ground != null:
+		draw_cover(ground, area)
+	else:
+		var bg = bg_tex()
+		if bg != null:
+			draw_cover(bg, area, bg_tint() * Color(0.55, 0.55, 0.6))
 	draw_field()
 	draw_board()
 	draw_set_transform(Vector2.ZERO)
@@ -511,26 +518,83 @@ func draw_fit(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 	draw_texture_rect(t, Rect2(r.position + (r.size - s) / 2.0, s), false, mod)
 
 func draw_field() -> void:
-	if tex("battle_bg") == null:
-		draw_rect(r_field, Color("1d3326"))
-		for i in range(18):
-			var x = fmod(i * 97.0, r_field.size.x)
-			var y = r_field.position.y + fmod(i * 53.0, r_field.size.y)
-			draw_circle(Vector2(x, y), 10 + (i % 4) * 4, Color(0.12, 0.25, 0.16, 0.6))
-	# yol
-	var pa = 0.0 if tex("battle_bg") != null else 0.9
-	if pa > 0.0:
-		draw_polyline(path_pts, Color(0.18, 0.12, 0.07, pa), 30.0, true)
-		draw_polyline(path_pts, Color(0.62, 0.48, 0.28, pa), 22.0, true)
-		draw_polyline(path_pts, Color(0.8, 0.66, 0.42, pa * 0.6), 8.0, true)
-	# kapı
-	var gate_r = Rect2(path_pts[path_pts.size() - 1] - Vector2(40, 52), Vector2(80, 64))
-	var gate = tex("gate_castle")
+	draw_road()
+	# kapı ve giriş geçidi
+	var end_p = path_pts[path_pts.size() - 1]
+	var gate = tex("castle_gate_front") if tex("castle_gate_front") != null else tex("gate_castle")
+	var gw = 92.0 * arena_sc
 	if gate != null:
-		draw_fit(gate, gate_r)
+		draw_fit(gate, Rect2(end_p - Vector2(gw / 2.0, gw * 0.62), Vector2(gw, gw * 0.75)))
+	var start_p = path_pts[1]
+	var portal = tex("summon_portal")
+	if portal != null:
+		var pr = 54.0 * arena_sc
+		draw_set_transform(start_p + Vector2(0, -6) + cur_off, clock * 1.6, Vector2(1.0, 0.55))
+		draw_fit(frame_tex("summon_portal", 3), Rect2(-Vector2(pr, pr) / 2.0, Vector2(pr, pr)), Color(1.0, 0.5, 0.5, 0.85))
+		draw_set_transform(cur_off)
+	# karolar: kahramanların durduğu taş zemin
+	var tile = tex("tile_platform")
+	var glow = tex("tile_platform_glow")
+	for i in range(slot_rects.size()):
+		var r: Rect2 = slot_rects[i]
+		var mergeable = drag_from >= 0 and drag_from != i and sim.can_merge(drag_from, i)
+		if tile != null:
+			draw_texture_rect(tile, r, false, Color(1, 1, 1, 0.92))
+		else:
+			draw_rect(r, Color(0.07, 0.1, 0.13, 0.55))
+			draw_rect(r, Color(0.87, 0.75, 0.49, 0.35), false, 1.5)
+			draw_rect(r.grow(-5), Color(0.33, 0.85, 0.9, 0.12), false, 1.0)
+		if mergeable:
+			var pulse = 0.6 + 0.4 * sin(clock * 8.0)
+			if glow != null:
+				draw_texture_rect(glow, r.grow(4), false, Color(1, 1, 1, pulse))
+			else:
+				draw_rect(r.grow(2), Color(1.0, 0.88, 0.4, pulse), false, 3.0)
+	# menzil dairesi: sürüklenen ya da bilgi gösterilen kahraman
+	var show_r = drag_from if drag_from >= 0 else info_slot
+	if show_r >= 0 and show_r < sim.slots.size() and sim.slots[show_r] != null:
+		var rc = to_screen(D.slot_ref(show_r)) if drag_from < 0 else drag_pos
+		var rad = float(D.HEROES[sim.slots[show_r].h].get("range", 160)) * arena_sc
+		draw_circle(rc, rad, Color(0.33, 0.88, 1.0, 0.08))
+		draw_arc(rc, rad, 0, TAU, 64, Color(0.33, 0.88, 1.0, 0.6), 2.0, true)
+
+func draw_road() -> void:
+	var w = D.ROAD_W * arena_sc
+	var rt = tex("road_texture")
+	# gölge kenar
+	draw_polyline(path_pts, Color(0.05, 0.04, 0.03, 0.55), w + 8.0, true)
+	if rt != null:
+		var tl = float(rt.get_width()) * (w / float(rt.get_height()))
+		var run = 0.0
+		for i in range(1, path_pts.size()):
+			var p0 = path_pts[i - 1]
+			var p1 = path_pts[i]
+			var dir = (p1 - p0)
+			var ln = dir.length()
+			if ln < 0.01:
+				continue
+			var nrm = Vector2(-dir.y, dir.x) / ln * (w / 2.0)
+			var u0 = run / tl
+			var u1 = (run + ln) / tl
+			draw_primitive(PackedVector2Array([p0 - nrm, p1 - nrm, p1 + nrm, p0 + nrm]), PackedColorArray([Color.WHITE, Color.WHITE, Color.WHITE, Color.WHITE]), PackedVector2Array([Vector2(u0, 0), Vector2(u1, 0), Vector2(u1, 1), Vector2(u0, 1)]), rt)
+			run += ln
 	else:
-		draw_rect(gate_r, Color("4a3a28"))
-		draw_rect(gate_r.grow(-10), Color("1a120a"))
+		draw_polyline(path_pts, Color(0.36, 0.26, 0.15), w, true)
+		draw_polyline(path_pts, Color(0.55, 0.42, 0.26), w - 10.0, true)
+		draw_polyline(path_pts, Color(0.68, 0.55, 0.36, 0.5), w * 0.3, true)
+		for i in range(path_pts.size()):
+			draw_circle(path_pts[i], (w - 10.0) / 2.0, Color(0.55, 0.42, 0.26))
+	# yön okları: düşmanın akış yönü
+	var total = float(path_len[path_len.size() - 1])
+	var k = fmod(clock * 30.0, 60.0)
+	while k < total:
+		var q = path_at(k / total)
+		var q2 = path_at(minf(1.0, (k + 4.0) / total))
+		var dd = (q2 - q).normalized()
+		var side = Vector2(-dd.y, dd.x) * 4.0
+		draw_colored_polygon(PackedVector2Array([q + dd * 5.0, q - dd * 3.0 + side, q - dd * 3.0 - side]), Color(1, 0.95, 0.8, 0.18))
+		k += 60.0
+
 	# düşmanlar (arkadan öne)
 	var list = sim.enemies.duplicate()
 	list.sort_custom(func(a, b): return float(a.d) < float(b.d))
@@ -552,7 +616,7 @@ func draw_field() -> void:
 		if dt == null:
 			continue
 		var f = dd.age / 0.4
-		var dsz = (124.0 if dd.boss else 44.0) * (1.0 - 0.5 * f)
+		var dsz = (120.0 if dd.boss else 54.0) * arena_sc * (1.0 - 0.5 * f)
 		var dp = dd.pos + Vector2(0, -dsz * 0.6 - 30.0 * f)
 		draw_set_transform(dp + cur_off, f * 1.2, Vector2.ONE)
 		draw_fit(dt, Rect2(-Vector2(dsz, dsz) / 2.0, Vector2(dsz, dsz)), Color(1.6, 1.3, 1.3, 1.0 - f))
@@ -561,6 +625,8 @@ func draw_field() -> void:
 	for s in shots:
 		var f = clampf(s.age / 0.2, 0, 1)
 		var p = s.from.lerp(s.to, f)
+		if s.proj in ["rock", "fireball"]:
+			p.y -= sin(f * PI) * 40.0 * arena_sc
 		var pt = tex("proj_" + str(s.proj))
 		var tcol = {"arrow": Color("f0e6c8"), "orb": Color("54e0ff"), "fireball": Color("ff7a2a"), "rock": Color("c0a880"), "spear": Color("e0d0a0")}.get(s.proj, Color.WHITE)
 		draw_line(p, s.from.lerp(s.to, maxf(0.0, f - 0.25)), Color(tcol, 0.45), 3.0, true)
@@ -592,11 +658,13 @@ func draw_field() -> void:
 			draw_circle(h.pos - Vector2(0, 12), 14 * (1.0 - a) + 6, Color(1, 0.9, 0.5, a * 0.7))
 	for f in floats:
 		var a = 1.0 - f.age / 0.8
-		text(f.pos, f.text, int(f.get("size", 13)), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
+		var pop_s = 1.0 + 0.45 * maxf(0.0, 1.0 - f.age / 0.12)
+		text(f.pos, f.text, int(float(f.get("size", 13)) * pop_s), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
 
 func enemy_screen_pos(en: Dictionary) -> Vector2:
-	# kalabalık tek çizgide üst üste binmesin: yolun iki yanına küçük şerit kayması
-	var d = float(en.d)
+	# kalabalık tek çizgide üst üste binmesin: yolun iki yanına küçük şerit kayması.
+	# Mantık 20 adım/sn; çizimde iki adım arası ara değer alınır (akıcı yürüyüş).
+	var d = lerpf(float(en.get("pd", en.d)), float(en.d), clampf(acc / D.TICK, 0.0, 1.0)) if not paused else float(en.d)
 	var p = path_at(d)
 	if en.boss:
 		return p
@@ -605,11 +673,12 @@ func enemy_screen_pos(en: Dictionary) -> Vector2:
 	if dir.length() < 0.01:
 		return p
 	var nrm = Vector2(-dir.y, dir.x).normalized()
-	return p + nrm * float((int(en.id) * 37) % 5 - 2) * 7.0
+	var kb = -dir.normalized() * 5.0 * arena_sc * (float(knock.get(en.id, 0.0)) / 0.12) if not en.boss else Vector2.ZERO
+	return p + nrm * float((int(en.id) * 37) % 5 - 2) * 6.0 * arena_sc + kb
 
 func draw_enemy(en: Dictionary) -> void:
 	var pos = enemy_screen_pos(en)
-	var sz = 124.0 if en.boss else 44.0
+	var sz = (120.0 if en.boss else 54.0) * arena_sc
 	if en.boss:
 		# boss altında kırmızı tehdit halkası
 		var pr = 0.5 + 0.5 * sin(clock * 5.0)
@@ -669,24 +738,17 @@ func draw_enemy(en: Dictionary) -> void:
 		text(pos + Vector2(-6, -sz), "✦", 14, Color("fff27a"))
 
 func hero_spot(i: int) -> Vector2:
-	# Arenadaki diziliş: kart tahtasının 5x3 düzeni kalenin önünde savunma hattına dönüşür.
-	# Üst satır (0) en önde, alt satır kapının hemen önünde.
-	var c = i % D.COLS
-	var r = i / D.COLS
-	var top = r_field.position.y + r_field.size.y * 0.5
-	var row_h = r_field.size.y * 0.15
-	var xf = [0.09, 0.27, 0.5, 0.73, 0.91][c]
-	var y = top + r * row_h + row_h
-	if c == 2:
-		# orta sütun yolu kapatmasın: kapının iki yanına
-		xf = 0.38 if r % 2 == 0 else 0.62
-		y += row_h * 0.45
-	return Vector2(r_field.position.x + r_field.size.x * xf, y)
+	# kahramanın ayak noktası: karonun alt-ortası
+	if i < 0 or i >= slot_rects.size():
+		return Vector2(size.x / 2, r_board.end.y)
+	var r: Rect2 = slot_rects[i]
+	return Vector2(r.get_center().x, r.end.y - r.size.y * 0.14)
 
 func hero_size(i: int) -> float:
 	var c = sim.slots[i] if i >= 0 and i < sim.slots.size() else null
 	var stars = 1 if c == null else int(c.s)
-	return 56.0 + stars * 5.0
+	var base = slot_rects[0].size.y if not slot_rects.is_empty() else 80.0
+	return base * (0.8 + stars * 0.03)
 
 func hero_frame_tex(h: String, frame: int) -> Texture2D:
 	var t = frame_tex("attack_" + h, frame)
@@ -716,7 +778,7 @@ func draw_hero(i: int) -> void:
 	if pop.has(i):
 		sz *= 1.0 + 0.35 * float(pop[i]) / 0.3
 	if i == drag_from:
-		sz *= 0.9
+		return
 	# zemin halkası: yıldız rengi, 4★ ve üstü parlar
 	var ring_a = 0.55 + (0.25 * sin(clock * 4.0 + i) if stars >= 4 else 0.0)
 	draw_set_transform(pos + Vector2(0, -3) + cur_off, 0.0, Vector2(1.0, 0.38))
@@ -748,11 +810,20 @@ func draw_hero(i: int) -> void:
 		draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
 	for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
 		draw_fit(t, Rect2(r.position + o * 1.4, r.size), Color(0.02, 0.03, 0.05, 0.85))
-	draw_fit(t, r, Color(1.25, 1.2, 1.1) if attack_anim.has(i) and float(attack_anim[i]) > 0.2 else Color.WHITE)
+	draw_fit(t, r, Color(1.4, 1.32, 1.18) if attack_anim.has(i) and float(attack_anim[i]) > 0.2 else Color(1.12, 1.1, 1.06))
 	if flip:
 		draw_set_transform(cur_off)
-	# yıldızlar
-	text(Vector2(pos.x - 30, pos.y + 11), "★".repeat(stars), 9, col.lightened(0.35), HORIZONTAL_ALIGNMENT_CENTER, 60)
+	# yıldız rozeti
+	var bw = 8.0 + stars * 9.0
+	var br = Rect2(base.x - bw / 2.0, base.y + 2, bw, 13)
+	draw_rect(br, Color(0.02, 0.03, 0.05, 0.85))
+	draw_rect(br, Color(col, 0.9), false, 1.0)
+	text(Vector2(br.position.x, br.end.y - 2), "★".repeat(stars), 10, col.lightened(0.35), HORIZONTAL_ALIGNMENT_CENTER, bw)
+	# bekleme göstergesi: saldırıya hazır olma
+	var interval = float(D.HEROES[h].interval)
+	var ready = 1.0 - clampf(float(c.cd) / interval, 0.0, 1.0)
+	if ready < 1.0:
+		draw_rect(Rect2(base.x - 14, base.y + 17, 28 * ready, 2), Color(1, 1, 1, 0.45))
 
 func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, attack: float = 0.0, atk_frame: int = -1) -> void:
 	var stars = int(c.s)
@@ -792,40 +863,7 @@ func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, a
 	text(Vector2(r.position.x, r.end.y - 4), star_text, 10 if stars > 3 else 12, Color(col.lightened(0.3), alpha), HORIZONTAL_ALIGNMENT_CENTER, r.size.x)
 
 func draw_board() -> void:
-	draw_rect(r_board, Color(0.04, 0.07, 0.1, 0.78))
-	draw_rect(r_board, Color("6e6042"), false, 2.0)
-	var cell_t = tex("merge_cell")
-	for i in range(slot_rects.size()):
-		var r: Rect2 = slot_rects[i]
-		if cell_t != null:
-			draw_texture_rect(cell_t, r, false, Color(1, 1, 1, 0.55))
-		else:
-			draw_rect(r, Color(0.1, 0.16, 0.22, 0.9))
-		var c = sim.slots[i]
-		if c == null or i == drag_from:
-			continue
-		var highlight = drag_from >= 0 and sim.can_merge(drag_from, i)
-		var atk = 0.0
-		if kick.has(i):
-			atk = float(kick[i]) / 0.12
-			r = Rect2(r.position - Vector2(0, 5.0 * atk), r.size)
-		if pop.has(i):
-			var pf = float(pop[i]) / 0.3
-			r = r.grow(r.size.x * 0.22 * pf)
-		var af = -1
-		if attack_anim.has(i):
-			af = clampi(int((1.0 - float(attack_anim[i]) / 0.36) * 4.0), 0, 3)
-		draw_card(r, c, 1.0, float(i) * 0.7, atk, af)
-		if kick.has(i):
-			draw_rect(r, Color(1, 0.95, 0.7, 0.5 * float(kick[i]) / 0.12), false, 2.0)
-		if highlight:
-			draw_rect(r.grow(2), Color("ffe27a"), false, 3.0)
-		if i == info_slot:
-			draw_rect(r.grow(2), Color("54e0ff"), false, 2.0)
-		# bekleme göstergesi
-		var interval = float(D.HEROES[c.h].interval)
-		var ready = 1.0 - clampf(float(c.cd) / interval, 0.0, 1.0)
-		draw_rect(Rect2(r.position.x + 4, r.position.y + 3, (r.size.x - 8) * ready, 2), Color(1, 1, 1, 0.35))
+	# Ayrı kart tahtası yok: kahramanlar karolarda duruyor (draw_field/draw_hero).
 	for f in flashes:
 		if f.slot < 0 or f.slot >= slot_rects.size():
 			continue
@@ -836,9 +874,14 @@ func draw_board() -> void:
 			draw_texture_rect(burst, rr, false, Color(1, 1, 1, a))
 		else:
 			draw_rect(rr, Color(1, 0.9, 0.5, a * 0.6), false, 4.0)
+	# sürüklenen kahraman parmağın altında
 	if drag_from >= 0 and sim.slots[drag_from] != null:
-		var dr = Rect2(drag_pos - slot_rects[0].size * 0.55, slot_rects[0].size * 1.1)
-		draw_card(dr, sim.slots[drag_from], 0.9)
+		var c = sim.slots[drag_from]
+		var t = hero_frame_tex(str(c.h), 0)
+		var sz = hero_size(drag_from) * 1.1
+		if t != null:
+			draw_fit(t, Rect2(drag_pos - Vector2(sz / 2.0, sz * 0.9), Vector2(sz, sz)), Color(1, 1, 1, 0.9))
+		text(Vector2(drag_pos.x - 30, drag_pos.y + 14), "★".repeat(int(c.s)), 11, STAR_COLORS[int(c.s) - 1].lightened(0.3), HORIZONTAL_ALIGNMENT_CENTER, 60)
 
 func icon_text(icon: String, pos: Vector2, s: String, col: Color = Color.WHITE) -> float:
 	var t = tex(icon)

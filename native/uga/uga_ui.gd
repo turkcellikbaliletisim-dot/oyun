@@ -838,8 +838,8 @@ func render_heroes() -> void:
 	title(str(spec.name), v, 20)
 	txt(("Seviye %d / %d" % [lv, Meta.MAX_HERO_LEVEL]) if lv > 0 else "Kilitli", v, 13, Color("ffd25a") if lv > 0 else MUTED)
 	txt(str(spec.text), v, 12, INK, true)
-	var reach = float(spec.get("reach", 0.2))
-	txt("Menzil: " + ("kısa (kaleye yakın)" if reach > 0.3 else "uzun" if reach < 0.15 else "orta"), v, 11, MUTED)
+	var rg = int(spec.get("range", 160))
+	txt("Menzil: %s (%d) · yola yakın karoya koy" % ["kısa" if rg < 160 else "uzun" if rg > 220 else "orta", rg], v, 11, MUTED)
 	if hero_sel == "ejder_yavrusu":
 		txt("Yalnızca 4★ ve üstü birleştirmede rastgele çıkar.", p, 12, MUTED, true)
 	elif lv <= 0:

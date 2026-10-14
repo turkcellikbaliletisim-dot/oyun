@@ -2,7 +2,7 @@ extends RefCounted
 # UGACHA tarzı mod için sabit veriler: kahramanlar, düşmanlar, dünyalar, iksirler.
 
 const SLOTS = 15
-const COLS = 5
+const COLS = 3
 const MAX_STARS = 6
 const TICK = 0.05
 const START_GOLD = 60
@@ -14,18 +14,18 @@ const STAR_DMG = [1.0, 2.3, 5.2, 11.5, 25.0, 55.0]
 const STAR_SPEED = [1.0, 1.08, 1.16, 1.25, 1.35, 1.5]
 
 const HEROES = {
-	"kilic": {"reach": 0.42, "name": "Alp Kılıççı", "dmg": 10.0, "interval": 0.9, "proj": "spear", "crit": 0.15, "text": "%15 kritik vuruş (x2)", "art": "unit_kilic"},
-	"okcu": {"name": "Okçu", "dmg": 6.0, "interval": 0.45, "proj": "arrow", "text": "Çok hızlı atış", "art": "unit_okcu"},
-	"buyucu": {"name": "Büyücü", "dmg": 9.0, "interval": 1.0, "proj": "orb", "chain": 1, "text": "Büyü ikinci düşmana sıçrar", "art": "unit_buyucu"},
-	"kalkan": {"reach": 0.42, "name": "Kalkancı", "dmg": 7.0, "interval": 1.0, "proj": "rock", "stun": 0.12, "text": "%12 şansla 1 sn sersemletir", "art": "unit_kalkan"},
-	"kam": {"name": "Kam", "dmg": 6.0, "interval": 0.9, "proj": "orb", "slow": 0.3, "text": "Düşmanı %30 yavaşlatır", "art": "hero_kam"},
-	"mizrakci": {"reach": 0.42, "name": "Mızrakçı", "dmg": 9.0, "interval": 1.0, "proj": "spear", "pierce": 2, "text": "İki düşmanı deler", "art": "hero_mizrakci"},
-	"kurt_binicisi": {"reach": 0.42, "name": "Kurt Binicisi", "dmg": 4.0, "interval": 0.3, "proj": "arrow", "text": "En hızlı saldırı", "art": "hero_kurt_binicisi"},
-	"simyaci": {"name": "Simyacı", "dmg": 3.0, "interval": 1.0, "proj": "orb", "poison": 6.0, "text": "Zehir: 3 sn hasar, zırhı yok sayar", "art": "hero_simyaci"},
-	"mancinik": {"reach": 0.1, "name": "Mancınık", "dmg": 20.0, "interval": 2.2, "proj": "rock", "splash": 3, "text": "Öndeki 3 düşmana alan hasarı", "art": "hero_mancinik"},
-	"tulpar_okcu": {"reach": 0.1, "name": "Tulpar Okçu", "dmg": 8.0, "interval": 0.8, "proj": "arrow", "boss_bonus": 0.5, "text": "Boss'a +%50 hasar", "art": "hero_tulpar_okcu"},
-	"umay": {"name": "Umay", "dmg": 4.0, "interval": 1.0, "proj": "orb", "aura": 0.2, "kill_gold": 1, "text": "Komşu kartlara +%20 hasar, öldürmede +1 altın", "art": "hero_umay"},
-	"ejder_yavrusu": {"name": "Ejder Yavrusu", "dmg": 26.0, "interval": 1.2, "proj": "fireball", "splash": 3, "burn": 8.0, "legendary": true, "text": "Efsanevi: alan hasarı + yanma", "art": "hero_ejder_yavrusu"},
+	"kilic": {"range": 125, "name": "Alp Kılıççı", "dmg": 10.0, "interval": 0.9, "proj": "spear", "crit": 0.15, "text": "%15 kritik vuruş (x2)", "art": "unit_kilic"},
+	"okcu": {"range": 205, "name": "Okçu", "dmg": 6.0, "interval": 0.45, "proj": "arrow", "text": "Çok hızlı atış", "art": "unit_okcu"},
+	"buyucu": {"range": 195, "name": "Büyücü", "dmg": 9.0, "interval": 1.0, "proj": "orb", "chain": 1, "text": "Büyü ikinci düşmana sıçrar", "art": "unit_buyucu"},
+	"kalkan": {"range": 125, "name": "Kalkancı", "dmg": 7.0, "interval": 1.0, "proj": "rock", "stun": 0.12, "text": "%12 şansla 1 sn sersemletir", "art": "unit_kalkan"},
+	"kam": {"range": 195, "name": "Kam", "dmg": 6.0, "interval": 0.9, "proj": "orb", "slow": 0.3, "text": "Düşmanı %30 yavaşlatır", "art": "hero_kam"},
+	"mizrakci": {"range": 150, "name": "Mızrakçı", "dmg": 9.0, "interval": 1.0, "proj": "spear", "pierce": 2, "text": "İki düşmanı deler", "art": "hero_mizrakci"},
+	"kurt_binicisi": {"range": 170, "name": "Kurt Binicisi", "dmg": 4.0, "interval": 0.3, "proj": "arrow", "text": "En hızlı saldırı", "art": "hero_kurt_binicisi"},
+	"simyaci": {"range": 195, "name": "Simyacı", "dmg": 3.0, "interval": 1.0, "proj": "orb", "poison": 6.0, "text": "Zehir: 3 sn hasar, zırhı yok sayar", "art": "hero_simyaci"},
+	"mancinik": {"range": 270, "name": "Mancınık", "dmg": 20.0, "interval": 2.2, "proj": "rock", "splash": 3, "text": "Öndeki 3 düşmana alan hasarı", "art": "hero_mancinik"},
+	"tulpar_okcu": {"range": 285, "name": "Tulpar Okçu", "dmg": 8.0, "interval": 0.8, "proj": "arrow", "boss_bonus": 0.5, "text": "Boss'a +%50 hasar", "art": "hero_tulpar_okcu"},
+	"umay": {"range": 185, "name": "Umay", "dmg": 4.0, "interval": 1.0, "proj": "orb", "aura": 0.2, "kill_gold": 1, "text": "Komşu kartlara +%20 hasar, öldürmede +1 altın", "art": "hero_umay"},
+	"ejder_yavrusu": {"range": 220, "name": "Ejder Yavrusu", "dmg": 26.0, "interval": 1.2, "proj": "fireball", "splash": 3, "burn": 8.0, "legendary": true, "text": "Efsanevi: alan hasarı + yanma", "art": "hero_ejder_yavrusu"},
 }
 const SUMMON_POOL = ["kilic", "okcu", "buyucu", "kalkan", "kam", "mizrakci", "kurt_binicisi", "simyaci", "mancinik", "tulpar_okcu", "umay"]
 const LEGEND_CHANCE = 0.12
@@ -67,3 +67,56 @@ const POTIONS = {
 	"freeze": {"name": "Buz İksiri", "text": "Tüm düşmanlar 5 sn donar", "art": "potion_freeze"},
 	"heal": {"name": "Şifa İksiri", "text": "Kaleye +8 can", "art": "potion_heal"},
 }
+
+# ---------- arena geometrisi (390x632 referans piksel) ----------
+# Ortada 3 sütun x 5 satır kahraman ızgarası; düşmanlar sol üstten girip
+# saat yönünde ızgaranın etrafını dolaşır ve sol taraftaki kale kapısına varır.
+const REF = Vector2(390, 632)
+const ROAD_INSET = 30.0
+const ROAD_W = 46.0
+const GRID_RECT = Rect2(68, 66, 254, 500)
+
+static func path_ref() -> PackedVector2Array:
+	var l = ROAD_INSET
+	var t = ROAD_INSET
+	var r = REF.x - ROAD_INSET
+	var b = REF.y - ROAD_INSET
+	var rad = 34.0
+	var pts = PackedVector2Array()
+	pts.append(Vector2(l, -30))
+	_corner(pts, Vector2(l, t), rad, PI, PI * 1.5, Vector2(l + rad, t + rad))
+	_corner(pts, Vector2(r, t), rad, PI * 1.5, TAU, Vector2(r - rad, t + rad))
+	_corner(pts, Vector2(r, b), rad, 0.0, PI * 0.5, Vector2(r - rad, b - rad))
+	_corner(pts, Vector2(l, b), rad, PI * 0.5, PI, Vector2(l + rad, b - rad))
+	pts.append(Vector2(l, REF.y * 0.3))
+	return pts
+
+static func _corner(pts: PackedVector2Array, _c: Vector2, rad: float, a0: float, a1: float, center: Vector2) -> void:
+	for k in range(7):
+		var a = lerpf(a0, a1, k / 6.0)
+		pts.append(center + Vector2(cos(a), sin(a)) * rad)
+
+static func path_lengths(pts: PackedVector2Array) -> Array:
+	var out = [0.0]
+	for i in range(1, pts.size()):
+		out.append(out[i - 1] + pts[i].distance_to(pts[i - 1]))
+	return out
+
+static func point_on(pts: PackedVector2Array, lens: Array, d: float) -> Vector2:
+	var target = clampf(d, 0.0, 1.0) * float(lens[lens.size() - 1])
+	for i in range(1, pts.size()):
+		if target <= float(lens[i]):
+			var seg = float(lens[i]) - float(lens[i - 1])
+			var f = 0.0 if seg <= 0.0 else (target - float(lens[i - 1])) / seg
+			return pts[i - 1].lerp(pts[i], f)
+	return pts[pts.size() - 1]
+
+static func slot_ref(i: int) -> Vector2:
+	var c = i % COLS
+	var r = i / COLS
+	var cw = GRID_RECT.size.x / COLS
+	var ch = GRID_RECT.size.y / (SLOTS / COLS)
+	return GRID_RECT.position + Vector2(cw * (c + 0.5), ch * (r + 0.5))
+
+static func cell_ref() -> Vector2:
+	return Vector2(GRID_RECT.size.x / COLS, GRID_RECT.size.y / (SLOTS / COLS))

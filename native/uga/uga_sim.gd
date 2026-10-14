@@ -48,7 +48,8 @@ func _init(seed_in: int = 1, world_in: int = 0, mods_in: Dictionary = {}, castle
 	slots.fill(null)
 	# Koşu 3 hazır kartla başlar: ilk saniyeden itibaren savaş olur.
 	for i in range(3):
-		slots[5 + i * 2] = {"h": pick(deck), "s": 1, "cd": 0.5}
+		var h = pick(deck)
+		slots[best_free_slot(h)] = {"h": h, "s": 1, "cd": 0.5}
 
 # ---------- rastgelelik ----------
 
@@ -74,18 +75,65 @@ func free_slot() -> int:
 			return i
 	return -1
 
+# ---------- arena geometrisi ----------
+static var _path: PackedVector2Array = PackedVector2Array()
+static var _lens: Array = []
+static var _cover: Dictionary = {}
+
+static func ensure_path() -> void:
+	if _path.is_empty():
+		_path = D.path_ref()
+		_lens = D.path_lengths(_path)
+
+static func pos_at(d: float) -> Vector2:
+	ensure_path()
+	return D.point_on(_path, _lens, d)
+
+static func hero_range(h: String) -> float:
+	return float(D.HEROES[h].get("range", 160))
+
+static func coverage(slot: int, rng_px: float) -> int:
+	# kahramanın menzili yolun ne kadarını görüyor (10 px örnekler)
+	var key = "%d:%d" % [slot, int(rng_px)]
+	if _cover.has(key):
+		return _cover[key]
+	ensure_path()
+	var total = float(_lens[_lens.size() - 1])
+	var sp = D.slot_ref(slot)
+	var n = 0
+	var x = 0.0
+	while x < total:
+		if D.point_on(_path, _lens, x / total).distance_to(sp) <= rng_px:
+			n += 1
+		x += 10.0
+	_cover[key] = n
+	return n
+
+func best_free_slot(h: String) -> int:
+	var best = -1
+	var best_c = -1
+	var r = hero_range(h)
+	for i in range(slots.size()):
+		if slots[i] == null:
+			var c = coverage(i, r)
+			if c > best_c:
+				best = i
+				best_c = c
+	return best
+
 func summon() -> bool:
 	err = ""
 	if over:
 		return fail("Koşu bitti.")
 	if gold < summon_cost:
 		return fail("Altın yetmiyor.")
-	var slot = free_slot()
-	if slot < 0:
+	if free_slot() < 0:
 		return fail("Yuvalar dolu. Birleştir!")
+	var h = pick(deck)
+	var slot = best_free_slot(h)
 	gold -= summon_cost
 	summon_cost += 1
-	slots[slot] = {"h": pick(deck), "s": 1, "cd": 0.3}
+	slots[slot] = {"h": h, "s": 1, "cd": 0.3}
 	stats.summons += 1
 	events.append({"t": "summon", "slot": slot})
 	return true
@@ -182,7 +230,7 @@ func start_wave() -> void:
 	spawn_queue = []
 	if is_boss_wave(wave):
 		var b = D.BOSSES[(world * 2 + wave / 10 - 1) % D.BOSSES.size()]
-		spawn_queue.append({"kind": "boss", "boss_name": b.name, "art": b.art, "hp": wave_hp(wave) * 55.0, "speed": 0.028, "boss": true, "gold": 30 + wave * 2, "leak": 10, "armor": 0.15, "regen": 0.0})
+		spawn_queue.append({"kind": "boss", "boss_name": b.name, "art": b.art, "hp": wave_hp(wave) * 26.0, "speed": 0.028, "boss": true, "gold": 30 + wave * 2, "leak": 10, "armor": 0.15, "regen": 0.0})
 		for i in range(6):
 			var k = w.enemies[i % w.enemies.size()]
 			spawn_queue.append(enemy_spec(k, wave))
@@ -197,7 +245,7 @@ func start_wave() -> void:
 
 func enemy_spec(kind: String, n: int) -> Dictionary:
 	var e = D.ENEMIES[kind]
-	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp) * 0.42, "speed": float(e.speed) * 1.7 * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
+	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp) * 0.2, "speed": float(e.speed) * 1.15 * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
 
 func spawn(spec: Dictionary) -> void:
 	var e = spec.duplicate()
@@ -205,6 +253,7 @@ func spawn(spec: Dictionary) -> void:
 	next_enemy_id += 1
 	e["max"] = e.hp
 	e["d"] = 0.0
+	e["pd"] = 0.0
 	e["slow_t"] = 0.0
 	e["slow_f"] = 0.0
 	e["stun_t"] = 0.0
@@ -231,7 +280,7 @@ func hero_damage(slot: int) -> float:
 
 func targets_front() -> Array:
 	# En öndeki (kapıya en yakın) düşmanlar önce.
-	var arr = enemies.filter(func(e): return float(e.hp) > 0.0 and float(e.d) > 0.1)
+	var arr = enemies.filter(func(e): return float(e.hp) > 0.0 and float(e.d) > 0.02)
 	arr.sort_custom(func(a, b): return float(a.d) > float(b.d) or (float(a.d) == float(b.d) and int(a.id) < int(b.id)))
 	return arr
 
@@ -262,10 +311,11 @@ func fire(slot: int) -> void:
 	var h = D.HEROES[c.h]
 	while not _front.is_empty() and float(_front[0].hp) <= 0.0:
 		_front.pop_front()
-	var reach = float(h.get("reach", 0.2))
+	var rng_px = hero_range(c.h)
+	var sp = D.slot_ref(slot)
 	var front = []
 	for en in _front:
-		if float(en.hp) > 0.0 and float(en.d) > reach:
+		if float(en.hp) > 0.0 and pos_at(float(en.d)).distance_to(sp) <= rng_px:
 			front.append(en)
 			if front.size() >= 8:
 				break
@@ -348,6 +398,7 @@ func step() -> void:
 					events.append({"t": "boss_timeout"})
 	# hareket ve durum etkileri
 	for e in enemies:
+		e.pd = float(e.d)
 		if float(e.poison_t) > 0.0:
 			e.poison_t = float(e.poison_t) - D.TICK
 			hit(e, float(e.poison) * D.TICK, -1)
@@ -363,6 +414,7 @@ func step() -> void:
 			continue
 		if freeze_t > 0.0:
 			continue
+		e.pd = float(e.d)
 		e.d = float(e.d) + float(e.speed) * (1.0 - float(e.slow_f)) * D.TICK
 		if float(e.d) >= 1.0:
 			castle_hp -= int(e.leak)
