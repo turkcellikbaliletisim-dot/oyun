@@ -154,12 +154,39 @@ static func short(n: int) -> String:
 		return "%.1fB" % (n / 1000.0)
 	return str(n)
 
+func ribbon(parent: Node, label: String, h: float = 50) -> Control:
+	var t = art("ui_ribbon.png")
+	if t == null:
+		return title(label, parent, 22)
+	var holder = TextureRect.new()
+	holder.texture = t
+	holder.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	holder.stretch_mode = TextureRect.STRETCH_SCALE
+	holder.custom_minimum_size = Vector2(10, h)
+	holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(holder)
+	var l = Label.new()
+	l.text = label
+	l.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	l.offset_left = h * 0.9
+	l.offset_right = -h * 0.9
+	l.offset_top = -h * 0.12
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+	l.clip_text = true
+	l.add_theme_font_size_override("font_size", 19)
+	l.add_theme_color_override("font_color", Color("3a2206"))
+	if app.portrait_font != null:
+		l.add_theme_font_override("font", app.portrait_font)
+	holder.add_child(l)
+	return holder
+
 func back(parent: Node, label: String) -> void:
-	var r = row(parent, 8)
-	var b = btn("‹ Geri", r, func(): open("lobby"), false, false, 38)
+	var r = row(parent, 6)
+	var b = btn("‹", r, func(): open("lobby"), false, false, 44)
 	b.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	b.custom_minimum_size.x = 86
-	title(label, r, 22)
+	b.custom_minimum_size.x = 48
+	ribbon(r, label)
 	resources(parent)
 
 func hero_tile(parent: Node, h: String, stars: int, size: float, selected: bool = false) -> PanelContainer:
