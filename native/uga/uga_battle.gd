@@ -230,6 +230,10 @@ func consume_events() -> void:
 			"shot":
 				var to = path_at(float(e.d)) + Vector2(0, -14)
 				shots.append({"from": slot_center(e.slot), "to": to, "age": 0.0, "proj": e.proj})
+				var spec = D.HEROES.get(e.get("h", ""), {})
+				var kind = "hit_ice" if spec.has("slow") else "hit_poison" if spec.has("poison") else "hit_spark" if spec.has("splash") or spec.has("burn") else ""
+				if kind != "" and hits.size() < 24:
+					hits.append({"pos": to + Vector2(0, 14), "age": -0.15, "kind": kind})
 				kick[e.slot] = 0.12
 			"hit":
 				enemy_flash[e.enemy] = 0.1
@@ -464,6 +468,8 @@ func draw_field() -> void:
 			draw_circle(p, 4.5, col)
 			draw_line(p, s.from.lerp(s.to, maxf(0, f - 0.15)), Color(col, 0.5), 2.0)
 	for h in hits:
+		if h.age < 0.0:
+			continue
 		var ht = tex(h.kind)
 		var a = 1.0 - h.age / 0.35
 		if ht != null:

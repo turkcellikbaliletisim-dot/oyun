@@ -269,7 +269,7 @@ func fire(slot: int) -> void:
 	var d0 = dmg
 	if h.has("boss_bonus") and target.boss:
 		d0 *= 1.0 + float(h.boss_bonus)
-	events.append({"t": "shot", "slot": slot, "enemy": target.id, "proj": h.proj, "d": float(target.d)})
+	events.append({"t": "shot", "slot": slot, "enemy": target.id, "proj": h.proj, "d": float(target.d), "h": c.h})
 	hit(target, d0, slot, crit)
 	if h.has("slow"):
 		target.slow_t = 2.0
