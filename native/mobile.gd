@@ -354,7 +354,7 @@ func open_tab(tab: String) -> void:
 	if busy:
 		return
 	gallery_open = false
-	view = TAB_VIEWS.get(tab, tab if tab in ["merge", "duel", "uga_missions", "uga_rebirth", "uga_result"] else "lobby")
+	view = TAB_VIEWS.get(tab, tab if tab in ["merge", "duel", "uga_missions", "uga_rebirth", "uga_result", "uga_map"] else "lobby")
 	selected = []
 	focus = {}
 	scroll.scroll_vertical = 0

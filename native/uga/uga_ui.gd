@@ -7,6 +7,7 @@ const D = preload("res://native/uga/uga_data.gd")
 const Meta = preload("res://native/uga/uga_meta.gd")
 const Sim = preload("res://native/uga/uga_sim.gd")
 const Battle = preload("res://native/uga/uga_battle.gd")
+const Sprite = preload("res://native/uga/uga_sprite.gd")
 
 const GOLD_C = Color("ddbf7e")
 const INK = Color("f7ecd4")
@@ -250,6 +251,8 @@ func render(v: String) -> void:
 			render_result()
 		"uga_online":
 			render_online()
+		"uga_map":
+			render_map()
 		_:
 			render_hub()
 
@@ -264,103 +267,150 @@ func render_hub() -> void:
 		icon(r, "icon_gold_coin.png", 30)
 		txt("Sen yokken kalen %d altın topladı!" % offline_gold, r, 14, INK, true)
 		offline_gold = 0
-	if meta.daily_ready():
-		var g = card_panel(c, Color("54e0ff"))
-		var r = row(g)
-		icon(r, "icon_daily_gift.png" if art("icon_daily_gift.png") != null else "scene_chest.png", 34)
-		txt("Günlük hediye hazır", r, 15, INK, true)
-		var b = btn("Al", r, func():
-			var out = meta.claim_daily()
-			if not out.is_empty():
-				toast("+%d elmas, +%d altın, sandık" % [out.diamond, out.gold])
-			open("lobby"), false, true, 40)
-		b.size_flags_horizontal = Control.SIZE_SHRINK_END
-		b.custom_minimum_size.x = 80
-	# dünya kartı
+	# ---- sahne: dünya arka planı, takım arenada, büyük SAVAŞ, yan düğmeler ----
 	var unlocked = int(meta.p.world)
 	world_sel = clampi(world_sel, 0, unlocked)
 	var w = D.WORLDS[world_sel]
-	var holder = PanelContainer.new()
-	holder.clip_contents = true
-	holder.custom_minimum_size.y = 250
-	holder.add_theme_stylebox_override("panel", app.box(Color("111b24"), Color("6e6042"), 1, 14, 0))
-	c.add_child(holder)
+	var stage = PanelContainer.new()
+	stage.clip_contents = true
+	stage.custom_minimum_size.y = 560
+	stage.add_theme_stylebox_override("panel", app.box(Color("111b24"), Color("6e6042"), 1, 16, 0))
+	c.add_child(stage)
 	var bg = TextureRect.new()
-	bg.texture = art("home_bg.png") if art("home_bg.png") != null else art("scene_play.png")
+	var bg_file = "battle_bg.png" if world_sel == 0 else "battle_bg_%d.png" % (world_sel + 1)
+	bg.texture = art(bg_file) if art(bg_file) != null else art("home_bg.png")
 	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
 	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	bg.modulate = [Color(1, 1, 1), Color(0.72, 0.85, 0.75), Color(0.8, 0.86, 1.0), Color(1.0, 0.82, 0.62), Color(0.95, 0.66, 0.78)][world_sel]
-	holder.add_child(bg)
-	var shade = ColorRect.new()
-	shade.color = Color(0.02, 0.04, 0.07, 0.45)
+	stage.add_child(bg)
+	var shade = TextureRect.new()
+	var grad = Gradient.new()
+	grad.set_color(0, Color(0.02, 0.04, 0.07, 0.65))
+	grad.add_point(0.35, Color(0.02, 0.04, 0.07, 0.05))
+	grad.add_point(0.7, Color(0.02, 0.04, 0.07, 0.1))
+	grad.set_color(grad.get_point_count() - 1, Color(0.02, 0.04, 0.07, 0.85))
+	var gt = GradientTexture2D.new()
+	gt.gradient = grad
+	gt.fill_from = Vector2(0, 0)
+	gt.fill_to = Vector2(0, 1)
+	shade.texture = gt
+	shade.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	shade.stretch_mode = TextureRect.STRETCH_SCALE
 	shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	holder.add_child(shade)
-	var m = MarginContainer.new()
-	for side in ["left", "right", "top", "bottom"]:
-		m.add_theme_constant_override("margin_" + side, 14)
-	holder.add_child(m)
-	var col = VBoxContainer.new()
-	col.add_theme_constant_override("separation", 6)
-	m.add_child(col)
-	var top = row(col, 6)
-	var prev = btn("‹", top, func(): world_sel -= 1; open("lobby"), world_sel <= 0, false, 40)
+	stage.add_child(shade)
+	var layer = Control.new()
+	layer.mouse_filter = Control.MOUSE_FILTER_PASS
+	stage.add_child(layer)
+	# üst: dünya adı ve oklar
+	var head = HBoxContainer.new()
+	place(layer, head, 0.03, 0.015, 0.97, 0.17)
+	head.add_theme_constant_override("separation", 4)
+	var prev = btn("‹", head, func(): world_sel -= 1; open("lobby"), world_sel <= 0, false, 40)
 	prev.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
-	prev.custom_minimum_size.x = 44
+	prev.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	prev.custom_minimum_size.x = 40
 	var name_box = VBoxContainer.new()
 	name_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	name_box.add_theme_constant_override("separation", 0)
-	top.add_child(name_box)
-	if art("world_%d.png" % (world_sel + 1)) != null:
-		var emblem = icon(name_box, "world_%d.png" % (world_sel + 1), 56)
-		emblem.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
-	var t1 = title("%d. Dünya" % (world_sel + 1), name_box, 16)
+	name_box.alignment = BoxContainer.ALIGNMENT_CENTER
+	name_box.add_theme_constant_override("separation", -2)
+	head.add_child(name_box)
+	var t1 = title("%d. DÜNYA" % (world_sel + 1), name_box, 14)
 	t1.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var t2 = title(w.name, name_box, 26)
+	var t2 = title(w.name, name_box, 28)
 	t2.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var next = btn("›", top, func(): world_sel += 1; open("lobby"), world_sel >= unlocked, false, 40)
-	next.size_flags_horizontal = Control.SIZE_SHRINK_END
-	next.custom_minimum_size.x = 44
-	var gap = Control.new()
-	gap.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	col.add_child(gap)
 	var best = meta.best_wave(world_sel)
-	var info = txt("En iyi: %d / %d dalga%s" % [best, D.WAVES_PER_WORLD, "  ✓" if best >= D.WAVES_PER_WORLD else ""], col, 15, INK)
-	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	var foes = []
-	for k in w.enemies:
-		var e = D.ENEMIES[k]
-		foes.append(str(e.name) + (" (zırhlı)" if e.has("armor") else " (iyileşir)" if e.has("regen") else ""))
-	var fl = txt("Düşmanlar: " + ", ".join(foes), col, 11, Color("cfd8de"), true)
-	fl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var t3 = txt("En iyi %d / %d dalga%s" % [best, D.WAVES_PER_WORLD, "  ✓" if best >= D.WAVES_PER_WORLD else ""], name_box, 12, INK)
+	t3.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var next = btn("›", head, func(): world_sel += 1; open("lobby"), world_sel >= unlocked, false, 40)
+	next.size_flags_horizontal = Control.SIZE_SHRINK_END
+	next.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	next.custom_minimum_size.x = 40
+	# boss gölgesi: bu dünyanın boss'u arkada bekliyor
+	var boss_t = art(str(D.BOSSES[world_sel].art) + ".png")
+	if boss_t != null:
+		var boss = TextureRect.new()
+		boss.texture = boss_t
+		boss.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		boss.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		boss.modulate = Color(0.55, 0.5, 0.65, 0.85)
+		boss.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		place(layer, boss, 0.3, 0.17, 0.7, 0.42)
+	# takım arenada: 5 kahraman yay şeklinde, canlı
+	var spots = [[0.5, 0.7], [0.29, 0.645], [0.71, 0.645], [0.15, 0.585], [0.85, 0.585]]
+	var order = [2, 1, 3, 0, 4]
+	for k in range(meta.p.deck.size()):
+		var h = str(meta.p.deck[k])
+		var sp = spots[order.find(k)] if order.find(k) >= 0 else spots[0]
+		var sw = 0.36 if k == 2 else 0.28
+		var spr = Sprite.new()
+		var sheet = art("attack_%s.png" % h)
+		spr.setup(sheet, hero_art(h, 3), 2.2 + k * 0.45, k * 0.7)
+		spr.flip = float(sp[0]) > 0.5
+		spr.ring = STAR_COLORS[clampi(meta.hero_level(h) / 3, 0, 5)]
+		place(layer, spr, float(sp[0]) - sw / 2.0, float(sp[1]) - 0.26, float(sp[0]) + sw / 2.0, float(sp[1]))
+		var lv = txt("Sv %d" % meta.hero_level(h), layer, 11, GOLD_C)
+		lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		place(layer, lv, float(sp[0]) - 0.1, float(sp[1]), float(sp[0]) + 0.1, float(sp[1]) + 0.035)
+	var team_b = Button.new()
+	team_b.flat = true
+	team_b.focus_mode = Control.FOCUS_NONE
+	for key in ["normal", "hover", "pressed", "focus"]:
+		team_b.add_theme_stylebox_override(key, StyleBoxEmpty.new())
+	team_b.pressed.connect(func(): click(); open("uga_heroes"))
+	place(layer, team_b, 0.05, 0.44, 0.95, 0.7)
+	# yan düğmeler
+	var chests = int(meta.p.chests.common) + int(meta.p.chests.rare) + int(meta.p.chests.epic)
+	var ready = 0
+	for mi in meta.p.missions.list:
+		if not mi.claimed and int(mi.progress) >= int(meta.mission_spec(mi.id).goal):
+			ready += 1
+	var left = [
+		["icon_daily_gift.png", "Hediye", func():
+			var out = meta.claim_daily()
+			if not out.is_empty():
+				toast("+%d elmas, +%d altın, sandık" % [out.diamond, out.gold])
+			else:
+				toast("Yarın yeni hediye", false)
+			open("lobby"), meta.daily_ready()],
+		["icon_mission.png", "Görev", func(): open("uga_missions"), ready > 0],
+		["scene_chest.png" if art("chest_rare.png") == null else "chest_rare.png", "Sandık", func(): open("uga_chests"), chests > 0],
+	]
+	var right = [
+		["icon_map.png" if art("icon_map.png") != null else "icon_story.png", "Harita", func(): open("uga_map"), false],
+		["icon_leaderboard.png", "Sıralama", func(): open("uga_online"), false],
+		["icon_star_rebirth.png", "Doğuş", func(): open("uga_rebirth"), meta.can_rebirth()],
+	]
+	for i in range(left.size()):
+		round_btn(layer, 0.015, 0.2 + i * 0.105, left[i])
+	for i in range(right.size()):
+		round_btn(layer, 0.815, 0.2 + i * 0.105, right[i])
+	# alt: SAVAŞ
+	var bottom = VBoxContainer.new()
+	bottom.add_theme_constant_override("separation", 4)
+	place(layer, bottom, 0.12, 0.76, 0.88, 0.98)
 	var bar = ProgressBar.new()
 	bar.max_value = D.WAVES_PER_WORLD
 	bar.value = best
 	bar.show_percentage = false
-	bar.custom_minimum_size = Vector2(0, 10)
-	bar.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 5, 0))
-	bar.add_theme_stylebox_override("fill", app.box(GOLD_C, Color(0, 0, 0, 0), 0, 5, 0))
-	col.add_child(bar)
-	btn("SAVAŞ", col, func(): start_run(world_sel), false, true, 58)
-	# takım
-	var deck_box = card_panel(c)
-	var dr = row(deck_box, 6)
-	title("Takımın", dr, 18)
-	var sp = Control.new()
-	sp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	dr.add_child(sp)
-	var change = btn("Değiştir", dr, func(): open("uga_heroes"), false, false, 34)
-	change.size_flags_horizontal = Control.SIZE_SHRINK_END
-	change.custom_minimum_size.x = 96
-	var cards = row(deck_box, 5)
-	for h in meta.p.deck:
-		var tile = hero_tile(cards, h, 1, 62)
-		var lv = txt("Sv %d" % meta.hero_level(h), tile.get_child(0), 10, GOLD_C)
-		lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	bar.custom_minimum_size = Vector2(0, 8)
+	bar.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 4, 0))
+	bar.add_theme_stylebox_override("fill", app.box(GOLD_C, Color(0, 0, 0, 0), 0, 4, 0))
+	bottom.add_child(bar)
+	var play = btn("SAVAŞ", bottom, func(): start_run(world_sel), false, true, 64)
+	play.add_theme_font_size_override("font_size", 26)
+	var pulse = play.create_tween().set_loops()
+	play.pivot_offset = Vector2(140, 32)
+	pulse.tween_property(play, "scale", Vector2(1.04, 1.04), 0.7).set_trans(Tween.TRANS_SINE)
+	pulse.tween_property(play, "scale", Vector2(1.0, 1.0), 0.7).set_trans(Tween.TRANS_SINE)
+	var foes = []
+	for k in w.enemies:
+		foes.append(str(D.ENEMIES[k].name))
+	var fl = txt("Düşmanlar: %s · Boss: %s" % [", ".join(foes), D.BOSSES[world_sel].name], bottom, 11, Color("cfd8de"), true)
+	fl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	# günün meydan okuması
 	var ch = card_panel(c, Color("e6b0ff"))
 	var chr_ = row(ch, 8)
-	icon(chr_, "boss_5.png" if art("boss_5.png") != null else "boss_1.png", 52)
+	icon(chr_, "boss_5.png" if art("boss_5.png") != null else "boss_1.png", 46)
 	var chv = VBoxContainer.new()
 	chv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	chv.add_theme_constant_override("separation", 1)
@@ -369,7 +419,7 @@ func render_hub() -> void:
 	if meta.challenge_done():
 		txt("Bugün tamamlandı: dalga %d. Yarın yeni dalgalar!" % int(meta.p.challenge_best), chv, 12, MUTED, true)
 	else:
-		txt("Herkes aynı dalgalarla. Ödül: ulaştığın dalga x3 elmas (günde bir).", chv, 12, INK, true)
+		txt("Herkes aynı dalgalarla. Ödül: dalga x3 elmas.", chv, 12, INK, true)
 		var cb = btn("OYNA", chr_, func():
 			challenge_active = true
 			race_active = ""
@@ -377,25 +427,54 @@ func render_hub() -> void:
 			challenge_active = true, false, true, 44)
 		cb.size_flags_horizontal = Control.SIZE_SHRINK_END
 		cb.custom_minimum_size.x = 84
-	# menü kutuları (2 sütun)
 	var grid = GridContainer.new()
 	grid.columns = 2
 	grid.add_theme_constant_override("h_separation", 8)
-	grid.add_theme_constant_override("v_separation", 8)
 	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c.add_child(grid)
-	var chests = int(meta.p.chests.common) + int(meta.p.chests.rare) + int(meta.p.chests.epic)
-	var ready = 0
-	for mi in meta.p.missions.list:
-		if not mi.claimed and int(mi.progress) >= int(meta.mission_spec(mi.id).goal):
-			ready += 1
-	tile(grid, "Kahramanlar", "Yükselt, takım kur", "unit_kilic_4.png", func(): open("uga_heroes"))
-	tile(grid, "Totemler", "Gücünü katla", "totem_1.png", func(): open("uga_totems"))
-	tile(grid, "Sandıklar" + (" (%d)" % chests if chests > 0 else ""), "Kahraman ve parça", "chest_rare.png" if art("chest_rare.png") != null else "scene_chest.png", func(): open("uga_chests"))
-	tile(grid, "Görevler" + (" (%d)" % ready if ready > 0 else ""), "Günlük elmas", "icon_mission.png" if art("icon_mission.png") != null else "icon_wave.png", func(): open("uga_missions"))
-	tile(grid, "Yeniden Doğuş", "Ruh taşı: %d" % int(meta.p.soul), "icon_star_rebirth.png", func(): open("uga_rebirth"))
-	tile(grid, "Sıralama & Yarış", "Arkadaşınla aynı dalgalar", "icon_leaderboard.png" if art("icon_leaderboard.png") != null else "icon_league.png", func(): open("uga_online"))
 	tile(grid, "Kart Düellosu", "Klasik kart oyunu", "scene_friends.png", func(): open("duel"))
+	tile(grid, "Yeniden Doğuş", "Ruh taşı: %d" % int(meta.p.soul), "icon_star_rebirth.png", func(): open("uga_rebirth"))
+
+func place(parent: Control, child: Control, x0: float, y0: float, x1: float, y1: float) -> void:
+	# Oransal yerleşim: sahne boyu değişse de düğmeler kaymaz.
+	if child.get_parent() == null:
+		parent.add_child(child)
+	child.anchor_left = x0
+	child.anchor_top = y0
+	child.anchor_right = x1
+	child.anchor_bottom = y1
+	child.offset_left = 0
+	child.offset_top = 0
+	child.offset_right = 0
+	child.offset_bottom = 0
+
+func round_btn(layer: Control, x: float, y: float, spec: Array) -> void:
+	var box = VBoxContainer.new()
+	box.add_theme_constant_override("separation", 0)
+	box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	place(layer, box, x, y, x + 0.17, y + 0.1)
+	var disc = PanelContainer.new()
+	disc.custom_minimum_size = Vector2(46, 46)
+	disc.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	disc.add_theme_stylebox_override("panel", app.box(Color(0.05, 0.08, 0.12, 0.88), GOLD_C, 2, 23, 3))
+	box.add_child(disc)
+	var ic = TextureRect.new()
+	ic.texture = art(str(spec[0]))
+	ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	disc.add_child(ic)
+	var lab = txt(str(spec[1]), box, 11, INK)
+	lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	if spec[3]:
+		var dot = PanelContainer.new()
+		dot.add_theme_stylebox_override("panel", app.box(Color("e04848"), Color("ffffff"), 1, 6, 0))
+		dot.custom_minimum_size = Vector2(12, 12)
+		dot.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		place(layer, dot, x + 0.12, y, x + 0.12, y)
+		dot.offset_right = 12
+		dot.offset_bottom = 12
+	press(disc, spec[2])
 
 func tile(parent: Node, name: String, sub: String, file: String, cb: Callable) -> void:
 	var holder = PanelContainer.new()
@@ -421,6 +500,76 @@ func tile(parent: Node, name: String, sub: String, file: String, cb: Callable) -
 	b.custom_minimum_size.x = 10
 	b.clip_text = true
 	press(holder, cb)
+
+# ---------- dünya haritası ----------
+
+const MAP_NODES = [[0.5, 0.83], [0.28, 0.66], [0.68, 0.49], [0.32, 0.31], [0.56, 0.13]]
+
+func render_map() -> void:
+	var c = app.content
+	back(c, "Dünya Haritası")
+	var holder = PanelContainer.new()
+	holder.clip_contents = true
+	holder.custom_minimum_size.y = 640
+	holder.add_theme_stylebox_override("panel", app.box(Color("111b24"), Color("6e6042"), 1, 16, 0))
+	c.add_child(holder)
+	var bg = TextureRect.new()
+	bg.texture = art("bg_world_map.png") if art("bg_world_map.png") != null else art("home_bg.png")
+	bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	holder.add_child(bg)
+	var layer = Control.new()
+	holder.add_child(layer)
+	var unlocked = int(meta.p.world)
+	for i in range(D.WORLDS.size()):
+		var pos = MAP_NODES[i]
+		var open_ = i <= unlocked
+		var box = VBoxContainer.new()
+		box.add_theme_constant_override("separation", 0)
+		box.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		place(layer, box, float(pos[0]) - 0.2, float(pos[1]) - 0.075, float(pos[0]) + 0.2, float(pos[1]) + 0.075)
+		var disc = PanelContainer.new()
+		disc.custom_minimum_size = Vector2(64, 64)
+		disc.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		var ring = GOLD_C if open_ else Color("5a6066")
+		if i == world_sel:
+			ring = Color("54e0ff")
+		disc.add_theme_stylebox_override("panel", app.box(Color(0.04, 0.07, 0.1, 0.9), ring, 3, 32, 4))
+		box.add_child(disc)
+		var ic = TextureRect.new()
+		ic.texture = art("world_%d.png" % (i + 1)) if open_ else art("icon_lock.png")
+		ic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		ic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		ic.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		if not open_:
+			ic.modulate = Color(0.7, 0.7, 0.7)
+		disc.add_child(ic)
+		var plate = PanelContainer.new()
+		plate.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		plate.add_theme_stylebox_override("panel", app.box(Color(0.03, 0.05, 0.08, 0.82), Color(0, 0, 0, 0), 0, 8, 2))
+		plate.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		box.add_child(plate)
+		var pv = VBoxContainer.new()
+		pv.add_theme_constant_override("separation", -3)
+		pv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		plate.add_child(pv)
+		var nm = title("%d. %s" % [i + 1, D.WORLDS[i].name], pv, 14)
+		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var best = meta.best_wave(i)
+		var st = txt(("%d / %d dalga" % [best, D.WAVES_PER_WORLD]) if open_ else "Önceki dünyayı geç", pv, 11, INK if open_ else MUTED)
+		st.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		if open_:
+			var k = i
+			press(disc, func():
+				world_sel = k
+				open("lobby"))
+			if i == unlocked:
+				var pulse = disc.create_tween().set_loops()
+				disc.pivot_offset = Vector2(32, 32)
+				pulse.tween_property(disc, "scale", Vector2(1.1, 1.1), 0.6).set_trans(Tween.TRANS_SINE)
+				pulse.tween_property(disc, "scale", Vector2(1.0, 1.0), 0.6).set_trans(Tween.TRANS_SINE)
+	txt("Bir dünyanın 30 dalgasını geçince sonraki açılır. Her dünyanın kendi boss'u ve düşmanları var.", c, 11, MUTED, true)
 
 # ---------- savaş ----------
 
@@ -538,19 +687,31 @@ func render_heroes() -> void:
 	var spec = D.HEROES[hero_sel]
 	var lv = meta.hero_level(hero_sel)
 	var p = card_panel(c, GOLD_C)
-	var r = row(p, 10)
-	var pic = TextureRect.new()
-	pic.texture = hero_art(hero_sel, 3)
-	pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-	pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-	pic.custom_minimum_size = Vector2(110, 120)
+	# kahraman sahnesi: kaide üstünde canlı (bekleme + saldırı karesi)
+	var stage = PanelContainer.new()
+	stage.clip_contents = true
+	stage.custom_minimum_size.y = 230
+	stage.add_theme_stylebox_override("panel", app.box(Color("0b141c"), Color("6e6042"), 1, 12, 0))
+	p.add_child(stage)
+	var sbg = TextureRect.new()
+	sbg.texture = art("bg_hero_stage.png") if art("bg_hero_stage.png") != null else art("bg_totem_altar.png")
+	sbg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	sbg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+	sbg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(sbg)
+	var slayer = Control.new()
+	slayer.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	stage.add_child(slayer)
+	var spr = Sprite.new()
+	spr.setup(art("attack_%s.png" % hero_sel), hero_art(hero_sel, 3), 1.6)
+	spr.ring = STAR_COLORS[clampi(lv / 3, 0, 5)]
 	if lv <= 0 and hero_sel != "ejder_yavrusu":
-		pic.modulate = Color(0.35, 0.35, 0.35)
-	r.add_child(pic)
+		spr.modulate = Color(0.2, 0.2, 0.25)
+	place(slayer, spr, 0.22, 0.04, 0.78, 0.97)
 	var v = VBoxContainer.new()
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	v.add_theme_constant_override("separation", 3)
-	r.add_child(v)
+	p.add_child(v)
 	title(str(spec.name), v, 20)
 	txt(("Seviye %d / %d" % [lv, Meta.MAX_HERO_LEVEL]) if lv > 0 else "Kilitli", v, 13, Color("ffd25a") if lv > 0 else MUTED)
 	txt(str(spec.text), v, 12, INK, true)

@@ -34,6 +34,9 @@ var enemy_flash: Dictionary = {}
 var fx: Array = []
 var coins: Array = []
 var attack_anim: Dictionary = {}
+var lunge: Dictionary = {}      # slot -> {to: Vector2, t: kalan süre}
+var hero_face: Dictionary = {}  # slot -> true ise sola bakar
+const MELEE = ["kilic", "kalkan"]
 var dying: Array = []
 var born: Dictionary = {}
 var pop: Dictionary = {}
@@ -159,8 +162,8 @@ func layout() -> void:
 	r_hud = Rect2(0, 0, w, 54)
 	var bar_h = 112.0
 	r_bar = Rect2(0, h - bar_h, w, bar_h)
-	var cell = minf((w - 24) / 5.0, 72.0)
-	var cell_h = cell * 1.2
+	var cell = minf((w - 24) / 5.0, 66.0)
+	var cell_h = cell * 1.08
 	var board_h = cell_h * 3 + 16
 	r_power = Rect2(0, r_bar.position.y - 48, w, 46)
 	r_board = Rect2((w - cell * 5) / 2.0 - 6, r_power.position.y - board_h - 2, cell * 5 + 12, board_h)
@@ -255,9 +258,22 @@ func consume_events() -> void:
 		match e.t:
 			"shot":
 				var to = path_at(float(e.d)) + Vector2(0, -14)
-				shots.append({"from": slot_center(e.slot), "to": to, "age": 0.0, "proj": e.proj})
+				var hero_id = str(e.get("h", ""))
+				var spot = hero_spot(e.slot)
+				hero_face[e.slot] = to.x < spot.x - 2.0
+				if MELEE.has(hero_id):
+					# yakın dövüşçü hedefe atılır, mermi yok
+					lunge[e.slot] = {"to": to + Vector2(0, 14), "t": 0.34}
+					if hits.size() < 24:
+						hits.append({"pos": to + Vector2(0, 14), "age": -0.12, "kind": "fxs_slash" if tex("fxs_slash") != null else "fx_slash" if tex("fx_slash") != null else "hit_spark"})
+				else:
+					shots.append({"from": spot + Vector2(0, -hero_size(e.slot) * 0.55), "to": to, "age": 0.0, "proj": e.proj})
 				var spec = D.HEROES.get(e.get("h", ""), {})
 				var kind = "hit_ice" if spec.has("slow") else "hit_poison" if spec.has("poison") else "hit_spark" if spec.has("splash") or spec.has("burn") else ""
+				if spec.has("splash") and tex("fxs_explosion") != null:
+					kind = "fxs_explosion"
+				elif spec.has("chain") and tex("fxs_lightning") != null:
+					kind = "fxs_lightning"
 				if kind != "" and hits.size() < 24:
 					hits.append({"pos": to + Vector2(0, 14), "age": -0.15, "kind": kind})
 				kick[e.slot] = 0.12
@@ -300,6 +316,8 @@ func consume_events() -> void:
 			"summon":
 				if tex("summon_fx") != null and e.slot < slot_rects.size():
 					fx.append({"rect": slot_rects[e.slot].grow(10), "tex": "summon_fx", "age": 0.0, "dur": 0.45})
+					var sp = hero_spot(e.slot)
+					fx.append({"rect": Rect2(sp - Vector2(34, 60), Vector2(68, 68)), "tex": "summon_fx", "age": 0.0, "dur": 0.5})
 				else:
 					flashes.append({"slot": e.slot, "age": 0.25})
 				sound("summon", -6.0)
@@ -364,6 +382,10 @@ func advance_fx(delta: float) -> void:
 		attack_anim[k] = float(attack_anim[k]) - delta * speed
 		if attack_anim[k] <= 0.0:
 			attack_anim.erase(k)
+	for k in lunge.keys():
+		lunge[k].t = float(lunge[k].t) - delta * speed
+		if lunge[k].t <= 0.0:
+			lunge.erase(k)
 	for k in pop.keys():
 		pop[k] = float(pop[k]) - delta
 		if pop[k] <= 0.0:
@@ -488,57 +510,19 @@ func draw_field() -> void:
 	# düşmanlar (arkadan öne)
 	var list = sim.enemies.duplicate()
 	list.sort_custom(func(a, b): return float(a.d) < float(b.d))
+	# düşmanlar ve arenadaki kahramanlar: y sırasına göre (arkadan öne)
+	var items: Array = []
 	for en in list:
-		var pos = path_at(float(en.d))
-		var sz = 86.0 if en.boss else 44.0
-		var moving = float(en.stun_t) <= 0.0 and sim.freeze_t <= 0.0
-		var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
-		var ahead = path_at(minf(1.0, float(en.d) + 0.01))
-		var face_left = ahead.x < pos.x - 0.5
-		if not born.has(en.id):
-			born[en.id] = clock
-		var grow_in = clampf((clock - float(born[en.id])) / 0.25, 0.2, 1.0)
-		var has_walk = not en.boss and tex("walk_" + str(en.art).trim_prefix("enemy_")) != null
-		var squash = 1.0 + (0.07 * sin(clock * 13.0 + int(en.id)) if moving and not has_walk else 0.0)
-		var w_sz = sz * grow_in / squash
-		var h_sz = sz * grow_in * squash
-		var r = Rect2(pos - Vector2(w_sz / 2, h_sz * 0.8 + bob), Vector2(w_sz, h_sz))
-		var mod = Color.WHITE
-		if float(en.slow_f) > 0.0 or sim.freeze_t > 0.0:
-			mod = Color(0.6, 0.85, 1.0)
-		if float(en.poison_t) > 0.0:
-			mod = mod * Color(0.75, 1.0, 0.7)
-		if enemy_flash.has(en.id):
-			mod = Color(1.6, 1.2, 1.2)
-		var t = null
-		var walk_name = "walk_" + str(en.art).trim_prefix("enemy_")
-		if not en.boss and tex(walk_name) != null:
-			var wf = int(clock * (9.0 if moving else 0.0) + int(en.id)) % 4
-			t = frame_tex(walk_name, wf)
-		if t == null:
-			t = tex(en.art)
-		if t == null:
-			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
-		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
-		if t != null:
-			# resimler ve yürüme şeritleri sağa bakar; SHEET_LEFT listesindekiler sola
-			var flip = face_left != (has_walk and SHEET_LEFT.has(walk_name))
-			if flip:
-				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
-			# koyu dış hat: kalabalık arka planda düşman seçilsin
-			for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
-				draw_fit(t, Rect2(r.position + o, r.size), Color(0, 0, 0, 0.55))
-			draw_fit(t, r, mod)
-			if flip:
-				draw_set_transform(cur_off)
+		items.append({"y": enemy_screen_pos(en).y, "en": en})
+	for i in range(sim.slots.size()):
+		if sim.slots[i] != null:
+			items.append({"y": hero_spot(i).y, "slot": i})
+	items.sort_custom(func(x, y): return float(x.y) < float(y.y))
+	for it in items:
+		if it.has("en"):
+			draw_enemy(it.en)
 		else:
-			draw_circle(pos - Vector2(0, sz * 0.35), sz * 0.4, Color("8a2f2f") * mod)
-		# can çubuğu
-		var hb = Rect2(pos.x - sz * 0.45, r.position.y - 6, sz * 0.9, 5 if not en.boss else 8)
-		draw_rect(hb, Color(0, 0, 0, 0.7))
-		draw_rect(Rect2(hb.position, Vector2(hb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), hb.size.y)), Color("e04848") if not en.boss else Color("ff8a2a"))
-		if float(en.stun_t) > 0.0:
-			text(pos + Vector2(-6, -sz), "✦", 14, Color("fff27a"))
+			draw_hero(int(it.slot))
 	for dd in dying:
 		var dt = tex(dd.art)
 		if dt == null:
@@ -573,13 +557,158 @@ func draw_field() -> void:
 			continue
 		var ht = tex(h.kind)
 		var a = 1.0 - h.age / 0.35
-		if ht != null:
+		if ht != null and str(h.kind).begins_with("fxs_"):
+			# 4 karelik efekt şeridi
+			var fr = clampi(int(h.age / 0.35 * 4.0), 0, 3)
+			draw_fit(frame_tex(h.kind, fr), Rect2(h.pos - Vector2(30, 46), Vector2(60, 60)), Color(1, 1, 1, minf(1.0, a * 2.0)))
+		elif ht != null:
 			draw_fit(ht, Rect2(h.pos - Vector2(22, 34), Vector2(44, 44)), Color(1, 1, 1, a))
 		else:
 			draw_circle(h.pos - Vector2(0, 12), 14 * (1.0 - a) + 6, Color(1, 0.9, 0.5, a * 0.7))
 	for f in floats:
 		var a = 1.0 - f.age / 0.8
 		text(f.pos, f.text, int(f.get("size", 13)), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
+
+func enemy_screen_pos(en: Dictionary) -> Vector2:
+	# kalabalık tek çizgide üst üste binmesin: yolun iki yanına küçük şerit kayması
+	var d = float(en.d)
+	var p = path_at(d)
+	if en.boss:
+		return p
+	var ahead = path_at(minf(1.0, d + 0.01))
+	var dir = ahead - p
+	if dir.length() < 0.01:
+		return p
+	var nrm = Vector2(-dir.y, dir.x).normalized()
+	return p + nrm * float((int(en.id) * 37) % 5 - 2) * 7.0
+
+func draw_enemy(en: Dictionary) -> void:
+	var pos = enemy_screen_pos(en)
+	var sz = 86.0 if en.boss else 44.0
+	var moving = float(en.stun_t) <= 0.0 and sim.freeze_t <= 0.0
+	var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
+	var ahead = path_at(minf(1.0, float(en.d) + 0.01))
+	var face_left = ahead.x < path_at(float(en.d)).x - 0.5
+	if not born.has(en.id):
+		born[en.id] = clock
+	var grow_in = clampf((clock - float(born[en.id])) / 0.25, 0.2, 1.0)
+	var has_walk = tex("walk_" + str(en.art).trim_prefix("enemy_")) != null
+	var squash = 1.0 + (0.07 * sin(clock * 13.0 + int(en.id)) if moving and not has_walk else 0.0)
+	var w_sz = sz * grow_in / squash
+	var h_sz = sz * grow_in * squash
+	var r = Rect2(pos - Vector2(w_sz / 2, h_sz * 0.8 + bob), Vector2(w_sz, h_sz))
+	var mod = Color.WHITE
+	if float(en.slow_f) > 0.0 or sim.freeze_t > 0.0:
+		mod = Color(0.6, 0.85, 1.0)
+	if float(en.poison_t) > 0.0:
+		mod = mod * Color(0.75, 1.0, 0.7)
+	if enemy_flash.has(en.id):
+		mod = Color(1.6, 1.2, 1.2)
+	var t = null
+	var walk_name = "walk_" + str(en.art).trim_prefix("enemy_")
+	if tex(walk_name) != null:
+		var wf = int(clock * (9.0 if moving else 0.0) + int(en.id)) % 4
+		t = frame_tex(walk_name, wf)
+	if t == null:
+		t = tex(en.art)
+	if t == null:
+		t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
+	draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
+	if t != null:
+		# resimler ve yürüme şeritleri sağa bakar; SHEET_LEFT listesindekiler sola
+		var flip = face_left != (has_walk and SHEET_LEFT.has(walk_name))
+		if flip:
+			draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
+		# koyu dış hat: kalabalık arka planda düşman seçilsin
+		for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
+			draw_fit(t, Rect2(r.position + o, r.size), Color(0, 0, 0, 0.55))
+		draw_fit(t, r, mod)
+		if flip:
+			draw_set_transform(cur_off)
+	else:
+		draw_circle(pos - Vector2(0, sz * 0.35), sz * 0.4, Color("8a2f2f") * mod)
+	# can çubuğu (yalnızca hasar almışsa ya da boss ise; kalabalıkta karmaşa olmasın)
+	if not en.boss and float(en.hp) >= float(en.max) - 0.01:
+		return
+	var hb = Rect2(pos.x - sz * 0.45, r.position.y - 6, sz * 0.9, 5 if not en.boss else 8)
+	draw_rect(hb, Color(0, 0, 0, 0.7))
+	draw_rect(Rect2(hb.position, Vector2(hb.size.x * clampf(float(en.hp) / float(en.max), 0, 1), hb.size.y)), Color("e04848") if not en.boss else Color("ff8a2a"))
+	if float(en.stun_t) > 0.0:
+		text(pos + Vector2(-6, -sz), "✦", 14, Color("fff27a"))
+
+func hero_spot(i: int) -> Vector2:
+	# Arenadaki diziliş: kart tahtasının 5x3 düzeni kalenin önünde savunma hattına dönüşür.
+	# Üst satır (0) en önde, alt satır kapının hemen önünde.
+	var c = i % D.COLS
+	var r = i / D.COLS
+	var top = r_field.position.y + r_field.size.y * 0.5
+	var row_h = r_field.size.y * 0.15
+	var x = r_field.position.x + r_field.size.x * (0.11 + c * 0.195) + (9.0 if r % 2 == 1 else 0.0)
+	return Vector2(x, top + r * row_h + row_h)
+
+func hero_size(i: int) -> float:
+	var c = sim.slots[i] if i >= 0 and i < sim.slots.size() else null
+	var stars = 1 if c == null else int(c.s)
+	return 56.0 + stars * 5.0
+
+func hero_frame_tex(h: String, frame: int) -> Texture2D:
+	var t = frame_tex("attack_" + h, frame)
+	if t != null:
+		return t
+	var art_name = str(D.HEROES[h].art)
+	t = tex(art_name)
+	if t == null:
+		t = tex(art_name + "_1")
+	return t
+
+func draw_hero(i: int) -> void:
+	var c = sim.slots[i]
+	if c == null:
+		return
+	var h = str(c.h)
+	var stars = int(c.s)
+	var col = STAR_COLORS[stars - 1]
+	var base = hero_spot(i)
+	var pos = base
+	if lunge.has(i):
+		# yakın dövüş: hedefe atıl ve geri dön
+		var f = 1.0 - float(lunge[i].t) / 0.34
+		var reach = sin(clampf(f, 0.0, 1.0) * PI)
+		pos = base.lerp(lunge[i].to, reach * 0.75)
+	var sz = hero_size(i)
+	if pop.has(i):
+		sz *= 1.0 + 0.35 * float(pop[i]) / 0.3
+	if i == drag_from:
+		sz *= 0.9
+	# zemin halkası: yıldız rengi, 4★ ve üstü parlar
+	var ring_a = 0.55 + (0.25 * sin(clock * 4.0 + i) if stars >= 4 else 0.0)
+	draw_set_transform(pos + Vector2(0, -3) + cur_off, 0.0, Vector2(1.0, 0.38))
+	draw_circle(Vector2.ZERO, sz * 0.42, Color(0, 0, 0, 0.35))
+	draw_arc(Vector2.ZERO, sz * 0.44, 0, TAU, 28, Color(col, ring_a), 3.0, true)
+	if D.HEROES[h].has("aura"):
+		draw_arc(Vector2.ZERO, sz * 0.62 + 3.0 * sin(clock * 3.0), 0, TAU, 28, Color(1.0, 0.9, 0.5, 0.35), 2.0, true)
+	draw_set_transform(cur_off)
+	# kare: saldırıda şeridin 4 karesi, beklerken 0. kare ve hafif nefes
+	var frame = 0
+	if attack_anim.has(i):
+		frame = clampi(int((1.0 - float(attack_anim[i]) / 0.36) * 4.0), 0, 3)
+	var t = hero_frame_tex(h, frame)
+	if t == null:
+		return
+	var breathe = 0.0 if attack_anim.has(i) else sin(clock * 2.4 + i * 0.9) * 0.03
+	var w = sz * (1.0 - breathe * 0.5)
+	var hh = sz * (1.0 + breathe)
+	var r = Rect2(pos - Vector2(w / 2.0, hh * 0.92), Vector2(w, hh))
+	var flip = hero_face.get(i, false)
+	if flip:
+		draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
+	for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
+		draw_fit(t, Rect2(r.position + o * 1.4, r.size), Color(0.02, 0.03, 0.05, 0.85))
+	draw_fit(t, r, Color(1.25, 1.2, 1.1) if attack_anim.has(i) and float(attack_anim[i]) > 0.2 else Color.WHITE)
+	if flip:
+		draw_set_transform(cur_off)
+	# yıldızlar
+	text(Vector2(pos.x - 30, pos.y + 11), "★".repeat(stars), 9, col.lightened(0.35), HORIZONTAL_ALIGNMENT_CENTER, 60)
 
 func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, attack: float = 0.0, atk_frame: int = -1) -> void:
 	var stars = int(c.s)
