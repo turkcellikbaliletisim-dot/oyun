@@ -32,6 +32,7 @@ func run() -> void:
 	b.size = Vector2(390, 844)
 	b.setup(sim, func(n): return null, ThemeDB.fallback_font, ThemeDB.fallback_font)
 	b.set_process(false)
+	b.audio_enabled = false
 	b.layout()
 	var g0 = sim.gold
 	touch(b, b.r_summon.get_center(), true)

@@ -33,6 +33,7 @@ var kick: Dictionary = {}
 var enemy_flash: Dictionary = {}
 var fx: Array = []
 var coins: Array = []
+var attack_anim: Dictionary = {}
 var dying: Array = []
 var born: Dictionary = {}
 var pop: Dictionary = {}
@@ -94,8 +95,10 @@ func _exit_tree() -> void:
 	own_sfx.clear()
 var shot_sound_t: float = 0.0
 
+var audio_enabled: bool = true
+
 func sound(name: String, vol: float = 0.0) -> void:
-	if host != null and host.muted:
+	if not audio_enabled or (host != null and host.muted):
 		return
 	if not own_sfx.has(name):
 		var path = "res://native/uga/sfx/%s.ogg" % name
@@ -258,6 +261,8 @@ func consume_events() -> void:
 				if kind != "" and hits.size() < 24:
 					hits.append({"pos": to + Vector2(0, 14), "age": -0.15, "kind": kind})
 				kick[e.slot] = 0.12
+				if not attack_anim.has(e.slot):
+					attack_anim[e.slot] = 0.36
 				if shot_sound_t <= 0.0:
 					sound({"arrow": "arrow", "spear": "arrow", "orb": "magic", "rock": "rock", "fireball": "fire"}.get(e.proj, "arrow"), -14.0)
 					shot_sound_t = 0.09
@@ -355,6 +360,10 @@ func advance_fx(delta: float) -> void:
 	for dd in dying:
 		dd.age += delta
 	dying = dying.filter(func(dd): return dd.age < 0.4)
+	for k in attack_anim.keys():
+		attack_anim[k] = float(attack_anim[k]) - delta * speed
+		if attack_anim[k] <= 0.0:
+			attack_anim.erase(k)
 	for k in pop.keys():
 		pop[k] = float(pop[k]) - delta
 		if pop[k] <= 0.0:
@@ -429,6 +438,23 @@ func draw_cover(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 	var src = Rect2((ts - src_size) / 2.0, src_size)
 	draw_texture_rect_region(t, r, src, mod)
 
+var frame_cache: Dictionary = {}
+
+func frame_tex(name: String, frame: int, count: int = 4) -> Texture2D:
+	# Yatay şerit (sprite sheet) içinden tek kare.
+	var key = "%s#%d" % [name, frame]
+	if frame_cache.has(key):
+		return frame_cache[key]
+	var sheet = tex(name)
+	if sheet == null:
+		return null
+	var at = AtlasTexture.new()
+	at.atlas = sheet
+	var w = sheet.get_width() / float(count)
+	at.region = Rect2(w * (frame % count), 0, w, sheet.get_height())
+	frame_cache[key] = at
+	return at
+
 func draw_fit(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 	if t == null:
 		return
@@ -471,7 +497,8 @@ func draw_field() -> void:
 		if not born.has(en.id):
 			born[en.id] = clock
 		var grow_in = clampf((clock - float(born[en.id])) / 0.25, 0.2, 1.0)
-		var squash = 1.0 + (0.07 * sin(clock * 13.0 + int(en.id)) if moving else 0.0)
+		var has_walk = not en.boss and tex("walk_" + str(en.art).trim_prefix("enemy_")) != null
+		var squash = 1.0 + (0.07 * sin(clock * 13.0 + int(en.id)) if moving and not has_walk else 0.0)
 		var w_sz = sz * grow_in / squash
 		var h_sz = sz * grow_in * squash
 		var r = Rect2(pos - Vector2(w_sz / 2, h_sz * 0.8 + bob), Vector2(w_sz, h_sz))
@@ -482,7 +509,13 @@ func draw_field() -> void:
 			mod = mod * Color(0.75, 1.0, 0.7)
 		if enemy_flash.has(en.id):
 			mod = Color(1.6, 1.2, 1.2)
-		var t = tex(en.art)
+		var t = null
+		var walk_name = "walk_" + str(en.art).trim_prefix("enemy_")
+		if not en.boss and tex(walk_name) != null:
+			var wf = int(clock * (9.0 if moving else 0.0) + int(en.id)) % 4
+			t = frame_tex(walk_name, wf)
+		if t == null:
+			t = tex(en.art)
 		if t == null:
 			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
 		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
@@ -546,7 +579,7 @@ func draw_field() -> void:
 		var a = 1.0 - f.age / 0.8
 		text(f.pos, f.text, int(f.get("size", 13)), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
 
-func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, attack: float = 0.0) -> void:
+func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, attack: float = 0.0, atk_frame: int = -1) -> void:
 	var stars = int(c.s)
 	var col = STAR_COLORS[stars - 1]
 	if stars >= 4:
@@ -564,6 +597,9 @@ func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0, life: float = 0.0, a
 		t = tex(art_name + "_1")
 	if t == null:
 		t = tex("unit_" + ["kilic", "okcu", "buyucu", "kalkan"][abs(str(c.h).hash()) % 4] + "_%d" % clampi((stars + 1) / 2, 1, 4))
+	if atk_frame >= 0 and tex("attack_" + str(c.h)) != null:
+		t = frame_tex("attack_" + str(c.h), atk_frame)
+		attack = 0.0
 	if t != null:
 		var art_r = Rect2(r.position + Vector2(r.size.x * 0.1, r.size.y * 0.08), Vector2(r.size.x * 0.8, r.size.y * 0.74))
 		var breathe = 1.0 + 0.025 * sin(clock * 2.2 + life)
@@ -601,7 +637,10 @@ func draw_board() -> void:
 		if pop.has(i):
 			var pf = float(pop[i]) / 0.3
 			r = r.grow(r.size.x * 0.22 * pf)
-		draw_card(r, c, 1.0, float(i) * 0.7, atk)
+		var af = -1
+		if attack_anim.has(i):
+			af = clampi(int((1.0 - float(attack_anim[i]) / 0.36) * 4.0), 0, 3)
+		draw_card(r, c, 1.0, float(i) * 0.7, atk, af)
 		if kick.has(i):
 			draw_rect(r, Color(1, 0.95, 0.7, 0.5 * float(kick[i]) / 0.12), false, 2.0)
 		if highlight:

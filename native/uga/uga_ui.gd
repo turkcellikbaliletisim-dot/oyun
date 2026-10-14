@@ -612,35 +612,155 @@ func render_heroes() -> void:
 
 # ---------- totemler ----------
 
+func scene_panel(parent: Node, bg_file: String, min_h: float) -> VBoxContainer:
+	# Arka plan resimli büyük sahne kutusu (menüleri liste yerine sahne gibi gösterir).
+	var holder = PanelContainer.new()
+	holder.clip_contents = true
+	holder.custom_minimum_size = Vector2(0, min_h)
+	holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	holder.add_theme_stylebox_override("panel", app.box(Color("0b141c"), Color("6e6042"), 1, 14, 0))
+	parent.add_child(holder)
+	var bt = art(bg_file)
+	if bt != null:
+		var bg = TextureRect.new()
+		bg.texture = bt
+		bg.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		bg.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+		bg.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		holder.add_child(bg)
+		var shade = ColorRect.new()
+		shade.color = Color(0.02, 0.04, 0.07, 0.35)
+		shade.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		holder.add_child(shade)
+	var m = MarginContainer.new()
+	for side in ["left", "right", "top", "bottom"]:
+		m.add_theme_constant_override("margin_" + side, 10)
+	holder.add_child(m)
+	var v = VBoxContainer.new()
+	v.add_theme_constant_override("separation", 8)
+	m.add_child(v)
+	return v
+
+func badge(parent: Node, s: String, col: Color = Color("ffd25a")) -> Label:
+	var l = txt(s, parent, 12, Color("2a1500"))
+	l.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	l.add_theme_constant_override("outline_size", 0)
+	var sb = app.box(col, Color("2a1500"), 1, 9, 2)
+	l.add_theme_stylebox_override("normal", sb)
+	l.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+	return l
+
 func render_totems() -> void:
 	var c = app.content
 	back(c, "Totemler")
-	txt("Totemler kalıcıdır; yeniden doğuşta da korunur.", c, 12, MUTED, true)
+	var altar = scene_panel(c, "bg_totem_altar.png", 560)
+	var info = txt("Totemler kalıcıdır, yeniden doğuşta da korunur.", altar, 12, INK, true)
+	info.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	var grid = GridContainer.new()
+	grid.columns = 2
+	grid.add_theme_constant_override("h_separation", 8)
+	grid.add_theme_constant_override("v_separation", 8)
+	grid.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	altar.add_child(grid)
 	for id in Meta.TOTEMS:
 		var spec = Meta.TOTEMS[id]
 		var lv = int(meta.p.totems[id])
-		var p = card_panel(c)
-		var r = row(p, 10)
-		icon(r, spec.art + ".png", 72)
+		var cell = PanelContainer.new()
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.add_theme_stylebox_override("panel", app.box(Color(0.03, 0.06, 0.09, 0.72), GOLD_C if lv > 0 else Color("6e6042"), 1, 12, 6))
+		grid.add_child(cell)
 		var v = VBoxContainer.new()
-		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		r.add_child(v)
-		txt("%s · Sv %d" % [spec.name, lv], v, 16, GOLD_C)
-		txt(spec.text, v, 12, INK, true)
+		v.add_theme_constant_override("separation", 3)
+		cell.add_child(v)
+		var pic = icon(v, spec.art + ".png", 96)
+		pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		if lv == 0:
+			pic.modulate = Color(0.75, 0.75, 0.75)
+		badge(v, "Sv %d" % lv)
+		var n = txt(spec.name, v, 13, GOLD_C)
+		n.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		n.custom_minimum_size.x = 10
+		n.clip_text = true
+		var e = txt(spec.text, v, 10, INK, true)
+		e.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		var cost = meta.totem_cost(id)
 		var tid = id
-		btn("Yükselt · %d elmas" % cost, v, func():
+		btn("%d elmas" % cost if lv < Meta.MAX_TOTEM_LEVEL else "MAX", v, func():
 			if meta.upgrade_totem(tid):
 				toast("%s seviye %d" % [spec.name, int(meta.p.totems[tid])])
 			else:
 				toast(meta.err, false)
-			open("uga_totems"), int(meta.p.diamond) < cost or lv >= Meta.MAX_TOTEM_LEVEL)
+			open("uga_totems"), int(meta.p.diamond) < cost or lv >= Meta.MAX_TOTEM_LEVEL, true, 40)
 
 # ---------- sandıklar ----------
+
+var chest_opening: String = ""
 
 func render_chests() -> void:
 	var c = app.content
 	back(c, "Sandıklar")
+	var vault = scene_panel(c, "bg_chest_vault.png", 330)
+	if chest_opening != "":
+		# açılma animasyonu: 4 karelik şerit ya da büyüyen sandık
+		var stage = Control.new()
+		stage.custom_minimum_size = Vector2(0, 230)
+		vault.add_child(stage)
+		var pic = TextureRect.new()
+		pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		pic.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		stage.add_child(pic)
+		var sheet = art("chest_open_%s.png" % chest_opening)
+		var kind = chest_opening
+		chest_opening = ""
+		var tw = app.create_tween()
+		if sheet != null:
+			var at = AtlasTexture.new()
+			at.atlas = sheet
+			var fw = sheet.get_width() / 4.0
+			at.region = Rect2(0, 0, fw, sheet.get_height())
+			pic.texture = at
+			tw.tween_method(func(f: float): at.region = Rect2(fw * mini(3, int(f)), 0, fw, sheet.get_height()), 0.0, 3.99, 0.9)
+		else:
+			pic.texture = art("chest_%s.png" % kind)
+			pic.pivot_offset = Vector2(185, 115)
+			tw.tween_property(pic, "scale", Vector2(1.25, 1.25), 0.25)
+			tw.tween_property(pic, "scale", Vector2(1, 1), 0.2)
+		var burst = TextureRect.new()
+		burst.texture = art("new_hero_bg.png") if art("new_hero_bg.png") != null else art("merge_burst.png")
+		burst.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+		burst.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+		burst.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+		burst.modulate.a = 0.0
+		burst.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		stage.add_child(burst)
+		stage.move_child(burst, 0)
+		tw.tween_property(burst, "modulate:a", 0.9, 0.3)
+	var specs = [["common", "Sıradan", 30], ["rare", "Nadir", 90], ["epic", "Destansı", 250]]
+	var shelf = row(vault, 6)
+	for sp in specs:
+		var kind = sp[0]
+		var n = int(meta.p.chests[kind])
+		var cell = VBoxContainer.new()
+		cell.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		cell.add_theme_constant_override("separation", 3)
+		shelf.add_child(cell)
+		var pic = icon(cell, "chest_%s.png" % kind if art("chest_%s.png" % kind) != null else "scene_chest.png", 92)
+		pic.size_flags_horizontal = Control.SIZE_SHRINK_CENTER
+		if n <= 0:
+			pic.modulate = Color(0.55, 0.55, 0.55)
+		badge(cell, "×%d" % n, Color("ffd25a") if n > 0 else Color("8a949b"))
+		var nm = txt(sp[1], cell, 13, GOLD_C)
+		nm.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		var k = kind
+		btn("AÇ", cell, func():
+			chest_reward = meta.open_chest(k)
+			chest_opening = k
+			open("uga_chests"), n <= 0, true, 40)
+		btn("%d elmas" % sp[2], cell, func():
+			if not meta.buy_chest(k):
+				toast(meta.err, false)
+			open("uga_chests"), int(meta.p.diamond) < int(sp[2]), false, 36)
 	if not chest_reward.is_empty():
 		var p = card_panel(c, GOLD_C)
 		txt("Sandıktan çıkanlar", p, 16, GOLD_C)
@@ -648,10 +768,11 @@ func render_chests() -> void:
 		stat(r, "icon_gold_coin.png", "+%d" % int(chest_reward.gold), Color("ffd25a"))
 		if int(chest_reward.diamond) > 0:
 			stat(r, "icon_diamond.png" if art("icon_diamond.png") != null else "icon_dust.png", "+%d" % int(chest_reward.diamond), Color("9fe8ff"))
-		var parts = []
+		var cards = row(p, 6)
 		for h in chest_reward.shards:
-			parts.append("%s +%d" % [D.HEROES[h].name, int(chest_reward.shards[h])])
-		txt("Parça: " + ", ".join(parts), p, 13, INK, true)
+			var t = hero_tile(cards, h, 1, 56)
+			var lab = txt("+%d parça" % int(chest_reward.shards[h]), t.get_child(0), 10, Color("54e0ff"))
+			lab.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		if str(chest_reward.hero) != "":
 			var reveal = PanelContainer.new()
 			reveal.clip_contents = true
@@ -668,70 +789,68 @@ func render_chests() -> void:
 			var rv = VBoxContainer.new()
 			rv.alignment = BoxContainer.ALIGNMENT_CENTER
 			reveal.add_child(rv)
-			var pic = TextureRect.new()
-			pic.texture = hero_art(chest_reward.hero, 3)
-			pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
-			pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
-			pic.custom_minimum_size = Vector2(0, 170)
-			rv.add_child(pic)
+			var hp = TextureRect.new()
+			hp.texture = hero_art(chest_reward.hero, 3)
+			hp.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			hp.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			hp.custom_minimum_size = Vector2(0, 170)
+			rv.add_child(hp)
 			var nt = title("YENİ KAHRAMAN: %s!" % D.HEROES[chest_reward.hero].name, rv, 18)
 			nt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		chest_reward = {}
-	var specs = [["common", "Sıradan Sandık", "Altın ve az parça", 30], ["rare", "Nadir Sandık", "Çok parça, elmas, %35 yeni kahraman", 90], ["epic", "Destansı Sandık", "Bol ödül, kesin yeni kahraman", 250]]
-	for s in specs:
-		var kind = s[0]
-		var n = int(meta.p.chests[kind])
-		var p = card_panel(c)
-		var r = row(p, 10)
-		icon(r, "chest_%s.png" % kind if art("chest_%s.png" % kind) != null else "scene_chest.png", 72)
-		var v = VBoxContainer.new()
-		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		r.add_child(v)
-		txt("%s  ×%d" % [s[1], n], v, 16, GOLD_C)
-		txt(s[2], v, 12, INK, true)
-		var br = row(v, 6)
-		var k = kind
-		btn("AÇ", br, func():
-			chest_reward = meta.open_chest(k)
-			open("uga_chests"), n <= 0, true, 40)
-		btn("%d elmas" % s[3], br, func():
-			if not meta.buy_chest(k):
-				toast(meta.err, false)
-			open("uga_chests"), int(meta.p.diamond) < int(s[3]))
+	txt("Sıradan: altın ve az parça · Nadir: çok parça, elmas, %35 yeni kahraman · Destansı: bol ödül, kesin yeni kahraman", c, 11, MUTED, true)
 
 # ---------- görevler ----------
 
 func render_missions() -> void:
 	var c = app.content
 	back(c, "Görevler")
-	txt("Her gün 3 yeni görev. Ödül: elmas.", c, 12, MUTED, true)
 	meta.ensure_missions()
+	var board = scene_panel(c, "bg_mission_board.png", 420)
+	var hdr = txt("Günlük görevler · her gün yenilenir", board, 13, INK)
+	hdr.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	for i in range(meta.p.missions.list.size()):
 		var m = meta.p.missions.list[i]
 		var spec = meta.mission_spec(m.id)
-		var p = card_panel(c, GOLD_C if int(m.progress) >= int(spec.goal) and not m.claimed else Color("6e6042"))
-		var r = row(p, 8)
+		var done = int(m.progress) >= int(spec.goal)
+		var note = PanelContainer.new()
+		note.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var paper = Color(0.93, 0.86, 0.68, 0.94) if not m.claimed else Color(0.6, 0.6, 0.6, 0.8)
+		note.add_theme_stylebox_override("panel", app.box(paper, Color("6b4a1e"), 2, 6, 8))
+		board.add_child(note)
+		var r = HBoxContainer.new()
+		r.add_theme_constant_override("separation", 8)
+		note.add_child(r)
 		icon(r, "icon_mission.png" if art("icon_mission.png") != null else "icon_wave.png", 40)
 		var v = VBoxContainer.new()
 		v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		v.add_theme_constant_override("separation", 2)
 		r.add_child(v)
-		txt(spec.text % int(spec.goal), v, 15, INK, true)
+		var t = txt(spec.text % int(spec.goal), v, 14, Color("3a2206"), true)
+		t.add_theme_constant_override("outline_size", 0)
 		var bar = ProgressBar.new()
 		bar.max_value = int(spec.goal)
 		bar.value = mini(int(m.progress), int(spec.goal))
 		bar.show_percentage = false
 		bar.custom_minimum_size = Vector2(0, 10)
-		bar.add_theme_stylebox_override("background", app.box(Color(0, 0, 0, 0.6), Color(0, 0, 0, 0), 0, 5, 0))
-		bar.add_theme_stylebox_override("fill", app.box(Color("54e0ff"), Color(0, 0, 0, 0), 0, 5, 0))
+		bar.add_theme_stylebox_override("background", app.box(Color(0.3, 0.2, 0.1, 0.4), Color(0, 0, 0, 0), 0, 5, 0))
+		bar.add_theme_stylebox_override("fill", app.box(Color("2f8f5a"), Color(0, 0, 0, 0), 0, 5, 0))
 		v.add_child(bar)
-		txt("%d / %d · ödül %d elmas" % [mini(int(m.progress), int(spec.goal)), int(spec.goal), int(spec.reward)], v, 12, MUTED)
+		var pr = txt("%d / %d · %d elmas" % [mini(int(m.progress), int(spec.goal)), int(spec.goal), int(spec.reward)], v, 11, Color("5a3a12"))
+		pr.add_theme_constant_override("outline_size", 0)
 		var idx = i
-		var b = btn("Alındı" if m.claimed else "Al", r, func():
+		var b = btn("✓" if m.claimed else "AL", r, func():
 			if meta.claim_mission(idx):
 				toast("+%d elmas" % int(spec.reward))
-			open("uga_missions"), m.claimed or int(m.progress) < int(spec.goal), not m.claimed, 40)
+			open("uga_missions"), m.claimed or not done, done and not m.claimed, 44)
 		b.size_flags_horizontal = Control.SIZE_SHRINK_END
-		b.custom_minimum_size.x = 80
+		b.custom_minimum_size.x = 64
+	if meta.daily_ready():
+		btn("Günlük hediyeyi al", c, func():
+			var out = meta.claim_daily()
+			if not out.is_empty():
+				toast("+%d elmas, +%d altın, sandık" % [out.diamond, out.gold])
+			open("uga_missions"), false, true, 46)
 
 # ---------- yeniden doğuş ----------
 
