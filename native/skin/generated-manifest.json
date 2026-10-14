@@ -1,0 +1,62 @@
+{
+  "generated_at": "2026-10-13 09:36 UTC",
+  "method": "built-in imagegen; Godot Image.resize normalization",
+  "assets": [
+    {
+      "file": "hero_player_alt3.png",
+      "width": 512,
+      "height": 512,
+      "transparent": true,
+      "sha256": "6a8182ba9724d18f9f302c984196d71f4764c054f56a948bf94861acbf0c398b",
+      "bytes": 543425
+    },
+    {
+      "file": "hero_player_alt4.png",
+      "width": 512,
+      "height": 512,
+      "transparent": true,
+      "sha256": "5157fe9cd60355a76249bd0b231be2050513f7315cdefda6d6aa09d47c13bb90",
+      "bytes": 566062
+    },
+    {
+      "file": "hero_player_alt5.png",
+      "width": 512,
+      "height": 512,
+      "transparent": true,
+      "sha256": "9ead1aaa5e1ce712ae4c7077c76b750a04350330e650047ed16d57405b136aed",
+      "bytes": 552559
+    },
+    {
+      "file": "splash_clean.png",
+      "width": 1242,
+      "height": 2688,
+      "transparent": false,
+      "sha256": "06a0ec690a55c8b5f7d426d2ec6a9b76b5af9fcc832cb4f50a5a1c11589ced7d",
+      "bytes": 2804491
+    },
+    {
+      "file": "badge_rank_bronze.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true,
+      "sha256": "0442ddc6aa717a4b7cf55b26675e1a8e20e068cbe70e40aecc3b29bc29e111a1",
+      "bytes": 26683
+    },
+    {
+      "file": "badge_rank_silver.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true,
+      "sha256": "2a1435c40573a39105a84f8095a0429abcdf50ca72ffc0a5d0ddda0ef873d2ea",
+      "bytes": 30480
+    },
+    {
+      "file": "badge_rank_gold.png",
+      "width": 128,
+      "height": 128,
+      "transparent": true,
+      "sha256": "f0d1879b95f01a130103abc2e106917e28644a8c797d7734e8373cb9d3a24083",
+      "bytes": 31107
+    }
+  ]
+}

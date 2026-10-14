@@ -1,0 +1,419 @@
+{
+  "source_base_commit": "acf6f30562ebb24268ae703429ca5a1cfc5f3b15",
+  "assets": {
+    "lane.png": {
+      "file": "native/skin/lane.png",
+      "method": "Independent Adobe Firefly illustration; Adobe background removal; game-specific three-slice packing with downsampling; precision boundary despill after premultiplied resampling",
+      "source_generation_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:11e537b4-b345-4e4a-b9ec-eeb0ad15104c",
+      "source_cutout_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ef800843-52b8-410d-88c7-5e3464e08069",
+      "source_file": "dokumanlar/serit-yenileme-kaynak/lane.png",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "a71a81fd77a199b2373be4b5c525e09e88781317cdada5388ff5cbeb5435c23f",
+      "source_at_least_2x_each_dimension": true,
+      "generated_independently": true,
+      "sha256": "530585dae95bfa44a427688f5aaae5b225a48689c4c403eece0d96d93ecfd1c5",
+      "bytes": 290162,
+      "source_subject_bounds": [
+        59,
+        173,
+        2639,
+        1395
+      ],
+      "source_slice_cap": 672,
+      "part_resample_scales_xy": [
+        [
+          0.3005952380952381,
+          0.3011456628477905
+        ],
+        [
+          0.43527508090614886,
+          0.3011456628477905
+        ],
+        [
+          0.3005952380952381,
+          0.3011456628477905
+        ]
+      ],
+      "content_rectangle": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "runtime_h3_caps": [
+        243,
+        0,
+        243,
+        0
+      ],
+      "center_adapted_separately": true,
+      "corner_aspect_preserved": true,
+      "upscaled": false,
+      "boundary_despill": {
+        "pixels": 6,
+        "radius_output_pixels": 2,
+        "alpha_unchanged": true,
+        "opaque_interior_untouched": true
+      },
+      "size": [
+        1024,
+        400
+      ],
+      "mode": "RGBA",
+      "alpha_bounds": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "transparent_outer_edges": true,
+      "painted_center_alpha_min": 255,
+      "painted_center_mean_luminance": 22.302,
+      "chroma_green_suspect_pixels_at_boundary": 0,
+      "opaque_green_candidate_count": 17,
+      "opaque_green_candidate_samples": [
+        [
+          140,
+          69,
+          25,
+          49,
+          25,
+          255
+        ],
+        [
+          141,
+          69,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          142,
+          69,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          140,
+          70,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          141,
+          70,
+          25,
+          49,
+          27,
+          255
+        ],
+        [
+          142,
+          70,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          141,
+          71,
+          24,
+          49,
+          27,
+          255
+        ],
+        [
+          142,
+          71,
+          27,
+          50,
+          26,
+          255
+        ],
+        [
+          134,
+          74,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          135,
+          74,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          134,
+          75,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          135,
+          75,
+          25,
+          51,
+          28,
+          255
+        ],
+        [
+          136,
+          75,
+          26,
+          51,
+          28,
+          255
+        ],
+        [
+          134,
+          76,
+          24,
+          50,
+          29,
+          255
+        ],
+        [
+          135,
+          76,
+          27,
+          51,
+          28,
+          255
+        ],
+        [
+          136,
+          76,
+          27,
+          50,
+          28,
+          255
+        ],
+        [
+          112,
+          100,
+          27,
+          49,
+          28,
+          255
+        ]
+      ],
+      "opaque_color_candidates_require_visual_review": true,
+      "adobe_edge_color_refinement": {
+        "target": "green",
+        "hue": -80,
+        "saturation": -70,
+        "lightness": -35,
+        "alpha_unchanged": true
+      }
+    },
+    "lane_enemy.png": {
+      "file": "native/skin/lane_enemy.png",
+      "method": "Independent Adobe Firefly illustration; Adobe background removal; game-specific three-slice packing with downsampling; precision boundary despill after premultiplied resampling",
+      "source_generation_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:e9306f8e-6d6d-458d-b45e-5f13871140e9",
+      "source_cutout_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:709faffe-92cb-4c18-97c7-77ec46778643",
+      "source_file": "dokumanlar/serit-yenileme-kaynak/lane_enemy.png",
+      "source_size": [
+        2704,
+        1552
+      ],
+      "source_sha256": "1b05f1b88a7be50e94c31a897d740ebf26f19a217078c0bae4fa1b30e4846962",
+      "source_at_least_2x_each_dimension": true,
+      "generated_independently": true,
+      "sha256": "8eae18b61c9704a354ae625de6a614be1031f9e2b8542f0c693fcbd8f6f007f3",
+      "bytes": 331954,
+      "source_subject_bounds": [
+        60,
+        174,
+        2655,
+        1409
+      ],
+      "source_slice_cap": 679,
+      "part_resample_scales_xy": [
+        [
+          0.2974963181148748,
+          0.2979757085020243
+        ],
+        [
+          0.4349232012934519,
+          0.2979757085020243
+        ],
+        [
+          0.2974963181148748,
+          0.2979757085020243
+        ]
+      ],
+      "content_rectangle": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "runtime_h3_caps": [
+        243,
+        0,
+        243,
+        0
+      ],
+      "center_adapted_separately": true,
+      "corner_aspect_preserved": true,
+      "upscaled": false,
+      "boundary_despill": {
+        "pixels": 12,
+        "radius_output_pixels": 2,
+        "alpha_unchanged": true,
+        "opaque_interior_untouched": true
+      },
+      "size": [
+        1024,
+        400
+      ],
+      "mode": "RGBA",
+      "alpha_bounds": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "transparent_outer_edges": true,
+      "painted_center_alpha_min": 255,
+      "painted_center_mean_luminance": 32.232,
+      "chroma_green_suspect_pixels_at_boundary": 0,
+      "opaque_green_candidate_count": 0,
+      "opaque_green_candidate_samples": [],
+      "opaque_color_candidates_require_visual_review": false,
+      "adobe_edge_color_refinement": {
+        "target": "green",
+        "hue": -80,
+        "saturation": -70,
+        "lightness": -35,
+        "alpha_unchanged": true
+      }
+    },
+    "loading_tip_panel.png": {
+      "file": "native/skin/loading_tip_panel.png",
+      "method": "Independent Adobe Firefly illustration; Adobe background removal; game-specific three-slice packing with downsampling; precision boundary despill after premultiplied resampling",
+      "source_generation_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:befa0b0d-1230-4d2b-9712-ed57a8d88d56",
+      "source_cutout_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:0c773de0-1d45-45cc-9fd4-6f440938b413",
+      "source_file": "dokumanlar/serit-yenileme-kaynak/loading_tip_panel.png",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "8b5961b922de2aedc426522891ff7ed07f1dd0d22f367d29cbc6c698a37a607b",
+      "source_at_least_2x_each_dimension": true,
+      "generated_independently": true,
+      "sha256": "cd5d30d377d6c877cdd89aca286cae1a141bb2378843919ae5361fecc6208998",
+      "bytes": 94098,
+      "source_subject_bounds": [
+        267,
+        407,
+        2388,
+        1211
+      ],
+      "source_slice_cap": 442,
+      "part_resample_scales_xy": [
+        [
+          0.1832579185520362,
+          0.18407960199004975
+        ],
+        [
+          0.5383993532740501,
+          0.18407960199004975
+        ],
+        [
+          0.1832579185520362,
+          0.18407960199004975
+        ]
+      ],
+      "content_rectangle": [
+        36,
+        6,
+        864,
+        154
+      ],
+      "runtime_h3_caps": [
+        117,
+        0,
+        117,
+        0
+      ],
+      "center_adapted_separately": true,
+      "corner_aspect_preserved": true,
+      "upscaled": false,
+      "boundary_despill": {
+        "pixels": 8,
+        "radius_output_pixels": 2,
+        "alpha_unchanged": true,
+        "opaque_interior_untouched": true
+      },
+      "size": [
+        900,
+        160
+      ],
+      "mode": "RGBA",
+      "alpha_bounds": [
+        36,
+        6,
+        864,
+        154
+      ],
+      "transparent_outer_edges": true,
+      "painted_center_alpha_min": 255,
+      "painted_center_mean_luminance": 35.595,
+      "chroma_green_suspect_pixels_at_boundary": 0,
+      "opaque_green_candidate_count": 3,
+      "opaque_green_candidate_samples": [
+        [
+          81,
+          12,
+          74,
+          157,
+          71,
+          255
+        ],
+        [
+          80,
+          13,
+          56,
+          150,
+          84,
+          255
+        ],
+        [
+          81,
+          13,
+          34,
+          133,
+          70,
+          255
+        ]
+      ],
+      "opaque_color_candidates_require_visual_review": true,
+      "adobe_edge_color_refinement": {
+        "target": "green",
+        "hue": -80,
+        "saturation": -70,
+        "lightness": -35,
+        "alpha_unchanged": true
+      }
+    }
+  },
+  "physical_device_test": false,
+  "gameplay_test": false,
+  "visual_acceptance": "pending actual renderer inspection"
+}

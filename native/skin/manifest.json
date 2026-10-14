@@ -461,22 +461,243 @@
       ]
     },
     "lane.png": {
+      "file": "native/skin/lane.png",
+      "method": "Independent Adobe Firefly illustration; Adobe background removal; game-specific three-slice packing with downsampling; precision boundary despill after premultiplied resampling",
+      "source_generation_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:11e537b4-b345-4e4a-b9ec-eeb0ad15104c",
+      "source_cutout_url": "https://photoshop-api.adobe.io/v2/short-url/urn:aaid:ps:US:ef800843-52b8-410d-88c7-5e3464e08069",
+      "source_file": "dokumanlar/serit-yenileme-kaynak/lane.png",
+      "source_size": [
+        2688,
+        1536
+      ],
+      "source_sha256": "a71a81fd77a199b2373be4b5c525e09e88781317cdada5388ff5cbeb5435c23f",
+      "source_at_least_2x_each_dimension": true,
+      "generated_independently": true,
+      "sha256": "530585dae95bfa44a427688f5aaae5b225a48689c4c403eece0d96d93ecfd1c5",
+      "bytes": 290162,
+      "source_subject_bounds": [
+        59,
+        173,
+        2639,
+        1395
+      ],
+      "source_slice_cap": 672,
+      "part_resample_scales_xy": [
+        [
+          0.3005952380952381,
+          0.3011456628477905
+        ],
+        [
+          0.43527508090614886,
+          0.3011456628477905
+        ],
+        [
+          0.3005952380952381,
+          0.3011456628477905
+        ]
+      ],
+      "content_rectangle": [
+        41,
+        16,
+        983,
+        384
+      ],
+      "runtime_h3_caps": [
+        243,
+        0,
+        243,
+        0
+      ],
+      "center_adapted_separately": true,
+      "corner_aspect_preserved": true,
+      "upscaled": false,
+      "boundary_despill": {
+        "pixels": 6,
+        "radius_output_pixels": 2,
+        "alpha_unchanged": true,
+        "opaque_interior_untouched": true
+      },
       "size": [
         1024,
         400
       ],
-      "mode": "RGB",
-      "source_crop": [
-        922,
-        663,
-        1211,
-        786
+      "mode": "RGBA",
+      "alpha_bounds": [
+        41,
+        16,
+        983,
+        384
       ],
-      "source_crop_size": [
-        289,
-        123
+      "transparent_outer_edges": true,
+      "painted_center_alpha_min": 255,
+      "painted_center_mean_luminance": 22.302,
+      "chroma_green_suspect_pixels_at_boundary": 0,
+      "opaque_green_candidate_count": 17,
+      "opaque_green_candidate_samples": [
+        [
+          140,
+          69,
+          25,
+          49,
+          25,
+          255
+        ],
+        [
+          141,
+          69,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          142,
+          69,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          140,
+          70,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          141,
+          70,
+          25,
+          49,
+          27,
+          255
+        ],
+        [
+          142,
+          70,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          141,
+          71,
+          24,
+          49,
+          27,
+          255
+        ],
+        [
+          142,
+          71,
+          27,
+          50,
+          26,
+          255
+        ],
+        [
+          134,
+          74,
+          25,
+          49,
+          26,
+          255
+        ],
+        [
+          135,
+          74,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          134,
+          75,
+          25,
+          50,
+          27,
+          255
+        ],
+        [
+          135,
+          75,
+          25,
+          51,
+          28,
+          255
+        ],
+        [
+          136,
+          75,
+          26,
+          51,
+          28,
+          255
+        ],
+        [
+          134,
+          76,
+          24,
+          50,
+          29,
+          255
+        ],
+        [
+          135,
+          76,
+          27,
+          51,
+          28,
+          255
+        ],
+        [
+          136,
+          76,
+          27,
+          50,
+          28,
+          255
+        ],
+        [
+          112,
+          100,
+          27,
+          49,
+          28,
+          255
+        ]
       ],
-      "sha256": "d375d5d655afd525c7caa568af38a06824addcd765f4eb3354d4e04c564bf4b8"
+      "opaque_color_candidates_require_visual_review": true,
+      "previous_revision": {
+        "size": [
+          1024,
+          400
+        ],
+        "mode": "RGB",
+        "source_crop": [
+          922,
+          663,
+          1211,
+          786
+        ],
+        "source_crop_size": [
+          289,
+          123
+        ],
+        "sha256": "d375d5d655afd525c7caa568af38a06824addcd765f4eb3354d4e04c564bf4b8"
+      },
+      "revision": "2026-10-13-lane-refresh",
+      "adobe_edge_color_refinement": {
+        "target": "green",
+        "hue": -80,
+        "saturation": -70,
+        "lightness": -35,
+        "alpha_unchanged": true
+      }
     },
     "logo.png": {
       "size": [

@@ -183,6 +183,46 @@ export class Service {
     for(const [key,session] of Object.entries(this.data.sessions))if(session.userId===user.id)delete this.data.sessions[key];
     this.data.queue=this.data.queue.filter(q=>q.userId!==user.id);delete this.data.users[user.id];this.mark();return {deleted:true};
   });}
+  // ---------- UGACHA modu: sıralama ve arkadaş yarışı ----------
+  ugaData(){this.data.uga??={scores:{},races:{}};return this.data.uga;}
+  ugaName(user){return this.ugaData().names?.[user.id]??'Destancı-'+user.id.slice(0,4).toUpperCase();}
+  ugaSetName(user,name){
+    if(name===undefined||name===null||name==='')return;
+    check(typeof name==='string',400,'Ad geçersiz.');const clean=name.normalize('NFC').trim().replace(/\s+/g,' ');
+    check(clean.length>=3&&clean.length<=16&&/^[\p{L}\p{N} _-]+$/u.test(clean),400,'Ad 3-16 harf/rakam olmalı.');
+    const data=this.ugaData();data.names??={};data.names[user.id]=clean;
+    const s=data.scores[user.id];if(s)s.name=clean;
+  }
+  ugaBoardFor(user,world){
+    const rows=Object.entries(this.ugaData().scores).map(([id,s])=>({id,name:s.name,wave:s.best[world]??0,at:s.at[world]??0})).filter(r=>r.wave>0).sort((a,b)=>b.wave-a.wave||a.at-b.at);
+    const rank=rows.findIndex(r=>r.id===user.id);
+    return {world,top:rows.slice(0,20).map(({name,wave})=>({name,wave})),me:rank<0?null:{rank:rank+1,wave:rows[rank].wave,name:rows[rank].name},name:this.ugaName(user)};
+  }
+  ugaScore(token,csrf,world,wave,name){return this.call(()=>{
+    const user=this.auth(token,csrf,true);this.ugaSetName(user,name);
+    check(Number.isInteger(world)&&world>=0&&world<5,400,'Dünya geçersiz.');check(Number.isInteger(wave)&&wave>=0&&wave<=30,400,'Dalga geçersiz.');
+    const s=this.ugaData().scores[user.id]??={name:this.ugaName(user),best:[0,0,0,0,0],at:[0,0,0,0,0]};
+    if(wave>s.best[world]){s.best[world]=wave;s.at[world]=this.now();this.mark();}
+    return this.ugaBoardFor(user,world);
+  });}
+  ugaBoard(token,world){return this.call(()=>{const user=this.auth(token);check(Number.isInteger(world)&&world>=0&&world<5,400,'Dünya geçersiz.');return this.ugaBoardFor(user,world);});}
+  ugaRaceView(code,race){return {code,world:race.world,seed:race.seed,results:Object.values(race.results).sort((a,b)=>b.wave-a.wave).map(({name,wave})=>({name,wave}))};}
+  ugaRaceCreate(token,csrf,world){return this.call(()=>{
+    const user=this.auth(token,csrf,true);check(Number.isInteger(world)&&world>=0&&world<5,400,'Dünya geçersiz.');
+    const races=this.ugaData().races;
+    for(const [code,race] of Object.entries(races))if(this.now()-race.created>7*86400000)delete races[code];
+    check(Object.keys(races).length<5000,503,'Yarış sayısı dolu, biraz sonra dene.');
+    let code;do{code=Array.from({length:6},()=>'ABCDEFGHJKLMNPRSTUVYZ23456789'[randomInt(0,29)]).join('');}while(races[code]);
+    races[code]={world,seed:randomInt(1,2000000000),created:this.now(),owner:user.id,results:{}};this.mark();
+    return this.ugaRaceView(code,races[code]);
+  });}
+  ugaRace(token,code){return this.call(()=>{this.auth(token);const race=this.ugaData().races[code];check(race,404,'Yarış bulunamadı.');return this.ugaRaceView(code,race);});}
+  ugaRaceResult(token,csrf,code,wave){return this.call(()=>{
+    const user=this.auth(token,csrf,true);const race=this.ugaData().races[code];check(race,404,'Yarış bulunamadı.');
+    check(Number.isInteger(wave)&&wave>=0&&wave<=30,400,'Dalga geçersiz.');
+    const old=race.results[user.id];race.results[user.id]={name:this.ugaName(user),wave:Math.max(old?.wave??0,wave)};this.mark();
+    return this.ugaRaceView(code,race);
+  });}
   tick(){
     const queue=this.data.queue.filter(q=>this.now()-(this.presence.get(q.userId)??q.since)<60000&&this.data.users[q.userId]);
     if(queue.length!==this.data.queue.length){this.data.queue=queue;this.mark();}

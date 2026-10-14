@@ -1,0 +1,23 @@
+{
+  "godot": {
+    "version": "4.7.2",
+    "url": "https://github.com/godotengine/godot-builds/releases/download/4.7.2-stable/Godot_v4.7.2-stable_export_templates.tpz",
+    "sha512": "ca4d71c4d7b81dfc15d1a98baa07534aa95b03fdda78a0075b06672e1648d2e5f40980c9adc28d23e1b92e732ee7bf3461997aa804af74ec2fcd7a93ccb84079"
+  },
+  "java": {
+    "url": "https://github.com/adoptium/temurin17-binaries/releases/download/jdk-17.0.20.1%2B1/OpenJDK17U-jdk_aarch64_mac_hotspot_17.0.20.1_1.tar.gz",
+    "sha256": "196d13ba5f10414bef7f6a05a9b3f00edacb18ebacef2b99485db9e2ee18f0e8"
+  },
+  "android_tools": {
+    "url": "https://dl.google.com/android/repository/commandlinetools-mac_arm64-16111833_latest.zip",
+    "sha1": "ad03dc49bfacfd52c110b14104ea548b8a07e830"
+  },
+  "cloudflared": {
+    "url": "https://github.com/cloudflare/cloudflared/releases/download/2026.10.0/cloudflared-darwin-arm64.tgz"
+  },
+  "android_packages": [
+    "platform-tools",
+    "build-tools;36.0.0",
+    "platforms;android-36"
+  ]
+}

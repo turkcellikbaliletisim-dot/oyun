@@ -5,3 +5,12 @@ test-results/
 .data/
 .godot/
 native-builds/
+
+.mobile-tools/
+.mobile-server.env
+.mobile-server.env.tmp
+export_credentials.cfg
+native/client.local.json
+
+# Godot üretimi
+*.import

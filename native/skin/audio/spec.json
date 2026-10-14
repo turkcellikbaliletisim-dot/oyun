@@ -1,0 +1,97 @@
+{
+  "format": "ogg",
+  "codec": "vorbis",
+  "sample_rate": 44100,
+  "peak_dbfs_max": -1.0,
+  "sfx_rms_spread_db_max": 6.0,
+  "original_composition": true,
+  "music_loop_requires_listening": true,
+  "assets": [
+    {
+      "file": "music_menu.ogg",
+      "seconds": 96,
+      "loop": true,
+      "bpm": 70,
+      "prompt": "96 saniyelik, kesintisiz döngülü, sakin ve destansı Anadolu menü müziği. Ney ve bağlama ağırlıklı, hafif def ritmi, uzun pad dokusu. Tempo 70 BPM, hüzünlü ama umutlu. Sözsüz, özgün beste. Sonu başına yumuşakça bağlansın."
+    },
+    {
+      "file": "music_battle.ogg",
+      "seconds": 96,
+      "loop": true,
+      "bpm": 110,
+      "prompt": "96 saniyelik, kesintisiz döngülü, tempolu Anadolu savaş müziği. Davul, zurna ve bağlama, güçlü ritim, yükselen gerilim. Tempo 110 BPM. Sözsüz, özgün beste. Sonu başına kesintisiz bağlansın."
+    },
+    {
+      "file": "click.ogg",
+      "seconds": 0.1,
+      "loop": false,
+      "prompt": "Hafif ahşap ve metal düğme tıklaması"
+    },
+    {
+      "file": "card_flip.ogg",
+      "seconds": 0.3,
+      "loop": false,
+      "prompt": "Kâğıt kartın çevrilmesi, kısa hışırtı"
+    },
+    {
+      "file": "play_card.ogg",
+      "seconds": 0.5,
+      "loop": false,
+      "prompt": "Kartın masaya vurulması, tok ahşap tık ve kısa parıltı"
+    },
+    {
+      "file": "attack.ogg",
+      "seconds": 0.5,
+      "loop": false,
+      "prompt": "Kılıç savurma ve vuruş, kısa metalik tını"
+    },
+    {
+      "file": "hit.ogg",
+      "seconds": 0.4,
+      "loop": false,
+      "prompt": "Darbe alma, tok çarpma sesi"
+    },
+    {
+      "file": "spell.ogg",
+      "seconds": 0.9,
+      "loop": false,
+      "prompt": "Büyü, yükselen mistik çınlama ve kısa patlama"
+    },
+    {
+      "file": "heal.ogg",
+      "seconds": 0.8,
+      "loop": false,
+      "prompt": "İyileşme, yumuşak yükselen çan ve ışıltı"
+    },
+    {
+      "file": "pack_open.ogg",
+      "seconds": 1.5,
+      "loop": false,
+      "prompt": "Sandık kapağı açılır, gıcırtı ve altın parıltısı"
+    },
+    {
+      "file": "turn_start.ogg",
+      "seconds": 0.8,
+      "loop": false,
+      "prompt": "Tur başlangıcı, kısa davul vuruşu ve zil"
+    },
+    {
+      "file": "end_turn.ogg",
+      "seconds": 0.4,
+      "loop": false,
+      "prompt": "Tur bitirme, tok kapanış tıkı"
+    },
+    {
+      "file": "victory.ogg",
+      "seconds": 3.0,
+      "loop": false,
+      "prompt": "Zafer, zurna ve davul fanfarı, kısa ve görkemli"
+    },
+    {
+      "file": "defeat.ogg",
+      "seconds": 3.0,
+      "loop": false,
+      "prompt": "Yenilgi, alçalan ney ve boğuk davul"
+    }
+  ]
+}
