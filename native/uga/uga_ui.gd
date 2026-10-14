@@ -393,6 +393,7 @@ func on_finished(result: Dictionary) -> void:
 	if is_instance_valid(battle):
 		battle.queue_free()
 	battle = null
+	app.view = "uga_result"
 	app.shell_margin.visible = true
 	app.set_music("music_menu")
 	if online():

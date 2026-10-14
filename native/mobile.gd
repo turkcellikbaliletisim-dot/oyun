@@ -375,6 +375,8 @@ func update_nav() -> void:
 func render() -> void:
 	if not is_instance_valid(content):
 		return
+	if uga != null and uga.battle != null and is_instance_valid(uga.battle):
+		return
 	cancel_gesture()
 	clear_content()
 	if is_instance_valid(feedback):
