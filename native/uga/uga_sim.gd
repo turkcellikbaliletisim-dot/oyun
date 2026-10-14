@@ -179,7 +179,7 @@ func start_wave() -> void:
 	spawn_queue = []
 	if is_boss_wave(wave):
 		var b = D.BOSSES[(world * 2 + wave / 10 - 1) % D.BOSSES.size()]
-		spawn_queue.append({"kind": "boss", "boss_name": b.name, "art": b.art, "hp": wave_hp(wave) * 55.0, "speed": 0.028, "boss": true, "gold": 30 + wave * 2, "leak": 10})
+		spawn_queue.append({"kind": "boss", "boss_name": b.name, "art": b.art, "hp": wave_hp(wave) * 55.0, "speed": 0.028, "boss": true, "gold": 30 + wave * 2, "leak": 10, "armor": 0.15, "regen": 0.0})
 		for i in range(6):
 			var k = w.enemies[i % w.enemies.size()]
 			spawn_queue.append(enemy_spec(k, wave))
@@ -194,7 +194,7 @@ func start_wave() -> void:
 
 func enemy_spec(kind: String, n: int) -> Dictionary:
 	var e = D.ENEMIES[kind]
-	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp), "speed": float(e.speed) * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1}
+	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp), "speed": float(e.speed) * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
 
 func spawn(spec: Dictionary) -> void:
 	var e = spec.duplicate()
@@ -235,6 +235,8 @@ func targets_front() -> Array:
 func hit(e: Dictionary, dmg: float, slot: int, crit: bool = false) -> void:
 	if float(e.hp) <= 0.0:
 		return
+	if slot >= 0:
+		dmg *= 1.0 - float(e.get("armor", 0.0))
 	var real = minf(dmg, float(e.hp))
 	e.hp = float(e.hp) - dmg
 	stats.damage = float(stats.damage) + real
@@ -333,6 +335,8 @@ func step() -> void:
 			hit(e, float(e.poison) * D.TICK, -1)
 		if float(e.hp) <= 0.0:
 			continue
+		if float(e.get("regen", 0.0)) > 0.0:
+			e.hp = minf(float(e.max), float(e.hp) + float(e.max) * float(e.regen) * D.TICK)
 		e.slow_t = maxf(0.0, float(e.slow_t) - D.TICK)
 		if float(e.slow_t) <= 0.0:
 			e.slow_f = 0.0

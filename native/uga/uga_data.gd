@@ -38,12 +38,12 @@ const ENEMIES = {
 	"haydut": {"name": "Haydut", "hp": 1.2, "speed": 0.06, "art": "enemy_haydut"},
 	"iskelet": {"name": "İskelet", "hp": 0.9, "speed": 0.065, "art": "enemy_iskelet"},
 	"cin": {"name": "Cin", "hp": 0.8, "speed": 0.09, "art": "enemy_cin"},
-	"golem_kucuk": {"name": "Taş Golem", "hp": 2.2, "speed": 0.045, "art": "enemy_golem_kucuk"},
+	"golem_kucuk": {"name": "Taş Golem", "hp": 2.2, "speed": 0.045, "art": "enemy_golem_kucuk", "armor": 0.3},
 	"kara_okcu": {"name": "Kara Okçu", "hp": 1.1, "speed": 0.065, "art": "enemy_kara_okcu"},
 	"gulyabani": {"name": "Gulyabani", "hp": 1.6, "speed": 0.06, "art": "enemy_gulyabani"},
-	"karakoncolos": {"name": "Karakoncolos", "hp": 1.4, "speed": 0.07, "art": "enemy_karakoncolos"},
+	"karakoncolos": {"name": "Karakoncolos", "hp": 1.4, "speed": 0.07, "art": "enemy_karakoncolos", "regen": 0.015},
 	"albasti": {"name": "Albastı", "hp": 1.0, "speed": 0.095, "art": "enemy_albasti"},
-	"tepegoz": {"name": "Tepegöz", "hp": 3.0, "speed": 0.04, "art": "enemy_tepegoz"},
+	"tepegoz": {"name": "Tepegöz", "hp": 3.0, "speed": 0.04, "art": "enemy_tepegoz", "armor": 0.4},
 }
 const BOSSES = [
 	{"name": "Taş Dev", "art": "boss_1"},
