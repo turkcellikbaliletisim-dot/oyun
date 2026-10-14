@@ -569,7 +569,9 @@ func draw_hud() -> void:
 	var alive = sim.enemies.size() + sim.spawn_queue.size()
 	x = icon_text("icon_wave", Vector2(x, 44), "%d" % alive, Color("cfe8ff"))
 	if sim.boss_timer > 0.0:
-		text(Vector2(x, 44), "⏱ %d" % int(ceil(sim.boss_timer)), 15, Color("ff9a5a"))
+		var urgent = sim.boss_timer < 10.0
+		var tcol = Color("ff4a3a") if urgent and int(Time.get_ticks_msec() / 250) % 2 == 0 else Color("ff9a5a")
+		text(Vector2(x, 44), "⏱ %d" % int(ceil(sim.boss_timer)), 17 if urgent else 15, tcol)
 	for en in sim.enemies:
 		if en.boss:
 			var bb = Rect2(10, r_hud.end.y + 6, size.x - 20, 14)
@@ -652,6 +654,13 @@ func draw_bar() -> void:
 	button_rect(r_speed, "x%d" % speed, speed > 1, 13)
 
 func draw_overlays() -> void:
+	if not sim.over and sim.castle_hp > 0 and sim.castle_hp <= maxi(3, sim.castle_max / 4):
+		var pulse = 0.25 + 0.2 * sin(Time.get_ticks_msec() / 160.0)
+		var edge = Color(0.9, 0.1, 0.05, pulse)
+		draw_rect(Rect2(0, 0, size.x, 10), edge)
+		draw_rect(Rect2(0, size.y - 10, size.x, 10), edge)
+		draw_rect(Rect2(0, 0, 10, size.y), edge)
+		draw_rect(Rect2(size.x - 10, 0, 10, size.y), edge)
 	for f in fx:
 		var t = tex(f.tex)
 		if t != null:
