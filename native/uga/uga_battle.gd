@@ -31,6 +31,7 @@ var tut_t: float = 0.0
 var tut_pair: Array = []
 var kick: Dictionary = {}
 var enemy_flash: Dictionary = {}
+var fx: Array = []
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -256,7 +257,10 @@ func consume_events() -> void:
 				sound("spell")
 				buzz(25)
 			"summon":
-				flashes.append({"slot": e.slot, "age": 0.25})
+				if tex("summon_fx") != null:
+					fx.append({"rect": slot_rects[e.slot].grow(10), "tex": "summon_fx", "age": 0.0, "dur": 0.45})
+				else:
+					flashes.append({"slot": e.slot, "age": 0.25})
 				sound("card_flip")
 			"leak":
 				shake = 0.35
@@ -270,6 +274,9 @@ func consume_events() -> void:
 				sound("turn_start")
 				buzz(120)
 				shake = 0.4
+			"power":
+				if power_rects.has(e.hero):
+					fx.append({"rect": power_rects[e.hero].grow(12), "tex": "levelup_fx" if tex("levelup_fx") != null else "merge_burst", "age": 0.0, "dur": 0.6})
 			"potion":
 				show_banner(D.POTIONS[e.kind].name.to_upper(), "")
 			"end":
@@ -303,6 +310,9 @@ func advance_fx(delta: float) -> void:
 		h.age += delta
 	hits = hits.filter(func(h): return h.age < 0.35)
 	shake = maxf(0.0, shake - delta)
+	for f in fx:
+		f.age += delta
+	fx = fx.filter(func(f): return f.age < f.dur)
 	banner_t = maxf(0.0, banner_t - delta)
 	message_t = maxf(0.0, message_t - delta)
 	hit_sound_t = maxf(0.0, hit_sound_t - delta)
@@ -620,6 +630,12 @@ func draw_bar() -> void:
 	button_rect(r_speed, "x%d" % speed, speed > 1, 13)
 
 func draw_overlays() -> void:
+	for f in fx:
+		var t = tex(f.tex)
+		if t != null:
+			var a = 1.0 - f.age / f.dur
+			var rr: Rect2 = f.rect.grow(10.0 * (1.0 - a))
+			draw_texture_rect(t, rr, false, Color(1, 1, 1, a))
 	if banner_t > 0.0:
 		var a = clampf(banner_t / 0.4, 0, 1)
 		var br = Rect2(0, r_field.position.y + r_field.size.y * 0.32, size.x, 86)
