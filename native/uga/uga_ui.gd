@@ -406,6 +406,7 @@ func start_run(world: int, seed_override: int = -1) -> void:
 	battle.setup(sim, app.skin_art, app.get_theme_default_font(), app.portrait_font)
 	battle.sfx = func(name: String) -> AudioStream: return null if app.muted else app.sfx_stream(name)
 	battle.tutorial = not bool(meta.p.tutorial)
+	battle.host = app
 	battle.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	battle.z_index = 50
 	app.add_child(battle)
@@ -467,6 +468,8 @@ func render_result() -> void:
 		for i in range(race.get("results", []).size()):
 			var e = race.results[i]
 			txt("%d. %s · dalga %d" % [i + 1, e.name, int(e.wave)], rp, 14, INK)
+	if str(last_reward.get("chest", "")) != "":
+		btn("Sandığı aç", c, func(): open("uga_chests"), false, false, 44)
 	var rr = row(c, 8)
 	btn("Ana sayfa", rr, func(): open("lobby"))
 	if race_active != "":

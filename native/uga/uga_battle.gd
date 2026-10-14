@@ -74,6 +74,7 @@ var path_pts: PackedVector2Array
 var path_len: Array = []
 
 var haptics: bool = true
+var host = null
 
 func buzz(ms: int) -> void:
 	if haptics and OS.get_name() in ["Android", "iOS"]:
@@ -678,6 +679,9 @@ func draw_overlays() -> void:
 		text(Vector2(0, size.y * 0.4), "DURAKLATILDI", 28, Color("ddbf7e"), HORIZONTAL_ALIGNMENT_CENTER, size.x, title_font)
 		button_rect(Rect2(size.x / 2 - 90, size.y * 0.46, 180, 48), "Devam et", true, 16)
 		button_rect(Rect2(size.x / 2 - 90, size.y * 0.46 + 60, 180, 48), "Koşuyu bitir", false, 16)
+		if host != null:
+			button_rect(Rect2(size.x / 2 - 90, size.y * 0.46 + 120, 180, 48), "Ses: kapalı" if host.muted else "Ses: açık", not host.muted, 16)
+			button_rect(Rect2(size.x / 2 - 90, size.y * 0.46 + 180, 180, 48), "Titreşim: açık" if haptics else "Titreşim: kapalı", haptics, 16)
 
 func hint(r: Rect2, msg: String) -> void:
 	var pulse = 0.5 + 0.5 * sin(Time.get_ticks_msec() / 180.0)
@@ -741,6 +745,12 @@ func _gui_input(event: InputEvent) -> void:
 		if pressed:
 			if Rect2(size.x / 2 - 90, size.y * 0.46, 180, 48).has_point(pos):
 				paused = false
+			elif host != null and Rect2(size.x / 2 - 90, size.y * 0.46 + 120, 180, 48).has_point(pos):
+				host.toggle_sound()
+				if not host.muted:
+					host.set_music("music_battle")
+			elif Rect2(size.x / 2 - 90, size.y * 0.46 + 180, 180, 48).has_point(pos):
+				haptics = not haptics
 			elif Rect2(size.x / 2 - 90, size.y * 0.46 + 60, 180, 48).has_point(pos):
 				paused = false
 				sim.over = true
