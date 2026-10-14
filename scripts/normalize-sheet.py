@@ -20,6 +20,22 @@ def main():
     valid = [f for f in frames if f is not None]
     if len(valid) < count:
         print('EKSIK_KARE', src, len(valid)); sys.exit(2)
+    # yönü ters çizilmiş kareyi ilk kareye göre aynala
+    import numpy as np
+    from PIL import ImageOps
+    def sig(img):
+        return np.asarray(img.convert('L').resize((48, 48)), dtype=np.float32)
+    ref = sig(frames[0])
+    flipped = []
+    for i in range(1, count if 'walk_' in src else 1):
+        same = np.mean((sig(frames[i]) - ref) ** 2)
+        mirror = np.mean((sig(ImageOps.mirror(frames[i])) - ref) ** 2)
+        if mirror < same * 0.8:
+            frames[i] = ImageOps.mirror(frames[i])
+            flipped.append(i)
+    if flipped:
+        print('AYNALANDI', src, flipped)
+    valid = frames
     # ortak ölçek: en yüksek kare hücrenin %90'ına sığsın, genişlik de taşmasın
     maxh = max(f.height for f in valid)
     maxw = max(f.width for f in valid)

@@ -439,6 +439,7 @@ func draw_cover(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 	draw_texture_rect_region(t, r, src, mod)
 
 var frame_cache: Dictionary = {}
+const SHEET_LEFT = []
 
 func frame_tex(name: String, frame: int, count: int = 4) -> Texture2D:
 	# Yatay şerit (sprite sheet) içinden tek kare.
@@ -520,8 +521,8 @@ func draw_field() -> void:
 			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
 		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
 		if t != null:
-			# yürüme şeritleri sola bakar; tek resimler sağa bakar kabul edilir
-			var flip = (not face_left) if has_walk else face_left
+			# resimler ve yürüme şeritleri sağa bakar; SHEET_LEFT listesindekiler sola
+			var flip = face_left != (has_walk and SHEET_LEFT.has(walk_name))
 			if flip:
 				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
 			# koyu dış hat: kalabalık arka planda düşman seçilsin
