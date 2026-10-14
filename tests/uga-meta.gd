@@ -51,6 +51,11 @@ func _initialize() -> void:
 	# çevrimdışı kazanç
 	m.p.last_seen = 1000
 	check(m.compute_offline(1000 + 3600 * 20) == 8 * m.offline_rate(), "çevrimdışı en çok 8 saat")
+	# günün meydan okuması
+	check(m.challenge_seed() == m.challenge_seed() and m.challenge_seed() > 0, "meydan okuma tohumu günlük sabit")
+	var dd = int(m.p.diamond)
+	check(m.finish_challenge(12) == 36 and int(m.p.diamond) == dd + 36 and m.challenge_done(), "meydan okuma ödülü")
+	check(m.finish_challenge(20) == 0, "meydan okuma günde bir")
 	# kalıcılık
 	m.save()
 	var again = Meta.new(path)

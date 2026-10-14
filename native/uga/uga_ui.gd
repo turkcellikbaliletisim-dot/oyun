@@ -27,6 +27,8 @@ var board_loading: bool = false
 var race: Dictionary = {}
 var race_active: String = ""
 var race_input: String = ""
+var challenge_active: bool = false
+var challenge_gain: int = 0
 
 func _init(app_in) -> void:
 	app = app_in
@@ -349,6 +351,26 @@ func render_hub() -> void:
 		var tile = hero_tile(cards, h, 1, 62)
 		var lv = txt("Sv %d" % meta.hero_level(h), tile.get_child(0), 10, GOLD_C)
 		lv.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	# günün meydan okuması
+	var ch = card_panel(c, Color("e6b0ff"))
+	var chr_ = row(ch, 8)
+	icon(chr_, "boss_5.png" if art("boss_5.png") != null else "boss_1.png", 52)
+	var chv = VBoxContainer.new()
+	chv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	chv.add_theme_constant_override("separation", 1)
+	chr_.add_child(chv)
+	txt("Günün Meydan Okuması", chv, 15, Color("e6b0ff"))
+	if meta.challenge_done():
+		txt("Bugün tamamlandı: dalga %d. Yarın yeni dalgalar!" % int(meta.p.challenge_best), chv, 12, MUTED, true)
+	else:
+		txt("Herkes aynı dalgalarla. Ödül: ulaştığın dalga x3 elmas (günde bir).", chv, 12, INK, true)
+		var cb = btn("OYNA", chr_, func():
+			challenge_active = true
+			race_active = ""
+			start_run(meta.challenge_world(), meta.challenge_seed())
+			challenge_active = true, false, true, 44)
+		cb.size_flags_horizontal = Control.SIZE_SHRINK_END
+		cb.custom_minimum_size.x = 84
 	# menü kutuları (2 sütun)
 	var grid = GridContainer.new()
 	grid.columns = 2
@@ -401,6 +423,7 @@ func start_run(world: int, seed_override: int = -1) -> void:
 		return
 	if seed_override < 0:
 		race_active = ""
+		challenge_active = false
 	var sim = Sim.new(meta.run_seed() if seed_override < 0 else seed_override, world, meta.mods(), meta.castle_bonus(), 0, meta.p.deck)
 	battle = Battle.new()
 	battle.setup(sim, app.skin_art, app.get_theme_default_font(), app.portrait_font)
@@ -420,6 +443,10 @@ func on_finished(result: Dictionary) -> void:
 	last_reward = meta.finish_run(result)
 	if last_reward.get("unlocked", false):
 		world_sel = int(meta.p.world)
+	challenge_gain = 0
+	if challenge_active:
+		challenge_gain = meta.finish_challenge(int(result.wave))
+		challenge_active = false
 	if is_instance_valid(battle):
 		battle.queue_free()
 	battle = null
@@ -470,6 +497,9 @@ func render_result() -> void:
 		for i in range(race.get("results", []).size()):
 			var e = race.results[i]
 			txt("%d. %s · dalga %d" % [i + 1, e.name, int(e.wave)], rp, 14, INK)
+	if challenge_gain > 0:
+		var cp = card_panel(c, Color("e6b0ff"))
+		txt("Günün meydan okuması tamamlandı: +%d elmas" % challenge_gain, cp, 15, Color("e6b0ff"), true)
 	if str(last_reward.get("chest", "")) != "":
 		btn("Sandığı aç", c, func(): open("uga_chests"), false, false, 44)
 	var rr = row(c, 8)
@@ -795,6 +825,7 @@ func render_online() -> void:
 		btn("Kodu kopyala", rr, func(): DisplayServer.clipboard_set(str(race.code)); toast("Kod kopyalandı"))
 		btn("YARIŞI OYNA", rr, func():
 			race_active = str(race.code)
+			challenge_active = false
 			start_run(int(race.world), int(race.seed)), false, true, 46)
 		btn("Sonuçları yenile", rp, func(): join_race(str(race.code)))
 	else:

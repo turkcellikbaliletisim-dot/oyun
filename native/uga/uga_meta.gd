@@ -44,7 +44,7 @@ func fresh() -> Dictionary:
 	return {"version": 1, "gold": 200, "diamond": 50, "soul": 0, "rebirths": 0, "shards": {}, "heroes": heroes,
 		"deck": D.DEFAULT_DECK.duplicate(), "world": 0, "best": {}, "totems": {"savas": 0, "hiz": 0, "altin": 0, "kale": 0},
 		"chests": {"common": 1, "rare": 0, "epic": 0}, "missions": {"day": "", "list": []}, "daily": "", "last_seen": 0,
-		"pending_offline": 0, "runs": 0, "tutorial": false, "name": "", "seed": rng.randi_range(1, 2000000000)}
+		"pending_offline": 0, "runs": 0, "tutorial": false, "name": "", "challenge_day": "", "challenge_best": 0, "seed": rng.randi_range(1, 2000000000)}
 
 func load_profile() -> void:
 	p = fresh()
@@ -357,3 +357,25 @@ func collect_offline(now: int = -1) -> int:
 	p.gold = int(p.gold) + g
 	save()
 	return g
+
+# ---------- günün meydan okuması ----------
+
+func challenge_seed() -> int:
+	return abs(("destan-" + today()).hash()) % 2000000000 + 1
+
+func challenge_world() -> int:
+	return clampi(int(p.world), 0, D.WORLDS.size() - 1)
+
+func challenge_done() -> bool:
+	return p.challenge_day == today()
+
+func finish_challenge(wave: int) -> int:
+	# Günde bir kez ödül: ulaşılan dalga x 3 elmas.
+	if challenge_done():
+		return 0
+	p.challenge_day = today()
+	p.challenge_best = wave
+	var gain = wave * 3
+	p.diamond = int(p.diamond) + gain
+	save()
+	return gain
