@@ -551,6 +551,8 @@ func render_heroes() -> void:
 		r.add_child(v)
 		txt("%s%s" % [spec.name, ("  · Sv %d" % lv) if lv > 0 else ""], v, 15, GOLD_C if lv > 0 else MUTED)
 		txt(str(spec.text), v, 12, INK, true)
+		var reach = float(spec.get("reach", 0.2))
+		txt("Menzil: " + ("kısa (kaleye yakın)" if reach > 0.3 else "uzun" if reach < 0.15 else "orta"), v, 11, MUTED)
 		if h == "ejder_yavrusu":
 			txt("Yalnızca 4★ ve üstü birleştirmede çıkar.", v, 11, MUTED, true)
 			continue

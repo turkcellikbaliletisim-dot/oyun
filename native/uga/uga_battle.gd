@@ -32,6 +32,7 @@ var tut_pair: Array = []
 var kick: Dictionary = {}
 var enemy_flash: Dictionary = {}
 var fx: Array = []
+var coins: Array = []
 var sfx: Callable
 var players: Array = []
 var hit_sound_t: float = 0.0
@@ -241,8 +242,8 @@ func consume_events() -> void:
 				enemy_flash[e.enemy] = 0.1
 				if e.slot >= 0:
 					var pos = path_at(float(e.d))
-					if e.crit:
-						floats.append({"pos": pos + Vector2(randf_range(-8, 8), -18), "text": str(e.dmg) + ("!" if e.crit else ""), "color": Color("ffd25a") if e.crit else Color("ffffff"), "age": 0.0})
+					if e.crit or floats.size() < 18:
+						floats.append({"pos": pos + Vector2(randf_range(-10, 10), -26), "text": str(e.dmg) + ("!" if e.crit else ""), "color": Color("ffd25a") if e.crit else Color(1, 1, 1, 0.85), "age": 0.0, "size": 16 if e.crit else 11})
 						if floats.size() > 40:
 							floats.pop_front()
 			"die":
@@ -251,7 +252,8 @@ func consume_events() -> void:
 					hit_sound_t = 0.12
 				var dpos = path_at(float(e.d))
 				hits.append({"pos": dpos, "age": 0.0, "kind": "hit_spark"})
-				floats.append({"pos": dpos + Vector2(0, -6), "text": "+%d" % int(e.gold), "color": Color("f5c542"), "age": 0.0})
+				if coins.size() < 20:
+					coins.append({"from": dpos + Vector2(0, -16), "age": 0.0})
 				if e.boss:
 					shake = 0.6
 					show_banner("BOSS YENİLDİ!", "banner_victory")
@@ -320,6 +322,9 @@ func advance_fx(delta: float) -> void:
 		h.age += delta
 	hits = hits.filter(func(h): return h.age < 0.35)
 	shake = maxf(0.0, shake - delta)
+	for cn in coins:
+		cn.age += delta
+	coins = coins.filter(func(cn): return cn.age < 0.55)
 	for f in fx:
 		f.age += delta
 	fx = fx.filter(func(f): return f.age < f.dur)
@@ -420,7 +425,7 @@ func draw_field() -> void:
 	list.sort_custom(func(a, b): return float(a.d) < float(b.d))
 	for en in list:
 		var pos = path_at(float(en.d))
-		var sz = 70.0 if en.boss else 36.0
+		var sz = 86.0 if en.boss else 44.0
 		var moving = float(en.stun_t) <= 0.0 and sim.freeze_t <= 0.0
 		var bob = absf(sin(Time.get_ticks_msec() / 110.0 + int(en.id) * 1.7)) * (3.0 if moving else 0.0)
 		var ahead = path_at(minf(1.0, float(en.d) + 0.01))
@@ -438,6 +443,9 @@ func draw_field() -> void:
 			t = tex("boss_1" if en.boss else "enemy_golem_kucuk")
 		draw_circle(pos + Vector2(0, -2), sz * 0.28, Color(0, 0, 0, 0.28))
 		if t != null:
+			# koyu dış hat: kalabalık arka planda düşman seçilsin
+			for o in [Vector2(-1.5, 0), Vector2(1.5, 0), Vector2(0, -1.5), Vector2(0, 1.5)]:
+				draw_fit(t, Rect2(r.position + o, r.size), Color(0, 0, 0, 0.55))
 			if face_left:
 				draw_set_transform(Vector2(r.get_center().x * 2.0, 0) + cur_off, 0.0, Vector2(-1, 1))
 				draw_fit(t, r, mod)
@@ -457,6 +465,8 @@ func draw_field() -> void:
 		var f = clampf(s.age / 0.2, 0, 1)
 		var p = s.from.lerp(s.to, f)
 		var pt = tex("proj_" + str(s.proj))
+		var tcol = {"arrow": Color("f0e6c8"), "orb": Color("54e0ff"), "fireball": Color("ff7a2a"), "rock": Color("c0a880"), "spear": Color("e0d0a0")}.get(s.proj, Color.WHITE)
+		draw_line(p, s.from.lerp(s.to, maxf(0.0, f - 0.25)), Color(tcol, 0.45), 3.0, true)
 		if pt != null:
 			var dir: Vector2 = s.to - s.from
 			if s.proj in ["arrow", "spear"]:
@@ -480,7 +490,7 @@ func draw_field() -> void:
 			draw_circle(h.pos - Vector2(0, 12), 14 * (1.0 - a) + 6, Color(1, 0.9, 0.5, a * 0.7))
 	for f in floats:
 		var a = 1.0 - f.age / 0.8
-		text(f.pos, f.text, 13, Color(f.color, a), HORIZONTAL_ALIGNMENT_CENTER, 0)
+		text(f.pos, f.text, int(f.get("size", 13)), Color(f.color, a * f.color.a), HORIZONTAL_ALIGNMENT_CENTER, 0)
 
 func draw_card(r: Rect2, c: Dictionary, alpha: float = 1.0) -> void:
 	var stars = int(c.s)
@@ -526,8 +536,11 @@ func draw_board() -> void:
 			continue
 		var highlight = drag_from >= 0 and sim.can_merge(drag_from, i)
 		if kick.has(i):
-			r = Rect2(r.position - Vector2(0, 4.0 * float(kick[i]) / 0.12), r.size)
+			var k = float(kick[i]) / 0.12
+			r = Rect2(r.position - Vector2(0, 6.0 * k), r.size).grow(2.0 * k)
 		draw_card(r, c)
+		if kick.has(i):
+			draw_rect(r, Color(1, 0.95, 0.7, 0.5 * float(kick[i]) / 0.12), false, 2.0)
 		if highlight:
 			draw_rect(r.grow(2), Color("ffe27a"), false, 3.0)
 		if i == info_slot:
@@ -654,6 +667,15 @@ func draw_bar() -> void:
 	button_rect(r_speed, "x%d" % speed, speed > 1, 13)
 
 func draw_overlays() -> void:
+	var coin_t = tex("icon_gold_coin")
+	var target = Vector2(78, 36)
+	for cn in coins:
+		var f = clampf(cn.age / 0.55, 0, 1)
+		var p = cn.from.lerp(target, f * f) + Vector2(0, -60.0 * sin(f * PI))
+		if coin_t != null:
+			draw_fit(coin_t, Rect2(p - Vector2(9, 9), Vector2(18, 18)))
+		else:
+			draw_circle(p, 7, Color("f5c542"))
 	if not sim.over and sim.castle_hp > 0 and sim.castle_hp <= maxi(3, sim.castle_max / 4):
 		var pulse = 0.25 + 0.2 * sin(Time.get_ticks_msec() / 160.0)
 		var edge = Color(0.9, 0.1, 0.05, pulse)

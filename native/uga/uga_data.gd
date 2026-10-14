@@ -14,16 +14,16 @@ const STAR_DMG = [1.0, 2.3, 5.2, 11.5, 25.0, 55.0]
 const STAR_SPEED = [1.0, 1.08, 1.16, 1.25, 1.35, 1.5]
 
 const HEROES = {
-	"kilic": {"name": "Alp Kılıççı", "dmg": 10.0, "interval": 0.9, "proj": "spear", "crit": 0.15, "text": "%15 kritik vuruş (x2)", "art": "unit_kilic"},
+	"kilic": {"reach": 0.42, "name": "Alp Kılıççı", "dmg": 10.0, "interval": 0.9, "proj": "spear", "crit": 0.15, "text": "%15 kritik vuruş (x2)", "art": "unit_kilic"},
 	"okcu": {"name": "Okçu", "dmg": 6.0, "interval": 0.45, "proj": "arrow", "text": "Çok hızlı atış", "art": "unit_okcu"},
 	"buyucu": {"name": "Büyücü", "dmg": 9.0, "interval": 1.0, "proj": "orb", "chain": 1, "text": "Büyü ikinci düşmana sıçrar", "art": "unit_buyucu"},
-	"kalkan": {"name": "Kalkancı", "dmg": 7.0, "interval": 1.0, "proj": "rock", "stun": 0.12, "text": "%12 şansla 1 sn sersemletir", "art": "unit_kalkan"},
+	"kalkan": {"reach": 0.42, "name": "Kalkancı", "dmg": 7.0, "interval": 1.0, "proj": "rock", "stun": 0.12, "text": "%12 şansla 1 sn sersemletir", "art": "unit_kalkan"},
 	"kam": {"name": "Kam", "dmg": 6.0, "interval": 0.9, "proj": "orb", "slow": 0.3, "text": "Düşmanı %30 yavaşlatır", "art": "hero_kam"},
-	"mizrakci": {"name": "Mızrakçı", "dmg": 9.0, "interval": 1.0, "proj": "spear", "pierce": 2, "text": "İki düşmanı deler", "art": "hero_mizrakci"},
-	"kurt_binicisi": {"name": "Kurt Binicisi", "dmg": 4.0, "interval": 0.3, "proj": "arrow", "text": "En hızlı saldırı", "art": "hero_kurt_binicisi"},
+	"mizrakci": {"reach": 0.42, "name": "Mızrakçı", "dmg": 9.0, "interval": 1.0, "proj": "spear", "pierce": 2, "text": "İki düşmanı deler", "art": "hero_mizrakci"},
+	"kurt_binicisi": {"reach": 0.42, "name": "Kurt Binicisi", "dmg": 4.0, "interval": 0.3, "proj": "arrow", "text": "En hızlı saldırı", "art": "hero_kurt_binicisi"},
 	"simyaci": {"name": "Simyacı", "dmg": 3.0, "interval": 1.0, "proj": "orb", "poison": 6.0, "text": "Zehir: 3 sn hasar, zırhı yok sayar", "art": "hero_simyaci"},
-	"mancinik": {"name": "Mancınık", "dmg": 20.0, "interval": 2.2, "proj": "rock", "splash": 3, "text": "Öndeki 3 düşmana alan hasarı", "art": "hero_mancinik"},
-	"tulpar_okcu": {"name": "Tulpar Okçu", "dmg": 8.0, "interval": 0.8, "proj": "arrow", "boss_bonus": 0.5, "text": "Boss'a +%50 hasar", "art": "hero_tulpar_okcu"},
+	"mancinik": {"reach": 0.1, "name": "Mancınık", "dmg": 20.0, "interval": 2.2, "proj": "rock", "splash": 3, "text": "Öndeki 3 düşmana alan hasarı", "art": "hero_mancinik"},
+	"tulpar_okcu": {"reach": 0.1, "name": "Tulpar Okçu", "dmg": 8.0, "interval": 0.8, "proj": "arrow", "boss_bonus": 0.5, "text": "Boss'a +%50 hasar", "art": "hero_tulpar_okcu"},
 	"umay": {"name": "Umay", "dmg": 4.0, "interval": 1.0, "proj": "orb", "aura": 0.2, "kill_gold": 1, "text": "Komşu kartlara +%20 hasar, öldürmede +1 altın", "art": "hero_umay"},
 	"ejder_yavrusu": {"name": "Ejder Yavrusu", "dmg": 26.0, "interval": 1.2, "proj": "fireball", "splash": 3, "burn": 8.0, "legendary": true, "text": "Efsanevi: alan hasarı + yanma", "art": "hero_ejder_yavrusu"},
 }

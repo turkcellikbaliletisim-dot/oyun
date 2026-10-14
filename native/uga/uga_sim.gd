@@ -46,6 +46,9 @@ func _init(seed_in: int = 1, world_in: int = 0, mods_in: Dictionary = {}, castle
 		potions[k] = int(potions[k]) + potion_bonus
 	slots.resize(D.SLOTS)
 	slots.fill(null)
+	# Koşu 3 hazır kartla başlar: ilk saniyeden itibaren savaş olur.
+	for i in range(3):
+		slots[5 + i * 2] = {"h": pick(deck), "s": 1, "cd": 0.5}
 
 # ---------- rastgelelik ----------
 
@@ -186,7 +189,7 @@ func start_wave() -> void:
 		boss_timer = 50.0
 		events.append({"t": "boss", "name": b.name, "art": b.art})
 	else:
-		var count = 8 + mini(wave, 22)
+		var count = 14 + mini(wave * 2, 30)
 		for i in range(count):
 			spawn_queue.append(enemy_spec(pick(w.enemies), wave))
 	spawn_timer = 0.0
@@ -194,7 +197,7 @@ func start_wave() -> void:
 
 func enemy_spec(kind: String, n: int) -> Dictionary:
 	var e = D.ENEMIES[kind]
-	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp), "speed": float(e.speed) * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
+	return {"kind": kind, "art": e.art, "hp": wave_hp(n) * float(e.hp) * 0.42, "speed": float(e.speed) * 1.7 * (1.0 + 0.004 * n), "boss": false, "gold": 2 + n / 6, "leak": 1, "armor": float(e.get("armor", 0.0)), "regen": float(e.get("regen", 0.0))}
 
 func spawn(spec: Dictionary) -> void:
 	var e = spec.duplicate()
@@ -228,7 +231,7 @@ func hero_damage(slot: int) -> float:
 
 func targets_front() -> Array:
 	# En öndeki (kapıya en yakın) düşmanlar önce.
-	var arr = enemies.filter(func(e): return float(e.hp) > 0.0 and float(e.d) > 0.05)
+	var arr = enemies.filter(func(e): return float(e.hp) > 0.0 and float(e.d) > 0.1)
 	arr.sort_custom(func(a, b): return float(a.d) > float(b.d) or (float(a.d) == float(b.d) and int(a.id) < int(b.id)))
 	return arr
 
@@ -259,7 +262,13 @@ func fire(slot: int) -> void:
 	var h = D.HEROES[c.h]
 	while not _front.is_empty() and float(_front[0].hp) <= 0.0:
 		_front.pop_front()
-	var front = _front.filter(func(e): return float(e.hp) > 0.0) if _front.size() < 8 else _front.slice(0, 8).filter(func(e): return float(e.hp) > 0.0)
+	var reach = float(h.get("reach", 0.2))
+	var front = []
+	for en in _front:
+		if float(en.hp) > 0.0 and float(en.d) > reach:
+			front.append(en)
+			if front.size() >= 8:
+				break
 	if front.is_empty():
 		return
 	var dmg = hero_damage(slot)
@@ -320,7 +329,7 @@ func step() -> void:
 		spawn_timer -= D.TICK
 		if spawn_timer <= 0.0:
 			spawn(spawn_queue.pop_front())
-			spawn_timer = 0.55
+			spawn_timer = 0.32
 	if boss_timer > 0.0:
 		boss_timer -= D.TICK
 		if boss_timer <= 0.0:
