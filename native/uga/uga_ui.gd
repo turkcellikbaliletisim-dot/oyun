@@ -545,9 +545,29 @@ func render_chests() -> void:
 			parts.append("%s +%d" % [D.HEROES[h].name, int(chest_reward.shards[h])])
 		txt("Parça: " + ", ".join(parts), p, 13, INK, true)
 		if str(chest_reward.hero) != "":
-			var hr = row(p, 8)
-			hero_tile(hr, chest_reward.hero, 3, 70)
-			txt("YENİ KAHRAMAN: %s!" % D.HEROES[chest_reward.hero].name, hr, 16, Color("7dff9a"), true)
+			var reveal = PanelContainer.new()
+			reveal.clip_contents = true
+			reveal.custom_minimum_size = Vector2(0, 230)
+			reveal.add_theme_stylebox_override("panel", app.box(Color("0b141c"), GOLD_C, 2, 12, 0))
+			p.add_child(reveal)
+			if art("new_hero_bg.png") != null:
+				var rays = TextureRect.new()
+				rays.texture = art("new_hero_bg.png")
+				rays.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+				rays.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_COVERED
+				rays.mouse_filter = Control.MOUSE_FILTER_IGNORE
+				reveal.add_child(rays)
+			var rv = VBoxContainer.new()
+			rv.alignment = BoxContainer.ALIGNMENT_CENTER
+			reveal.add_child(rv)
+			var pic = TextureRect.new()
+			pic.texture = hero_art(chest_reward.hero, 3)
+			pic.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+			pic.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+			pic.custom_minimum_size = Vector2(0, 170)
+			rv.add_child(pic)
+			var nt = title("YENİ KAHRAMAN: %s!" % D.HEROES[chest_reward.hero].name, rv, 18)
+			nt.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		chest_reward = {}
 	var specs = [["common", "Sıradan Sandık", "Altın ve az parça", 30], ["rare", "Nadir Sandık", "Çok parça, elmas, %35 yeni kahraman", 90], ["epic", "Destansı Sandık", "Bol ödül, kesin yeni kahraman", 250]]
 	for s in specs:

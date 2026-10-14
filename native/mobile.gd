@@ -2633,6 +2633,8 @@ func _notification(what: int) -> void:
 				reconnect_timer.start(0.2)
 	elif what == NOTIFICATION_WM_GO_BACK_REQUEST:
 		cancel_gesture()
+		if uga != null and uga.battle != null and is_instance_valid(uga.battle):
+			return
 		if not room.is_empty() and not gallery_open:
 			confirm_leave()
 		else:

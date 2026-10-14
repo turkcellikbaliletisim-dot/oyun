@@ -72,6 +72,12 @@ var potion_rects: Dictionary = {}
 var path_pts: PackedVector2Array
 var path_len: Array = []
 
+var haptics: bool = true
+
+func buzz(ms: int) -> void:
+	if haptics and OS.get_name() in ["Android", "iOS"]:
+		Input.vibrate_handheld(ms)
+
 func sound(name: String, vol: float = 0.0) -> void:
 	if not sfx.is_valid():
 		return
@@ -248,18 +254,21 @@ func consume_events() -> void:
 					tut_t = 3.0
 				flashes.append({"slot": e.slot, "age": 0.0})
 				sound("spell")
+				buzz(25)
 			"summon":
 				flashes.append({"slot": e.slot, "age": 0.25})
 				sound("card_flip")
 			"leak":
 				shake = 0.35
 				sound("attack", -4.0)
+				buzz(60)
 			"wave":
 				if not sim.is_boss_wave(int(e.n)):
 					show_banner("DALGA %d" % int(e.n), "")
 			"boss":
 				show_banner(str(e.name).to_upper(), "banner_boss_warning")
 				sound("turn_start")
+				buzz(120)
 				shake = 0.4
 			"potion":
 				show_banner(D.POTIONS[e.kind].name.to_upper(), "")
