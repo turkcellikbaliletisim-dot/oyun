@@ -52,3 +52,10 @@ Ana sayfa (kale arka planı, OYNA, dünya seçimi, kaynaklar) · Savaş · Koşu
 
 ## 8. Gece yol haritası
 1. Plan + görsel isteği · 2. Simülasyon + testler · 3. Savaş ekranı · 4. Meta + menüler · 5. Görselleri bağlama (yarım saatte bir kontrol) · 6. Dengeleme (otomatik oynatıcı ile dalga eğrisi) · 7. APK + video.
+
+## 9. Gece ilerlemesi (2026-10-14, otomatik)
+Yapılanlar: deterministik savaş simülasyonu (`native/uga/uga_sim.gd`), kalıcı ilerleme (`uga_meta.gd`), elle çizilen savaş ekranı (`uga_battle.gd`: boyalı yolda yürüyen düşmanlar, mermiler, vuruş efektleri, sürükle-birleştir, SAT bölgesi, koşu içi güçlendirme şeridi, 4 iksir, OTO ve x1/x2/x3 hız, duraklat, boss can çubuğu, ilk koşu öğreticisi, titreşim ve sesler), menüler (`uga_ui.gd`: merkez, kahramanlar/takım, totemler, sandıklar, görevler, yeniden doğuş, sıralama & yarış, koşu sonu). Uygulama dikey açılır (390x844).
+Çevrimiçi: sunucuda `/api/uga/score`, `/api/uga/board/N`, `/api/uga/race`, `/api/uga/race/KOD[/result]` (testli). Sunucu yayına alınınca sıralama ve kodla arkadaş yarışı çalışır; çevrimdışıyken yerel rekorlar görünür.
+Denge: ilerleme simülasyonu ile ayarlandı (otomatik oyuncuyla 1. dünya ilk koşu, 2. dünya ~6, 3. ~17, 4. ~27 koşu; 5. dünya için yeniden doğuş ve yeni kahraman gerekir).
+Testler: `tests/uga-sim.gd`, `tests/uga-meta.gd`, `tests/uga-server.test.js`, düzen testi tüm UGACHA ekranlarını 360/390/844/1280 genişlikte taşma için kontrol eder. Ekran görüntüleri: `tests/uga-shots.gd`.
+Sıradaki: sunucuyu yayına almak, oyuncu adı, mağaza/IAP (isteğe bağlı), daha çok dünya arka planı (4. parti istendi), ses efektlerinin çeşitlenmesi.

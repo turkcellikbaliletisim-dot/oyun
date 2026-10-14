@@ -75,3 +75,7 @@ Ses teslimi: `dokumanlar/SES-PROMPTLARI.md`, `native/skin/audio/spec.json` ve do
 ## 2. parti görseller (istendi: 2026-10-13, klasör `gorsel-yeni2/`)
 35 dosya: `unit_kilic|okcu|buyucu|kalkan_1..4` (256), `enemy_kurt|haydut|iskelet|cin|golem_kucuk|kara_okcu` (256), `merge_board_bg` 1024x1792, `merge_cell` / `merge_cell_selected` 192, ikonlar 96 (`icon_buy, icon_sell, icon_wave, icon_heart, icon_star_rebirth, icon_lock, icon_gold_coin`), afişler (`banner_victory`, `banner_defeat`, `banner_rebirth` 1024x384; `banner_boss_warning` 1024x256).
 Bağlanmamış 1. parti görseller: `glow_*`, `matchmaking_search`, `icon_invite_code`, `badge_rank_platinum|diamond|legend`, `store_feature_graphic`.
+
+## 3. ve 4. parti (UGACHA, 2026-10-14)
+- 3. parti (45 dosya, `gorsel-yeni3/`) tamamlandı ve oyuna bağlandı: kahraman portreleri, yıldız çerçeveleri, savaş/ana sayfa arka planı, kale kapısı, mermiler, vuruş efektleri, iksirler, para ikonları, çağır düğmesi, sandıklar, yeni düşmanlar, Erlik Han ve Şahmeran.
+- 4. parti istendi (`gorsel-yeni4/`): `battle_bg_2..5` (aynı yol düzeni, farklı tema), `world_1..5` amblemleri, `levelup_fx`, `new_hero_bg`, `summon_fx`, `ui_panel`, `ui_ribbon`. Kod hepsini hazır bekliyor; dosyalar gelmezse yedek (renk tonu) kullanılır.
