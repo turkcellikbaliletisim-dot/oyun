@@ -44,7 +44,7 @@ func fresh() -> Dictionary:
 	return {"version": 1, "gold": 200, "diamond": 50, "soul": 0, "rebirths": 0, "shards": {}, "heroes": heroes,
 		"deck": D.DEFAULT_DECK.duplicate(), "world": 0, "best": {}, "totems": {"savas": 0, "hiz": 0, "altin": 0, "kale": 0},
 		"chests": {"common": 1, "rare": 0, "epic": 0}, "missions": {"day": "", "list": []}, "daily": "", "last_seen": 0,
-		"pending_offline": 0, "runs": 0, "tutorial": false, "seed": rng.randi_range(1, 2000000000)}
+		"pending_offline": 0, "runs": 0, "tutorial": false, "name": "", "seed": rng.randi_range(1, 2000000000)}
 
 func load_profile() -> void:
 	p = fresh()

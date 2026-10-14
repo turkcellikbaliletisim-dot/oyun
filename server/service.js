@@ -185,14 +185,21 @@ export class Service {
   });}
   // ---------- UGACHA modu: sıralama ve arkadaş yarışı ----------
   ugaData(){this.data.uga??={scores:{},races:{}};return this.data.uga;}
-  ugaName(user){return 'Destancı-'+user.id.slice(0,4).toUpperCase();}
+  ugaName(user){return this.ugaData().names?.[user.id]??'Destancı-'+user.id.slice(0,4).toUpperCase();}
+  ugaSetName(user,name){
+    if(name===undefined||name===null||name==='')return;
+    check(typeof name==='string',400,'Ad geçersiz.');const clean=name.normalize('NFC').trim().replace(/\s+/g,' ');
+    check(clean.length>=3&&clean.length<=16&&/^[\p{L}\p{N} _-]+$/u.test(clean),400,'Ad 3-16 harf/rakam olmalı.');
+    const data=this.ugaData();data.names??={};data.names[user.id]=clean;
+    const s=data.scores[user.id];if(s)s.name=clean;
+  }
   ugaBoardFor(user,world){
     const rows=Object.entries(this.ugaData().scores).map(([id,s])=>({id,name:s.name,wave:s.best[world]??0,at:s.at[world]??0})).filter(r=>r.wave>0).sort((a,b)=>b.wave-a.wave||a.at-b.at);
     const rank=rows.findIndex(r=>r.id===user.id);
     return {world,top:rows.slice(0,20).map(({name,wave})=>({name,wave})),me:rank<0?null:{rank:rank+1,wave:rows[rank].wave,name:rows[rank].name},name:this.ugaName(user)};
   }
-  ugaScore(token,csrf,world,wave){return this.call(()=>{
-    const user=this.auth(token,csrf,true);
+  ugaScore(token,csrf,world,wave,name){return this.call(()=>{
+    const user=this.auth(token,csrf,true);this.ugaSetName(user,name);
     check(Number.isInteger(world)&&world>=0&&world<5,400,'Dünya geçersiz.');check(Number.isInteger(wave)&&wave>=0&&wave<=30,400,'Dalga geçersiz.');
     const s=this.ugaData().scores[user.id]??={name:this.ugaName(user),best:[0,0,0,0,0],at:[0,0,0,0,0]};
     if(wave>s.best[world]){s.best[world]=wave;s.at[world]=this.now();this.mark();}

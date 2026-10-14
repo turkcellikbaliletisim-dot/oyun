@@ -651,7 +651,10 @@ func online() -> bool:
 	return not app.offline_mode and not app.account.is_empty()
 
 func submit_online(result: Dictionary) -> void:
-	await app.api("uga/score", HTTPClient.METHOD_POST, {"world": int(result.world), "wave": int(result.wave)})
+	var body = {"world": int(result.world), "wave": int(result.wave)}
+	if str(meta.p.get("name", "")).length() >= 3:
+		body["name"] = str(meta.p.name)
+	await app.api("uga/score", HTTPClient.METHOD_POST, body)
 	if race_active != "":
 		var r = await app.api("uga/race/%s/result" % race_active, HTTPClient.METHOD_POST, {"wave": int(result.wave)})
 		if not r.has("error"):
@@ -699,6 +702,30 @@ func render_online() -> void:
 		if w > int(meta.p.world) and meta.best_wave(w) == 0:
 			continue
 		txt("%d. %s · en iyi dalga %d/%d" % [w + 1, D.WORLDS[w].name, meta.best_wave(w), D.WAVES_PER_WORLD], rec, 13, INK)
+	var np = card_panel(c)
+	txt("Oyuncu adın (sıralamada görünür)", np, 13, MUTED)
+	var nr = row(np, 8)
+	var name_edit = LineEdit.new()
+	name_edit.max_length = 16
+	name_edit.placeholder_text = "3-16 harf"
+	name_edit.text = str(meta.p.get("name", ""))
+	name_edit.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_edit.custom_minimum_size = Vector2(10, 42)
+	nr.add_child(name_edit)
+	var nb = btn("Kaydet", nr, func():
+		var clean = name_edit.text.strip_edges()
+		if clean.length() < 3 or clean.length() > 16:
+			toast("Ad 3-16 karakter olmalı.", false)
+			return
+		meta.p.name = clean
+		meta.save()
+		toast("Ad kaydedildi")
+		if online():
+			app.api("uga/score", HTTPClient.METHOD_POST, {"world": world_sel, "wave": meta.best_wave(world_sel), "name": clean})
+		board_data = {}
+		open("uga_online"), false, false, 42)
+	nb.size_flags_horizontal = Control.SIZE_SHRINK_END
+	nb.custom_minimum_size.x = 90
 	if not online():
 		var p = card_panel(c, Color("e7a36d"))
 		txt("Çevrimdışısın. Dünya sıralaması ve arkadaş yarışı için internete bağlanıp ayarlardan sunucuya bağlan. Oyunun geri kalanı internetsiz çalışır.", p, 13, INK, true)

@@ -56,7 +56,7 @@ export async function createApp({dataDir=join(ROOT,'.data'),now=Date.now,origin,
         else if(req.method==='POST'&&path==='/api/queue'){keys(body,['deck']);result=await service.queue(token,csrf,body.deck);}
         else if(req.method==='POST'&&path==='/api/queue/cancel'){keys(body,[]);result=await service.cancelQueue(token,csrf);}
         else if(req.method==='DELETE'&&path==='/api/account'){keys(body,[]);result=await service.remove(token,csrf);res.setHeader('Set-Cookie',sessionCookie('',production,true));}
-        else if(req.method==='POST'&&path==='/api/uga/score'){keys(body,['world','wave']);result=await service.ugaScore(token,csrf,body.world,body.wave);}
+        else if(req.method==='POST'&&path==='/api/uga/score'){keys(body,['world','wave','name']);result=await service.ugaScore(token,csrf,body.world,body.wave,body.name);}
         else if(req.method==='POST'&&path==='/api/uga/race'){keys(body,['world']);result=await service.ugaRaceCreate(token,csrf,body.world);}
         else {
           const board=/^\/api\/uga\/board\/([0-4])$/.exec(path);

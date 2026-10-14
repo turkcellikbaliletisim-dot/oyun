@@ -38,3 +38,10 @@ test('UGACHA arkadaş yarışı aynı tohumu paylaşır ve sonuçları toplar',a
   assert.deepEqual(fin.body.results.map(x=>x.wave),[14,9]);
   const missing=await f.request('/api/uga/race/ZZZZZZ',{client:a});assert.equal(missing.status,404);
 });
+
+test('UGACHA oyuncu adı doğrulanır ve sıralamada görünür',async t=>{
+  const f=await setup(t);const a=await f.guest();
+  let r=await f.request('/api/uga/score',{method:'POST',client:a,body:{world:0,wave:7,name:'Kürşat Alp'}});assert.equal(r.status,200);assert.equal(r.body.top[0].name,'Kürşat Alp');
+  r=await f.request('/api/uga/score',{method:'POST',client:a,body:{world:0,wave:7,name:'<script>'}});assert.equal(r.status,400);
+  r=await f.request('/api/uga/score',{method:'POST',client:a,body:{world:0,wave:7,name:'ab'}});assert.equal(r.status,400);
+});
