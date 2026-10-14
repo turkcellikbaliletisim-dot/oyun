@@ -705,6 +705,7 @@ func draw_enemy(en: Dictionary) -> void:
 	var w_sz = sz * grow_in / squash
 	var h_sz = sz * grow_in * squash
 	var r = Rect2(pos - Vector2(w_sz / 2, h_sz * 0.8 + bob), Vector2(w_sz, h_sz))
+	r.position.x = clampf(r.position.x, 0.0, size.x - r.size.x)
 	var mod = Color.WHITE
 	if float(en.slow_f) > 0.0 or sim.freeze_t > 0.0:
 		mod = Color(0.6, 0.85, 1.0)
