@@ -101,22 +101,69 @@ func btn(s: String, parent: Node, cb: Callable, disabled: bool = false, gold: bo
 	b.clip_text = true
 	b.focus_mode = Control.FOCUS_NONE
 	b.add_theme_font_size_override("font_size", 15 if gold else 14)
-	var bg = Color("b8862a") if gold else Color("1d2a33")
-	var border = Color("ffe2a0") if gold else Color("6e6042")
-	b.add_theme_stylebox_override("normal", app.box(bg, border, 2, 10, 6))
-	b.add_theme_stylebox_override("hover", app.box(bg.lightened(0.08), border, 2, 10, 6))
-	b.add_theme_stylebox_override("pressed", app.box(bg.darkened(0.15), border, 2, 10, 6))
-	b.add_theme_stylebox_override("disabled", app.box(Color("2a2f33"), Color("3a4249"), 1, 10, 6))
+	# süslü çerçeveli düğme dokusu (altın ya da koyu), yoksa düz kutu
+	# önce düz kutu (küçük en az genişlik); yeterince genişse süslü doku (style_btn)
+	b.set_meta("narrow", true)
+	var bg = Color("c9952e") if gold else Color("1d2a33")
+	var border = Color("ffe2a0") if gold else Color("8a7448")
+	b.add_theme_stylebox_override("normal", app.box(bg, border, 2, 12, 6))
+	b.add_theme_stylebox_override("hover", app.box(bg.lightened(0.08), border, 2, 12, 6))
+	b.add_theme_stylebox_override("pressed", app.box(bg.darkened(0.15), border, 2, 12, 6))
+	b.add_theme_stylebox_override("disabled", app.box(Color("2a2f33"), Color("3a4249"), 1, 12, 6))
+	if art("button_gold_s.png") != null:
+		var bb = b
+		var gg = gold
+		b.resized.connect(func(): style_btn(bb, gg))
 	b.add_theme_color_override("font_color", Color("2a1500") if gold else INK)
+	b.add_theme_color_override("font_outline_color", Color(0, 0, 0, 0.0) if gold else Color(0, 0, 0, 0.8))
+	b.add_theme_constant_override("outline_size", 0 if gold else 3)
 	b.add_theme_color_override("font_hover_color", Color("2a1500") if gold else Color.WHITE)
 	b.add_theme_color_override("font_pressed_color", Color("2a1500") if gold else Color.WHITE)
 	b.add_theme_color_override("font_disabled_color", Color("7a858c"))
 	if app.portrait_font != null and gold:
 		b.add_theme_font_override("font", app.portrait_font)
-		b.add_theme_font_size_override("font_size", 18)
+		b.add_theme_font_size_override("font_size", 17)
 	b.pressed.connect(func(): click(); cb.call())
 	parent.add_child(b)
 	return b
+
+func style_btn(b: Button, gold: bool) -> void:
+	var narrow = b.size.x < 150.0
+	if narrow == bool(b.get_meta("narrow", false)) and b.has_meta("narrow"):
+		return
+	b.set_meta("narrow", narrow)
+	if narrow:
+		var bg = Color("c9952e") if gold else Color("1d2a33")
+		var border = Color("ffe2a0") if gold else Color("8a7448")
+		b.add_theme_stylebox_override("normal", app.box(bg, border, 2, 12, 6))
+		b.add_theme_stylebox_override("hover", app.box(bg.lightened(0.08), border, 2, 12, 6))
+		b.add_theme_stylebox_override("pressed", app.box(bg.darkened(0.15), border, 2, 12, 6))
+		b.add_theme_stylebox_override("disabled", app.box(Color("2a2f33"), Color("3a4249"), 1, 12, 6))
+	else:
+		var face = art("button_gold_s.png" if gold else "button_dark_s.png")
+		b.add_theme_stylebox_override("normal", tex_box(face, Color.WHITE))
+		b.add_theme_stylebox_override("hover", tex_box(face, Color(1.1, 1.1, 1.1)))
+		b.add_theme_stylebox_override("pressed", tex_box(face, Color(0.8, 0.8, 0.8)))
+		b.add_theme_stylebox_override("disabled", tex_box(art("button_dark_s.png"), Color(0.55, 0.55, 0.55)))
+
+func tex_box(t: Texture2D, mod: Color) -> StyleBox:
+	var sb = StyleBoxTexture.new()
+	sb.texture = t
+	sb.modulate_color = mod
+	if t.get_width() == 160:
+		for side in [SIDE_LEFT, SIDE_RIGHT, SIDE_TOP, SIDE_BOTTOM]:
+			sb.set_texture_margin(side, 40)
+			sb.set_content_margin(side, 10)
+	else:
+		sb.set_texture_margin(SIDE_LEFT, 44)
+		sb.set_texture_margin(SIDE_RIGHT, 44)
+		sb.set_texture_margin(SIDE_TOP, 16)
+		sb.set_texture_margin(SIDE_BOTTOM, 16)
+		sb.set_content_margin(SIDE_LEFT, 38)
+		sb.set_content_margin(SIDE_RIGHT, 38)
+		sb.set_content_margin(SIDE_TOP, 4)
+		sb.set_content_margin(SIDE_BOTTOM, 4)
+	return sb
 
 func click() -> void:
 	var st = app.sfx_stream("click")
@@ -126,7 +173,11 @@ func click() -> void:
 
 func card_panel(parent: Node, border: Color = Color("6e6042")) -> VBoxContainer:
 	var holder = PanelContainer.new()
-	holder.add_theme_stylebox_override("panel", app.box(Color(0.06, 0.1, 0.13, 0.94), border, 1, 12, 10))
+	var pt = art("ui_panel_s.png")
+	if pt != null:
+		holder.add_theme_stylebox_override("panel", tex_box(pt, Color.WHITE if border == Color("6e6042") else border.lerp(Color.WHITE, 0.55)))
+	else:
+		holder.add_theme_stylebox_override("panel", app.box(Color(0.06, 0.1, 0.13, 0.94), border, 1, 12, 10))
 	holder.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	parent.add_child(holder)
 	var inner = VBoxContainer.new()

@@ -78,3 +78,11 @@ Sıradaki: sunucuyu yayına almak, oyuncu adı, mağaza/IAP (isteğe bağlı), d
 - 4★+ kahramanlarda ulti (her 6. saldırı, öndeki 5 düşmana 3 kat hasar), efekt şeritleri (kılıç, patlama, şimşek, şifa).
 - Öğretici kutusu hedefi kapatmıyor, güçlendirme şeridi anlaşılır, koşu sonunda takım sahnesi ve sonraki hedef, kalıcı başarımlar.
 - ChatGPT 6. parti görseller.
+
+### 0.8.0 (2026-10-14) · savaş baştan
+- Tek arena (UGACHA / Lucky Defense düzeni): ortada 3x5 taş karo üzerinde kahramanlar, düşmanlar etrafındaki yolda saat yönünde döner, kale kapısı solda. Ayrı kart tahtası kaldırıldı; sürükle-birleştir doğrudan kahramanların üstünde.
+- Konuma bağlı menzil: her kahramanın menzil dairesi var (yakın 125, orta ~195, uzun 270-285 referans piksel); çağrılan kahraman menziline en uygun boş karoya konur. Sürüklerken menzil dairesi görünür.
+- Akıcılık: düşmanlar iki mantık adımı arasında ara değerle çizilir (20 Hz atlama yok), vuruşta geri tepme, ağır mermilerde yay, hasar sayıları büyüyerek çıkar.
+- Denge yeniden: düşman hızı ve canı yeni menzil düzenine göre (1. dünya otomatik oyuncuyla 20-30 dalga).
+- Arayüz: süslü altın/koyu düğme dokuları ve lacivert-altın panel çerçevesi (dar düğmelerde düz kutu).
+- ChatGPT 7. parti: 5 arena zemini, yol dokusu, taş karo, kale kapısı.

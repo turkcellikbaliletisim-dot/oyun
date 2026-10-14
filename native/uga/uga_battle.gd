@@ -519,6 +519,7 @@ func draw_fit(t: Texture2D, r: Rect2, mod: Color = Color.WHITE) -> void:
 
 func draw_field() -> void:
 	draw_road()
+	draw_ground_props()
 	# kapı ve giriş geçidi
 	var end_p = path_pts[path_pts.size() - 1]
 	var gate = tex("castle_gate_front") if tex("castle_gate_front") != null else tex("gate_castle")
@@ -557,6 +558,10 @@ func draw_field() -> void:
 		var rad = float(D.HEROES[sim.slots[show_r].h].get("range", 160)) * arena_sc
 		draw_circle(rc, rad, Color(0.33, 0.88, 1.0, 0.08))
 		draw_arc(rc, rad, 0, TAU, 64, Color(0.33, 0.88, 1.0, 0.6), 2.0, true)
+	draw_units()
+
+func draw_ground_props() -> void:
+	pass
 
 func draw_road() -> void:
 	var w = D.ROAD_W * arena_sc
@@ -564,6 +569,7 @@ func draw_road() -> void:
 	# gölge kenar
 	draw_polyline(path_pts, Color(0.05, 0.04, 0.03, 0.55), w + 8.0, true)
 	if rt != null:
+		w *= 1.25
 		var tl = float(rt.get_width()) * (w / float(rt.get_height()))
 		var run = 0.0
 		for i in range(1, path_pts.size()):
@@ -595,6 +601,7 @@ func draw_road() -> void:
 		draw_colored_polygon(PackedVector2Array([q + dd * 5.0, q - dd * 3.0 + side, q - dd * 3.0 - side]), Color(1, 0.95, 0.8, 0.18))
 		k += 60.0
 
+func draw_units() -> void:
 	# düşmanlar (arkadan öne)
 	var list = sim.enemies.duplicate()
 	list.sort_custom(func(a, b): return float(a.d) < float(b.d))
